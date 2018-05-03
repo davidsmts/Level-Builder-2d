@@ -1,0 +1,31 @@
+/**
+ * @Author: David Schmotz <David>
+ * @Date:   2018-05-03T21:33:34+02:00
+ * @Email:  davidschmotz@gmail.com
+ * @Filename: filetree.css
+ * @Last modified by:   David
+ * @Last modified time: 2018-05-03T21:37:51+02:00
+ */
+
+ #drag-file {
+   width: 100%;
+   height: 100%;
+ }
+
+ #display-files {
+   height: 100%;
+   padding: 0;
+ }
+
+ ul {
+   list-style-type: none;
+ }
+
+.file {
+  width: 100%;
+  height: 20px;
+  padding: 5px;
+  text-align: left;
+  vertical-align: middle;
+  display: block;
+}
