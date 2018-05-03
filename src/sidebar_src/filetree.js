@@ -4,11 +4,12 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: dragndrop.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-03T22:11:32+02:00
+ * @Last modified time: 2018-05-03T22:12:33+02:00
 */
 
 const fs = require('fs')
 
+//  loads all files of the given path into the sidebar
 function openPath(path) {
   document.getElementById("display-files").innerHTML = "";
   console.log('File(s) you dragged here: ', path)
@@ -34,7 +35,6 @@ function addListenersForFiles(classname = "file") {
     })
   }
 }
-
 
 
 module.exports = {
