@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>RNDMS XML-Level Builder</title>
+  <link rel="stylesheet" href="style/main.css" />
+  <!-- <script src="sketch.js"></script>
+  <script>
+    var p5 = require('p5');
+    var app = new p5(sketch);
+  </script> -->
+</head>
+<body>
+<div class="sidebar">
+  Show this on left side
+  <div ><ul id="display-files"></ul></div>
+</div>
+<div class="levelbuilder">
+  <div id="drag-file">
+      <p>Drag your files here</p>
+  </div>
+</div>
+
+  <script>
+  // You can also require other files to run in this process
+  require('./renderer')
+  require('./assets/dragndrop')
+  </script>
+</body>
+</html>

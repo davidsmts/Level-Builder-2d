@@ -1,0 +1,55 @@
+/**
+* @Author: David Schmotz <David>
+* @Date:   2018-05-01T20:27:14+02:00
+* @Email:  davidschmotz@gmail.com
+* @Filename: main.css
+ * @Last modified by:   David
+ * @Last modified time: 2018-05-03T13:10:25+02:00
+*/
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+}
+
+canvas {
+  display: block;
+}
+
+#drag-file {
+  background-color: blue;
+  color:white;
+  text-align: center;
+  width:300px;
+  height:300px;
+}
+
+.sidebar {
+  background-color: green;
+  float: left;
+  display: inline-block;
+  width: 20%;
+  height: 100vh;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+.levelbuilder {
+  background-color: red;
+  display: inline-block;
+  width: 80%;
+  height: 100vh;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+#display-files {
+  height: 100%;
+
+}
+
+ul {
+  list-style-type: none;
+}
