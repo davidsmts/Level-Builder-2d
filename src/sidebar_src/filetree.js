@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: dragndrop.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-03T22:03:17+02:00
+ * @Last modified time: 2018-05-03T22:11:32+02:00
 */
 
 const fs = require('fs')
@@ -21,19 +21,17 @@ function openPath(path) {
       console.log(file);
       document.getElementById("display-files").innerHTML += `<a class="file">${file}</a>`;
     }
+    addListenersForFiles()
   });
-  addListenersForFiles()
 }
 
+//  adds click events to all the file buttons
 function addListenersForFiles(classname = "file") {
   const file_elements = document.getElementsByClassName(classname)
-  console.log(file_elements)
-  console.log(file_elements.length)
   for (var i=0; i<file_elements.length; i++) {
-    console.log("lel");
-    // file_element.addEventListener("click", () => {
-    //   console.log("clicki");
-    // })
+    file_elements[i].addEventListener("click", () => {
+      console.log("clicki");
+    })
   }
 }
 
