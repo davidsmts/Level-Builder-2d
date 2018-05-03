@@ -1,0 +1,19 @@
+{
+  "name": "Level-Builder-2d",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron-prebuilt": "^1.4.13"
+  },
+  "dependencies": {
+    "less": "^3.0.2",
+    "p5": "^0.6.1"
+  }
+}
