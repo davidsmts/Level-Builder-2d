@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-05T20:27:30+02:00
+ * @Last modified time: 2018-05-05T22:05:44+02:00
 */
 
 'use strict';
@@ -13,6 +13,7 @@
 let CubeWidthAndHeight = 50;
 let LevelWidth = 1000;
 let LevelHeight = 3000;
+let level;
 
 const sketch = (p) => {
 
@@ -42,8 +43,7 @@ const sketch = (p) => {
     // Create the canvas
     canvas = p.createCanvas(LevelWidth, LevelHeight);
     canvas.parent(PARENT_ID);
-    p.loop();
-    //p.noLoop();
+    console.log(level);
   };
 
 
