@@ -1,0 +1,52 @@
+<!--
+@Author: David Schmotz <David>
+@Date:   2018-03-04T22:15:14+01:00
+@Email:  davidschmotz@gmail.com
+@Filename: output.xml
+@Last modified by:   David
+@Last modified time: 2018-05-05T21:42:46+02:00
+-->
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<elementCollection>
+  <elements>
+    <element>
+      <id>1</id>
+      <xPosition>-5</xPosition>
+      <yPosition>-3</yPosition>
+      <type>sprite</type>
+      <prefab>0</prefab>
+    </element>
+    <element>
+      <id>2</id>
+      <xPosition>-3</xPosition>
+      <yPosition>-2</yPosition>
+      <type>sprite</type>
+      <prefab>0</prefab>
+    </element>
+    <element>
+      <id>3</id>
+      <xPosition>-1</xPosition>
+      <yPosition>-1</yPosition>
+      <type>sprite</type>
+      <prefab>0</prefab>
+    </element>
+    <element>
+      <id>4</id>
+      <xPosition>5</xPosition>
+      <yPosition>-1</yPosition>
+      <type>sprite</type>
+      <prefab>0</prefab>
+    </element>
+    <element>
+      <id>5</id>
+      <xPosition>6</xPosition>
+      <yPosition>1</yPosition>
+      <type>sprite</type>
+      <prefab>0</prefab>
+    </element>
+  </elements>
+
+</elementCollection>
