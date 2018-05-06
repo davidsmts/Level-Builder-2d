@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-06T12:27:19+02:00
+ * @Last modified time: 2018-05-06T12:30:51+02:00
 */
 
 const xml2js = require("xml2js");
@@ -20,7 +20,7 @@ let Path = "";
 
 const Level = () => {
   const path  = __dirname + '/output.xml';
-  console.log(path)
+  console.log(path);
   let xml;
   const parser = new xml2js.Parser();
   fs.readFile(path, function(err, data) {
