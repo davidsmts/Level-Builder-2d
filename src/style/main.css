@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: main.css
  * @Last modified by:   David
- * @Last modified time: 2018-05-03T21:36:28+02:00
+ * @Last modified time: 2018-05-06T11:37:52+02:00
 */
 
 html, body {
@@ -25,7 +25,7 @@ canvas {
 
 
 .sidebar {
-  background-color: green;
+  background-color: darkgrey;
   float: left;
   display: inline-block;
   width: 20%;
@@ -35,7 +35,7 @@ canvas {
 }
 
 .levelbuilder {
-  background-color: red;
+  background-color: lightgrey;
   display: inline-block;
   width: 80%;
   height: 100vh;

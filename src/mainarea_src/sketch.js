@@ -4,8 +4,11 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-05T22:05:44+02:00
+ * @Last modified time: 2018-05-06T12:27:19+02:00
 */
+
+const xml2js = require("xml2js");
+const fs = require('fs');
 
 'use strict';
 
@@ -13,7 +16,20 @@
 let CubeWidthAndHeight = 50;
 let LevelWidth = 1000;
 let LevelHeight = 3000;
-let level;
+let Path = "";
+
+const Level = () => {
+  const path  = __dirname + '/output.xml';
+  console.log(path)
+  let xml;
+  const parser = new xml2js.Parser();
+  fs.readFile(path, function(err, data) {
+    parser.parseString(data, function (err, result) {
+      console.dir(result)
+      return result;
+    });
+  });
+}
 
 const sketch = (p) => {
 
@@ -43,12 +59,12 @@ const sketch = (p) => {
     // Create the canvas
     canvas = p.createCanvas(LevelWidth, LevelHeight);
     canvas.parent(PARENT_ID);
-    console.log(level);
+    let xml = Level();
+    console.log(xml);
   };
 
 
   p.draw = () => {
-    console.log(LevelWidth);
     p.background(200);
     p.fill(255);
     for (var i=0; i<LevelHeight; i+=CubeWidthAndHeight) {
@@ -82,5 +98,7 @@ module.exports = {
   sketch,
   CubeWidthAndHeight,
   LevelWidth,
-  LevelHeight
+  LevelHeight,
+  Level,
+  Path
 }
