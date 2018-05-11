@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: main.css
  * @Last modified by:   David
- * @Last modified time: 2018-05-06T11:37:52+02:00
+ * @Last modified time: 2018-05-11T18:31:39+02:00
 */
 
 html, body {
@@ -17,11 +17,6 @@ body {
   -webkit-app-region: drag;
   -webkit-user-select: none;
 }
-
-canvas {
-  display: block;
-}
-
 
 
 .sidebar {

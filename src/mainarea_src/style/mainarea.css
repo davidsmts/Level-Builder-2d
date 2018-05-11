@@ -4,9 +4,14 @@
  * @Email:  davidschmotz@gmail.com
  * @Filename: main.css
  * @Last modified by:   David
- * @Last modified time: 2018-05-04T18:48:22+02:00
+ * @Last modified time: 2018-05-11T18:31:43+02:00
  */
 
 #p5Area {
   overflow: scroll;
+}
+
+canvas {
+  display: block;
+  pointer-events: none;
 }

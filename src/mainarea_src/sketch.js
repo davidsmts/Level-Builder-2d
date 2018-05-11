@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-11T17:34:04+02:00
+ * @Last modified time: 2018-05-11T18:41:57+02:00
 */
 
 
@@ -64,7 +64,6 @@ const sketch = (p) => {
 
   };
 
-
   p.draw = () => {
     p.background(200);
     p.fill(255);
@@ -74,16 +73,41 @@ const sketch = (p) => {
     for (var i=0; i<LevelWidth; i+=CubeWidthAndHeight) {
       p.line(0, i, LevelWidth, i);
     }
-  };
+    for (let position of spritePositions) {
+      p.fill(NORMAL_BLOCK_COLOR);
+      p.rect(position.x, position.y, 50, 50);
+    }
+  }
+
+  p.mousePressed = () => {
+    console.log("press")
+    console.log(p)
+    let p5AreaPosition = document.getElementById("p5Area")
+    console.log(p5AreaPosition)
+  }
 
   ipcRenderer.on('new-doc-sketch', (event, arg) => {
     console.log("sketch: " + arg)
     Level.then((result) => {
       console.log(result);
+      interpretLevelObject(result)
     }, (err) => {
       console.log(err)
     })
   })
+
+  const interpretLevelObject = (obj) => {
+    console.log("interpretLevelObject")
+    const elements = obj.elementCollection.elements[0].element
+    for (let element of elements) {
+      console.log(element.id[0])
+      //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
+      let vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
+      spritePositions.push(vector)
+    }
+    console.log(spritePositions)
+  }
+
 }
 
 module.exports = {
