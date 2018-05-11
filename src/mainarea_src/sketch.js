@@ -4,13 +4,16 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-07T23:37:47+02:00
+ * @Last modified time: 2018-05-11T17:34:04+02:00
 */
+
+
+'use strict';
 
 const xml2js = require("xml2js");
 const fs = require('fs');
+const {ipcRenderer} = require("electron")
 
-'use strict';
 
 //  global vars that are getting edited by outside
 let CubeWidthAndHeight = 50;
@@ -18,18 +21,17 @@ let LevelWidth = 1000;
 let LevelHeight = 3000;
 let Path = "";
 
-const Level = () => {
+const Level = new Promise((resolve, reject) => {
   const path  = __dirname + '/output.xml';
   console.log(path);
-  let xml
   const parser = new xml2js.Parser();
   fs.readFile(path, function(err, data) {
     parser.parseString(data, function (err, result) {
       console.dir(result)
-      return result;
+      resolve(result)
     });
   });
-}
+})
 
 const sketch = (p) => {
 
@@ -59,8 +61,7 @@ const sketch = (p) => {
     // Create the canvas
     canvas = p.createCanvas(LevelWidth, LevelHeight);
     canvas.parent(PARENT_ID);
-    let xml = Level();
-    console.log(xml);
+
   };
 
 
@@ -74,23 +75,15 @@ const sketch = (p) => {
       p.line(0, i, LevelWidth, i);
     }
   };
-/*
-  //System function
-  p.mousePressed = () => {
-    var mouse = p.createVector(mouseX, mouseY);
-    var indexArr = coordinateToIndex(mouse);
-    if (p.mouse.x>0 && p.mouse.y>0) {
-      var toRoundX = mouse.x % 50;
-      var toRoundY = mouse.y % 50;
-      var x = mouse.x - toRoundX;
-      var y = mouse.y - toRoundY;
-      //openMenu(p.createVector(x,y));
-      p.fill(NORMAL_BLOCK_COLOR);
-      p.rect(x,y,50,50);
-      spritePositions.push(p.createVector(x/50,y/50));
-    }
-  }
-  */
+
+  ipcRenderer.on('new-doc-sketch', (event, arg) => {
+    console.log("sketch: " + arg)
+    Level.then((result) => {
+      console.log(result);
+    }, (err) => {
+      console.log(err)
+    })
+  })
 }
 
 module.exports = {
