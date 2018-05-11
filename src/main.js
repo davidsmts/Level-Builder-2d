@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: main.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-03T13:00:13+02:00
+ * @Last modified time: 2018-05-11T17:02:45+02:00
 */
 
 const electron = require("electron")
@@ -12,6 +12,7 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const url = require('url')
+const ipcMain = electron.ipcMain
 
 let mainWindow
 
@@ -45,4 +46,21 @@ app.on("activate", function () {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+//  ToDo: find a better describing comment here
+//  Current Path and Current Document logic
+
+const documents = {
+  currentPath: "",
+  currentDocumentName: ""
+}
+
+ipcMain.on("new-path", (event, arg) => {
+  console.log("main: " + arg)
+})
+
+ipcMain.on("new-doc-main", (event, arg) => {
+  console.log("main: " + arg)
+  mainWindow.webContents.send('new-doc-sketch', arg)
 })

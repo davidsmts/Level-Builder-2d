@@ -4,15 +4,20 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: dragndrop.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-03T22:12:33+02:00
+ * @Last modified time: 2018-05-11T17:36:30+02:00
 */
 
+const electron = require("electron")
 const fs = require('fs')
+const ipcRenderer = electron.ipcRenderer
+const mainarea = require("../mainarea_src/mainareaManager")
 
 //  loads all files of the given path into the sidebar
 function openPath(path) {
   document.getElementById("display-files").innerHTML = "";
   console.log('File(s) you dragged here: ', path)
+  mainarea.loadXML()
+  messageMain(path)
   fs.readdir(path, (err, files) => {
     'use strict';
     //if an error is thrown when reading the directory, we throw it. Otherwise we continue
@@ -35,6 +40,16 @@ function addListenersForFiles(classname = "file") {
     })
   }
 }
+
+//  sends the new path to the ipc main proccess
+const messageMain = (path) => {
+  ipcRenderer.send('new-doc-main', path)
+}
+
+ipcRenderer.on('new-doc-sketch', (event, arg) => {
+  console.log(this)
+  console.log(arg)
+})
 
 
 module.exports = {

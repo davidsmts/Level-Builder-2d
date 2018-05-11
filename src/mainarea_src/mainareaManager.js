@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: mainareaManager.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-06T12:27:08+02:00
+ * @Last modified time: 2018-05-11T17:36:09+02:00
 */
 
 const sketch = require("./sketch");
@@ -34,6 +34,11 @@ const widthBut = document.getElementById("changeWidthBut");
 widthBut.addEventListener("click", () => {
   loadXML();
 });
+
+
+module.exports = {
+  loadXML
+}
 
 //  Function that creates new default xml
 

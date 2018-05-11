@@ -4,7 +4,7 @@
 @Email:  davidschmotz@gmail.com
 @Filename: output.xml
 @Last modified by:   David
-@Last modified time: 2018-05-05T21:42:46+02:00
+@Last modified time: 2018-05-11T18:22:33+02:00
 -->
 
 
@@ -14,29 +14,29 @@
   <elements>
     <element>
       <id>1</id>
-      <xPosition>-5</xPosition>
-      <yPosition>-3</yPosition>
+      <xPosition>5</xPosition>
+      <yPosition>3</yPosition>
       <type>sprite</type>
       <prefab>0</prefab>
     </element>
     <element>
       <id>2</id>
-      <xPosition>-3</xPosition>
-      <yPosition>-2</yPosition>
+      <xPosition>3</xPosition>
+      <yPosition>2</yPosition>
       <type>sprite</type>
       <prefab>0</prefab>
     </element>
     <element>
       <id>3</id>
-      <xPosition>-1</xPosition>
-      <yPosition>-1</yPosition>
+      <xPosition>1</xPosition>
+      <yPosition>1</yPosition>
       <type>sprite</type>
       <prefab>0</prefab>
     </element>
     <element>
       <id>4</id>
       <xPosition>5</xPosition>
-      <yPosition>-1</yPosition>
+      <yPosition>1</yPosition>
       <type>sprite</type>
       <prefab>0</prefab>
     </element>
@@ -48,5 +48,4 @@
       <prefab>0</prefab>
     </element>
   </elements>
-
 </elementCollection>

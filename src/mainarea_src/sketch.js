@@ -4,13 +4,16 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-07T23:37:47+02:00
+ * @Last modified time: 2018-05-11T18:41:57+02:00
 */
+
+
+'use strict';
 
 const xml2js = require("xml2js");
 const fs = require('fs');
+const {ipcRenderer} = require("electron")
 
-'use strict';
 
 //  global vars that are getting edited by outside
 let CubeWidthAndHeight = 50;
@@ -18,18 +21,17 @@ let LevelWidth = 1000;
 let LevelHeight = 3000;
 let Path = "";
 
-const Level = () => {
+const Level = new Promise((resolve, reject) => {
   const path  = __dirname + '/output.xml';
   console.log(path);
-  let xml
   const parser = new xml2js.Parser();
   fs.readFile(path, function(err, data) {
     parser.parseString(data, function (err, result) {
       console.dir(result)
-      return result;
+      resolve(result)
     });
   });
-}
+})
 
 const sketch = (p) => {
 
@@ -59,10 +61,8 @@ const sketch = (p) => {
     // Create the canvas
     canvas = p.createCanvas(LevelWidth, LevelHeight);
     canvas.parent(PARENT_ID);
-    let xml = Level();
-    console.log(xml);
-  };
 
+  };
 
   p.draw = () => {
     p.background(200);
@@ -73,24 +73,41 @@ const sketch = (p) => {
     for (var i=0; i<LevelWidth; i+=CubeWidthAndHeight) {
       p.line(0, i, LevelWidth, i);
     }
-  };
-/*
-  //System function
-  p.mousePressed = () => {
-    var mouse = p.createVector(mouseX, mouseY);
-    var indexArr = coordinateToIndex(mouse);
-    if (p.mouse.x>0 && p.mouse.y>0) {
-      var toRoundX = mouse.x % 50;
-      var toRoundY = mouse.y % 50;
-      var x = mouse.x - toRoundX;
-      var y = mouse.y - toRoundY;
-      //openMenu(p.createVector(x,y));
+    for (let position of spritePositions) {
       p.fill(NORMAL_BLOCK_COLOR);
-      p.rect(x,y,50,50);
-      spritePositions.push(p.createVector(x/50,y/50));
+      p.rect(position.x, position.y, 50, 50);
     }
   }
-  */
+
+  p.mousePressed = () => {
+    console.log("press")
+    console.log(p)
+    let p5AreaPosition = document.getElementById("p5Area")
+    console.log(p5AreaPosition)
+  }
+
+  ipcRenderer.on('new-doc-sketch', (event, arg) => {
+    console.log("sketch: " + arg)
+    Level.then((result) => {
+      console.log(result);
+      interpretLevelObject(result)
+    }, (err) => {
+      console.log(err)
+    })
+  })
+
+  const interpretLevelObject = (obj) => {
+    console.log("interpretLevelObject")
+    const elements = obj.elementCollection.elements[0].element
+    for (let element of elements) {
+      console.log(element.id[0])
+      //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
+      let vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
+      spritePositions.push(vector)
+    }
+    console.log(spritePositions)
+  }
+
 }
 
 module.exports = {
