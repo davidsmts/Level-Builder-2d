@@ -4,10 +4,12 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: dragndrop.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-03T22:12:33+02:00
+ * @Last modified time: 2018-05-11T16:25:39+02:00
 */
 
+const electron = require("electron")
 const fs = require('fs')
+const ipcRenderer = electron.ipcRenderer
 
 //  loads all files of the given path into the sidebar
 function openPath(path) {
@@ -34,6 +36,11 @@ function addListenersForFiles(classname = "file") {
       console.log("clicki");
     })
   }
+}
+
+//  sends the new path to the ipc main proccess
+const messageMain = (path) => {
+  ipcRenderer.send('new-path', "sampleArg")
 }
 
 
