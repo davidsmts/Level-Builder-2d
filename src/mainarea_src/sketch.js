@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-12T16:35:26+02:00
+ * @Last modified time: 2018-05-12T17:58:14+02:00
 */
 
 
@@ -104,7 +104,7 @@ const sketch = (p) => {
     const x = blockPos.x - toRoundX;
     const y = blockPos.y - toRoundY;
     console.log(blockPos)
-    spritePositions.push(p.createVector(x/50,y/50));
+    spritePositions.push(p.createVector(x,y));
   }
 
   //  Loops thorugh the elements of the received xml and pushes the Values into
