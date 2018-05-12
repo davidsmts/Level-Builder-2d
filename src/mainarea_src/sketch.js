@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-11T18:41:57+02:00
+ * @Last modified time: 2018-05-12T16:35:26+02:00
 */
 
 
@@ -43,9 +43,11 @@ const sketch = (p) => {
 
   //  constants
   const PARENT_ID = "p5Area";
+  const CANVAS_CLASSNAME = "sketch";
 
   //  generel global vars
   let spritePositions = new Array();
+  let spriteTypes = new Array();
   let idCounter = 0;
   let canvas;
 
@@ -61,29 +63,82 @@ const sketch = (p) => {
     // Create the canvas
     canvas = p.createCanvas(LevelWidth, LevelHeight);
     canvas.parent(PARENT_ID);
-
+    canvas.id(CANVAS_CLASSNAME);
   };
 
   p.draw = () => {
     p.background(200);
     p.fill(255);
+    //  Draw Vetical Lines
     for (var i=0; i<LevelHeight; i+=CubeWidthAndHeight) {
       p.line(i, 0, i, LevelHeight);
     }
+    //  Draw Horizontal Lines
     for (var i=0; i<LevelWidth; i+=CubeWidthAndHeight) {
       p.line(0, i, LevelWidth, i);
     }
+    //  Draw Blocks
     for (let position of spritePositions) {
       p.fill(NORMAL_BLOCK_COLOR);
-      p.rect(position.x, position.y, 50, 50);
+      p.rect(position.x, position.y, CubeWidthAndHeight, CubeWidthAndHeight);
     }
   }
 
   p.mousePressed = () => {
-    console.log("press")
-    console.log(p)
-    let p5AreaPosition = document.getElementById("p5Area")
-    console.log(p5AreaPosition)
+    const mouse = p.createVector(p.mouseX, p.mouseY);
+    const sketchElement = document.getElementById(CANVAS_CLASSNAME)
+    const sketchPosition = p.createVector(sketchElement.offsetLeft, sketchElement.offsetTop)
+    const sketchSize = p.createVector(sketchElement.width, sketchElement.height)
+
+    if (rectContains(sketchPosition, sketchSize, mouse)) {
+      console.log("in bound")
+      createNewBlock(mouse)
+    }
+  }
+
+  //  this function creates a new block at the given position
+  //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
+  const createNewBlock = (blockPos) => {
+    const toRoundX = blockPos.x % 50;
+    const toRoundY = blockPos.y % 50;
+    const x = blockPos.x - toRoundX;
+    const y = blockPos.y - toRoundY;
+    console.log(blockPos)
+    spritePositions.push(p.createVector(x/50,y/50));
+  }
+
+  //  Loops thorugh the elements of the received xml and pushes the Values into
+  //  prepared arrays
+  const interpretLevelObject = (obj) => {
+    console.log("interpretLevelObject")
+    const elements = obj.elementCollection.elements[0].element
+    for (let element of elements) {
+      console.log(element.id[0])
+      //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
+      const vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
+      const type = element.type[0]
+
+      spritePositions.push(vector)
+      spriteTypes.push(type)
+    }
+    console.log(spritePositions)
+    console.log(spriteTypes)
+  }
+
+  //  this function checks if the given rectangle contains the given point
+  //  rectPosition    : p.Vector2d => Position(x and y) of the rectangle
+  //  rectPosition    : p.Vector2d => size(width and height) of the rectangle
+  //  pointToCheckFor : p.Vector2d => Position of the rectangle
+  const rectContains = (rectPosition, rectSize, pointToCheckFor) => {
+    const upperVerticalBound = rectPosition.y
+    const lowerVerticalBound = rectPosition.y + rectSize.y
+    const leftHorizontalBound = rectPosition.x
+    const rightHorizontalBound = rectPosition.x + rectSize.x
+
+    if (pointToCheckFor.x > leftHorizontalBound && pointToCheckFor.x < rightHorizontalBound && pointToCheckFor.y > upperVerticalBound && pointToCheckFor.y < lowerVerticalBound) {
+      return true
+    }
+    return false
   }
 
   ipcRenderer.on('new-doc-sketch', (event, arg) => {
@@ -95,18 +150,6 @@ const sketch = (p) => {
       console.log(err)
     })
   })
-
-  const interpretLevelObject = (obj) => {
-    console.log("interpretLevelObject")
-    const elements = obj.elementCollection.elements[0].element
-    for (let element of elements) {
-      console.log(element.id[0])
-      //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
-      let vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
-      spritePositions.push(vector)
-    }
-    console.log(spritePositions)
-  }
 
 }
 
