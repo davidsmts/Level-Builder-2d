@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: main.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-11T17:02:45+02:00
+ * @Last modified time: 2018-05-15T18:19:16+02:00
 */
 
 const electron = require("electron")
@@ -58,9 +58,12 @@ const documents = {
 
 ipcMain.on("new-path", (event, arg) => {
   console.log("main: " + arg)
+  this.documents.currentPath = arg;
 })
 
 ipcMain.on("new-doc-main", (event, arg) => {
   console.log("main: " + arg)
-  mainWindow.webContents.send('new-doc-sketch', arg)
+  this.documents.currentDocumentName = arg;
+  const fullpath = this.documents.currentPath + this.documents.currentDocumentName;
+  mainWindow.webContents.send('new-doc-sketch', fullpath);
 })

@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="sidebar_src/style/filetree.css" />
   <link rel="stylesheet" href="mainarea_src/style/mainarea.css" />
 
-  <script src="./mainarea_src/sketch.js"></script>
   <script>
 
   </script>
@@ -18,7 +17,8 @@
   </div>
   <div class="levelbuilder">
     <div class="levelbuilder_menu">
-      <div id="changeWidthBut">Change Width</div>
+      <div id="changeWidthBut" class="topBut">Change Width</div>
+      <div id="saveBut" class="topBut">Save</div>
     </div>
     <div id="p5Area">
 
@@ -32,6 +32,7 @@
     require('./sidebar_src/filetree')
     require('./mainarea_src/mainareaManager')
     require('./mainarea_src/actions')
+    require("./mainarea_src/sketch.js")
   </script>
 </body>
 </html>

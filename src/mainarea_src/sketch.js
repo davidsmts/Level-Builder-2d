@@ -4,15 +4,14 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-12T17:58:14+02:00
+ * @Last modified time: 2018-05-15T18:13:13+02:00
 */
 
-
-'use strict';
+//"use strict";
 
 const xml2js = require("xml2js");
 const fs = require('fs');
-const {ipcRenderer} = require("electron")
+const {ipcRenderer} = require("electron");
 
 
 //  global vars that are getting edited by outside
@@ -20,20 +19,26 @@ let CubeWidthAndHeight = 50;
 let LevelWidth = 1000;
 let LevelHeight = 3000;
 let Path = "";
+let SpritePositions = new Array();
+let SpriteTypes = new Array();
 
-const Level = new Promise((resolve, reject) => {
-  const path  = __dirname + '/output.xml';
-  console.log(path);
-  const parser = new xml2js.Parser();
-  fs.readFile(path, function(err, data) {
-    parser.parseString(data, function (err, result) {
-      console.dir(result)
-      resolve(result)
+const Level = (path) => {
+  return new Promise((resolve, reject) => {
+    //const path  = __dirname + '/output2.xml';
+    console.log(path);
+    const parser = new xml2js.Parser();
+    fs.readFile(path, function(err, data) {
+      parser.parseString(data, function (err, result) {
+        console.dir(result)
+        resolve(result)
+      });
     });
-  });
-})
+  })
+}
 
-const sketch = (p) => {
+
+
+function sketch(p) {
 
   //  function dependant constants
   let NORMAL_BLOCK_COLOR;
@@ -46,10 +51,9 @@ const sketch = (p) => {
   const CANVAS_CLASSNAME = "sketch";
 
   //  generel global vars
-  let spritePositions = new Array();
-  let spriteTypes = new Array();
   let idCounter = 0;
   let canvas;
+
 
   p.preload = () => {
     //initialising constants
@@ -64,6 +68,8 @@ const sketch = (p) => {
     canvas = p.createCanvas(LevelWidth, LevelHeight);
     canvas.parent(PARENT_ID);
     canvas.id(CANVAS_CLASSNAME);
+    console.log(this)
+    console.log(p)
   };
 
   p.draw = () => {
@@ -78,7 +84,7 @@ const sketch = (p) => {
       p.line(0, i, LevelWidth, i);
     }
     //  Draw Blocks
-    for (let position of spritePositions) {
+    for (let position of SpritePositions) {
       p.fill(NORMAL_BLOCK_COLOR);
       p.rect(position.x, position.y, CubeWidthAndHeight, CubeWidthAndHeight);
     }
@@ -104,7 +110,7 @@ const sketch = (p) => {
     const x = blockPos.x - toRoundX;
     const y = blockPos.y - toRoundY;
     console.log(blockPos)
-    spritePositions.push(p.createVector(x,y));
+    SpritePositions.push(p.createVector(x,y));
   }
 
   //  Loops thorugh the elements of the received xml and pushes the Values into
@@ -118,11 +124,30 @@ const sketch = (p) => {
       const vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
       const type = element.type[0]
 
-      spritePositions.push(vector)
-      spriteTypes.push(type)
+      SpritePositions.push(vector)
+      SpriteTypes.push(type)
     }
-    console.log(spritePositions)
-    console.log(spriteTypes)
+    console.log(SpritePositions)
+    console.log(SpriteTypes)
+  }
+
+  //  Loops thorugh the elements of the received xml and pushes the Values into
+  //  prepared arrays
+  const interpretLevelObjectV2 = (obj) => {
+    console.log("interpretLevelObjectV2")
+    const elements = obj.elementCollection.element
+    for (let element of elements) {
+      element = element.$
+      console.log(element.id)
+      //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
+      const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
+      const type = element.type
+
+      SpritePositions.push(vector)
+      SpriteTypes.push(type)
+    }
+    console.log(SpritePositions)
+    console.log(SpriteTypes)
   }
 
   //  this function checks if the given rectangle contains the given point
@@ -143,15 +168,17 @@ const sketch = (p) => {
 
   ipcRenderer.on('new-doc-sketch', (event, arg) => {
     console.log("sketch: " + arg)
-    Level.then((result) => {
+    Level(arg).then((result) => {
       console.log(result);
-      interpretLevelObject(result)
+      interpretLevelObjectV2(result)
     }, (err) => {
       console.log(err)
     })
   })
-
 }
+// END OF SKETCH
+
+
 
 module.exports = {
   //  global vars that are getting edited by outside
@@ -160,5 +187,6 @@ module.exports = {
   LevelWidth,
   LevelHeight,
   Level,
-  Path
+  Path,
+  SpritePositions
 }

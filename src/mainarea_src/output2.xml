@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<elementCollection>
+  <element id="0" prefab="0" type="sprite" xPosition="250" yPosition="150"/>
+  <element id="1" prefab="0" type="sprite" xPosition="150" yPosition="150"/>
+  <element id="2" prefab="0" type="sprite" xPosition="200" yPosition="150"/>
+  <element id="3" prefab="0" type="sprite" xPosition="300" yPosition="150"/>
+  <element id="4" prefab="0" type="sprite" xPosition="350" yPosition="150"/>
+  <element id="5" prefab="0" type="sprite" xPosition="400" yPosition="150"/>
+</elementCollection>
