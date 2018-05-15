@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: dragndrop.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-15T18:19:49+02:00
+ * @Last modified time: 2018-05-15T22:04:02+02:00
 */
 
 const electron = require("electron")
@@ -19,7 +19,7 @@ function openPath(path) {
   document.getElementById("display-files").innerHTML = "";
   console.log('File(s) you dragged here: ', path)
   //mainarea.loadXML()
-  messageMain(path)
+  messageMainPath(path)
   fs.readdir(path, (err, files) => {
     'use strict';
     //if an error is thrown when reading the directory, we throw it. Otherwise we continue
@@ -38,16 +38,18 @@ function openPath(path) {
 function addListenersForFiles(classname = "file") {
   const file_elements = document.getElementsByClassName(classname)
   for (var i=0; i<file_elements.length; i++) {
+    const filename = filesOfCurrentPath[i];
+    console.log(filename);
     file_elements[i].addEventListener("click", () => {
-      console.log("clicki");
-      messageMainDoc(filesOfCurrentPath[i]);
+      messageMainDoc(filename);
     })
   }
 }
 
 //  sends the new path to the ipc main proccess
 const messageMainDoc = (filename) => {
-  ipcRenderer.send('new-doc-main', filename)
+  console.log("messaging name : " + filename);
+  ipcRenderer.send('new-doc-main', filename);
 }
 
 //  sends the new path to the ipc main proccess
