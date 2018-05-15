@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: mainareaManager.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-15T22:09:58+02:00
+ * @Last modified time: 2018-05-15T22:16:59+02:00
 */
 
 const sketch = require("./sketch");
@@ -19,6 +19,7 @@ const app = new p5(sketch.sketch);
 
 //
 const saveXML = () => {
+
   const path  = __dirname + '/output2.xml';
   console.log(path)
   const obj = buildJsonObject()
@@ -58,9 +59,9 @@ const buildJsonObject = () => {
   return obj
 }
 
-// ipcRenderer.on('new-doc-sketch', (event, path) => {
-//   console.log("mainarea creates sketch");
-// })
+ipcRenderer.on('new-doc-sketch', (event, path) => {
+  console.log("mainarea creates sketch");
+})
 
 module.exports = {
   saveXML
