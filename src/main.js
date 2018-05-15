@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: main.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-11T17:02:45+02:00
+ * @Last modified time: 2018-05-15T22:16:42+02:00
 */
 
 const electron = require("electron")
@@ -53,14 +53,32 @@ app.on("activate", function () {
 
 const documents = {
   currentPath: "",
-  currentDocumentName: ""
+  currentDocumentName: "",
+  currentFullPath: ""
 }
 
 ipcMain.on("new-path", (event, arg) => {
   console.log("main: " + arg)
+  documents.currentPath = arg;
 })
 
 ipcMain.on("new-doc-main", (event, arg) => {
-  console.log("main: " + arg)
-  mainWindow.webContents.send('new-doc-sketch', arg)
+  console.log("main: " + arg);
+  documents.currentDocumentName = arg;
+  const fullpath = documents.currentPath + "/" + documents.currentDocumentName;
+  docuents.currentFullPath = fullpath;
+  openNewDocument(fullpath);
 })
+
+ipcMain.on("giveme-currentDocumentPath", (event, arg) => {
+  console.log("main: " + arg);
+  currentDocumentPath(fullpath);
+})
+
+const currentDocumentPath = (currentDocumentPath) => {
+  mainWindow.webContents.send('givingyou-currentDocumentPath', currentDocumentPath);
+}
+
+const openNewDocument = (pathToNewDocument) => {
+  mainWindow.webContents.send('new-doc-sketch', pathToNewDocument);
+}

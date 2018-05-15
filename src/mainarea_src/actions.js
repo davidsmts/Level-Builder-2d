@@ -1,18 +1,21 @@
 /**
- * @Author: David Schmotz <David>
- * @Date:   2018-05-05T20:27:20+02:00
- * @Email:  davidschmotz@gmail.com
- * @Filename: actions.js
+* @Author: David Schmotz <David>
+* @Date:   2018-05-05T20:27:20+02:00
+* @Email:  davidschmotz@gmail.com
+* @Filename: actions.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-05T22:16:19+02:00
- */
+ * @Last modified time: 2018-05-12T18:04:16+02:00
+*/
 
-// const widthBut = document.getElementById("changeWidthBut");
-// widthBut.addEventListener("click", () => {
-//   console.log("here");
-//   console.log(sketch);
-//   console.log(sketch.sketch);
-//   console.log(sketch.LevelWidth);
-//   sketch.LevelWidth = 4000;
-//
-// });
+const mainarea = require('./mainareaManager');
+
+
+const widthBut = document.getElementById("changeWidthBut");
+widthBut.addEventListener("click", () => {
+  mainarea.loadXML();
+});
+
+const saveBut = document.getElementById("saveBut");
+saveBut.addEventListener("click", () => {
+  mainarea.saveXML();
+});

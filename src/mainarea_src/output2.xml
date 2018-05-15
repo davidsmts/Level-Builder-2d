@@ -1,0 +1,18 @@
+<!--
+@Author: David Schmotz <David>
+@Date:   2018-05-13T23:17:43+02:00
+@Email:  davidschmotz@gmail.com
+@Filename: output2.xml
+@Last modified by:   David
+@Last modified time: 2018-05-15T22:12:54+02:00
+-->
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<elementCollection>
+  <element id="0" prefab="0" type="sprite" xPosition="5" yPosition="3"/>
+  <element id="1" prefab="0" type="sprite" xPosition="3" yPosition="3"/>
+  <element id="2" prefab="0" type="sprite" xPosition="4" yPosition="3"/>
+  <element id="3" prefab="0" type="sprite" xPosition="6" yPosition="3"/>
+  <element id="4" prefab="0" type="sprite" xPosition="7" yPosition="3"/>
+  <element id="5" prefab="0" type="sprite" xPosition="8" yPosition="3"/>
+</elementCollection>

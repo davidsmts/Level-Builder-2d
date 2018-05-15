@@ -4,15 +4,14 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-11T18:41:57+02:00
+ * @Last modified time: 2018-05-15T21:57:08+02:00
 */
 
-
-'use strict';
+//"use strict";
 
 const xml2js = require("xml2js");
 const fs = require('fs');
-const {ipcRenderer} = require("electron")
+const {ipcRenderer} = require("electron");
 
 
 //  global vars that are getting edited by outside
@@ -20,20 +19,26 @@ let CubeWidthAndHeight = 50;
 let LevelWidth = 1000;
 let LevelHeight = 3000;
 let Path = "";
+let SpritePositions = new Array();
+let SpriteTypes = new Array();
 
-const Level = new Promise((resolve, reject) => {
-  const path  = __dirname + '/output.xml';
-  console.log(path);
-  const parser = new xml2js.Parser();
-  fs.readFile(path, function(err, data) {
-    parser.parseString(data, function (err, result) {
-      console.dir(result)
-      resolve(result)
+const Level = (path) => {
+  return new Promise((resolve, reject) => {
+    //const path  = __dirname + '/output2.xml';
+    console.log(path);
+    const parser = new xml2js.Parser();
+    fs.readFile(path, function(err, data) {
+      parser.parseString(data, function (err, result) {
+        console.dir(result)
+        resolve(result)
+      });
     });
-  });
-})
+  })
+}
 
-const sketch = (p) => {
+
+
+function sketch(p) {
 
   //  function dependant constants
   let NORMAL_BLOCK_COLOR;
@@ -43,11 +48,12 @@ const sketch = (p) => {
 
   //  constants
   const PARENT_ID = "p5Area";
+  const CANVAS_CLASSNAME = "sketch";
 
   //  generel global vars
-  let spritePositions = new Array();
   let idCounter = 0;
   let canvas;
+
 
   p.preload = () => {
     //initialising constants
@@ -61,54 +67,118 @@ const sketch = (p) => {
     // Create the canvas
     canvas = p.createCanvas(LevelWidth, LevelHeight);
     canvas.parent(PARENT_ID);
-
+    canvas.id(CANVAS_CLASSNAME);
+    console.log(this)
+    console.log(p)
   };
 
   p.draw = () => {
     p.background(200);
     p.fill(255);
+    //  Draw Vetical Lines
     for (var i=0; i<LevelHeight; i+=CubeWidthAndHeight) {
       p.line(i, 0, i, LevelHeight);
     }
+    //  Draw Horizontal Lines
     for (var i=0; i<LevelWidth; i+=CubeWidthAndHeight) {
       p.line(0, i, LevelWidth, i);
     }
-    for (let position of spritePositions) {
+    //  Draw Blocks
+    for (let position of SpritePositions) {
       p.fill(NORMAL_BLOCK_COLOR);
-      p.rect(position.x, position.y, 50, 50);
+      p.rect(position.x, position.y, CubeWidthAndHeight, CubeWidthAndHeight);
     }
   }
 
   p.mousePressed = () => {
-    console.log("press")
-    console.log(p)
-    let p5AreaPosition = document.getElementById("p5Area")
-    console.log(p5AreaPosition)
+    const mouse = p.createVector(p.mouseX, p.mouseY);
+    const sketchElement = document.getElementById(CANVAS_CLASSNAME)
+    const sketchPosition = p.createVector(sketchElement.offsetLeft, sketchElement.offsetTop)
+    const sketchSize = p.createVector(sketchElement.width, sketchElement.height)
+
+    if (rectContains(sketchPosition, sketchSize, mouse)) {
+      console.log("in bound")
+      createNewBlock(mouse)
+    }
   }
 
-  ipcRenderer.on('new-doc-sketch', (event, arg) => {
-    console.log("sketch: " + arg)
-    Level.then((result) => {
-      console.log(result);
-      interpretLevelObject(result)
-    }, (err) => {
-      console.log(err)
-    })
-  })
+  //  this function creates a new block at the given position
+  //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
+  const createNewBlock = (blockPos) => {
+    const toRoundX = blockPos.x % 50;
+    const toRoundY = blockPos.y % 50;
+    const x = blockPos.x - toRoundX;
+    const y = blockPos.y - toRoundY;
+    console.log(blockPos)
+    SpritePositions.push(p.createVector(x,y));
+  }
 
+  //  Loops thorugh the elements of the received xml and pushes the Values into
+  //  prepared arrays
   const interpretLevelObject = (obj) => {
     console.log("interpretLevelObject")
     const elements = obj.elementCollection.elements[0].element
     for (let element of elements) {
       console.log(element.id[0])
       //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
-      let vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
-      spritePositions.push(vector)
+      const vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
+      const type = element.type[0]
+
+      SpritePositions.push(vector)
+      SpriteTypes.push(type)
     }
-    console.log(spritePositions)
+    console.log(SpritePositions)
+    console.log(SpriteTypes)
   }
 
+  //  Loops thorugh the elements of the received xml and pushes the Values into
+  //  prepared arrays
+  const interpretLevelObjectV2 = (obj) => {
+    console.log("interpretLevelObjectV2")
+    const elements = obj.elementCollection.element
+    for (let element of elements) {
+      element = element.$
+      console.log(element.id)
+      //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
+      const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
+      const type = element.type
+
+      SpritePositions.push(vector)
+      SpriteTypes.push(type)
+    }
+    console.log(SpritePositions)
+    console.log(SpriteTypes)
+  }
+
+  //  this function checks if the given rectangle contains the given point
+  //  rectPosition    : p.Vector2d => Position(x and y) of the rectangle
+  //  rectPosition    : p.Vector2d => size(width and height) of the rectangle
+  //  pointToCheckFor : p.Vector2d => Position of the rectangle
+  const rectContains = (rectPosition, rectSize, pointToCheckFor) => {
+    const upperVerticalBound = rectPosition.y
+    const lowerVerticalBound = rectPosition.y + rectSize.y
+    const leftHorizontalBound = rectPosition.x
+    const rightHorizontalBound = rectPosition.x + rectSize.x
+
+    if (pointToCheckFor.x > leftHorizontalBound && pointToCheckFor.x < rightHorizontalBound && pointToCheckFor.y > upperVerticalBound && pointToCheckFor.y < lowerVerticalBound) {
+      return true
+    }
+    return false
+  }
+
+  ipcRenderer.on('new-doc-sketch', (event, arg) => {
+    console.log("sketch: " + arg)
+    Level(arg).then((result) => {
+      console.log(result);
+      interpretLevelObjectV2(result)
+    }, (err) => {
+      console.log(err)
+    })
+  })
 }
+// END OF SKETCH
+
+
 
 module.exports = {
   //  global vars that are getting edited by outside
@@ -117,5 +187,6 @@ module.exports = {
   LevelWidth,
   LevelHeight,
   Level,
-  Path
+  Path,
+  SpritePositions
 }
