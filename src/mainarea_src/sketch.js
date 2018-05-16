@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-15T21:57:08+02:00
+ * @Last modified time: 2018-05-16T23:04:10+02:00
 */
 
 //"use strict";
@@ -16,8 +16,8 @@ const {ipcRenderer} = require("electron");
 
 //  global vars that are getting edited by outside
 let CubeWidthAndHeight = 50;
-let LevelWidth = 1000;
-let LevelHeight = 3000;
+let LevelWidth = 4000;
+let LevelHeight = 5000;
 let Path = "";
 let SpritePositions = new Array();
 let SpriteTypes = new Array();
@@ -68,8 +68,9 @@ function sketch(p) {
     canvas = p.createCanvas(LevelWidth, LevelHeight);
     canvas.parent(PARENT_ID);
     canvas.id(CANVAS_CLASSNAME);
-    console.log(this)
-    console.log(p)
+    // const parentElement = document.getElementById(PARENT_ID);
+    // parentElement.style.width = LevelWidth + "px";
+    // parentElement.style.height = LevelHeight + "px";
   };
 
   p.draw = () => {
@@ -95,10 +96,12 @@ function sketch(p) {
     const sketchElement = document.getElementById(CANVAS_CLASSNAME)
     const sketchPosition = p.createVector(sketchElement.offsetLeft, sketchElement.offsetTop)
     const sketchSize = p.createVector(sketchElement.width, sketchElement.height)
-
+    console.log(mouse)
     if (rectContains(sketchPosition, sketchSize, mouse)) {
       console.log("in bound")
       createNewBlock(mouse)
+    } else {
+      console.log("not in bounds")
     }
   }
 
@@ -160,7 +163,7 @@ function sketch(p) {
     const leftHorizontalBound = rectPosition.x
     const rightHorizontalBound = rectPosition.x + rectSize.x
 
-    if (pointToCheckFor.x > leftHorizontalBound && pointToCheckFor.x < rightHorizontalBound && pointToCheckFor.y > upperVerticalBound && pointToCheckFor.y < lowerVerticalBound) {
+    if (pointToCheckFor.x > 0 && pointToCheckFor.y > 0) {
       return true
     }
     return false

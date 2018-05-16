@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: main.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-15T22:16:42+02:00
+ * @Last modified time: 2018-05-16T20:16:22+02:00
 */
 
 const electron = require("electron")
@@ -66,7 +66,7 @@ ipcMain.on("new-doc-main", (event, arg) => {
   console.log("main: " + arg);
   documents.currentDocumentName = arg;
   const fullpath = documents.currentPath + "/" + documents.currentDocumentName;
-  docuents.currentFullPath = fullpath;
+  documents.currentFullPath = fullpath;
   openNewDocument(fullpath);
 })
 
