@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-16T23:04:10+02:00
+ * @Last modified time: 2018-06-02T15:59:34+02:00
 */
 
 //"use strict";
@@ -99,21 +99,40 @@ function sketch(p) {
     console.log(mouse)
     if (rectContains(sketchPosition, sketchSize, mouse)) {
       console.log("in bound")
-      createNewBlock(mouse)
+      handleBlock(mouse)
     } else {
       console.log("not in bounds")
+    }
+  }
+
+  //
+  const handleBlock = (point) => {
+    const toRoundX = point.x % 50;
+    const toRoundY = point.y % 50;
+    const x = point.x - toRoundX;
+    const y = point.y - toRoundY;
+    const blockPosition = p.createVector(x,y);
+    let {doesContain, index} = doSpritesContain(blockPosition)
+
+    if (!doesContain) { //  doesnt already contain the block
+      createNewBlock(blockPosition)
+    } else {            //  already contains the block
+      removeBlock(index)
     }
   }
 
   //  this function creates a new block at the given position
   //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
   const createNewBlock = (blockPos) => {
-    const toRoundX = blockPos.x % 50;
-    const toRoundY = blockPos.y % 50;
-    const x = blockPos.x - toRoundX;
-    const y = blockPos.y - toRoundY;
-    console.log(blockPos)
-    SpritePositions.push(p.createVector(x,y));
+    console.log("createNewBlock")
+    SpritePositions.push(blockPos);
+  }
+
+  //  this function creates a new block at the given position
+  //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
+  const removeBlock = (index) => {
+    console.log("removeBlock")
+    SpritePositions.splice(index, 1)
   }
 
   //  Loops thorugh the elements of the received xml and pushes the Values into
@@ -167,6 +186,20 @@ function sketch(p) {
       return true
     }
     return false
+  }
+
+  //
+  const doSpritesContain = (point) => {
+    console.log("doSpritesContain")
+    for (let i = 0; i < SpritePositions.length; i++) {
+      const spritePosition = SpritePositions[i];
+      if (spritePosition.x == point.x && spritePosition.y == point.y) {
+        console.log("y")
+        return {doesContain: true, index: i};
+      }
+    }
+    console.log("n")
+    return {doesContain: false, index: 0};
   }
 
   ipcRenderer.on('new-doc-sketch', (event, arg) => {
