@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-02T15:59:34+02:00
+ * @Last modified time: 2018-06-07T00:20:04+02:00
 */
 
 //"use strict";
@@ -115,7 +115,8 @@ function sketch(p) {
     let {doesContain, index} = doSpritesContain(blockPosition)
 
     if (!doesContain) { //  doesnt already contain the block
-      createNewBlock(blockPosition)
+      //createNewBlock(blockPosition)
+      showContextMenu(point);
     } else {            //  already contains the block
       removeBlock(index)
     }
@@ -202,6 +203,42 @@ function sketch(p) {
     return {doesContain: false, index: 0};
   }
 
+  //
+  const showContextMenu = (clickPosition) => {
+    console.log("showContextMenu");
+    closeAllContextMenus();
+    var textur_but = p.createButton("Textur");
+    textur_but.position(clickPosition.x-30, clickPosition.y-10);
+    textur_but.class("button-class");
+    textur_but.id("textur_but_" + idCounter)
+    idCounter++;
+    var type_but = p.createButton("Typ");
+    type_but.position(clickPosition.x+30, clickPosition.y-10);
+    type_but.class("button-class");
+    type_but.id("type_but_" + idCounter);
+    idCounter++;
+  }
+
+  //
+  const closeAllContextMenus = () => {
+    console.log("closeAllMenus");
+    textur_count = idCounter-2;
+    type_count = idCounter-1;
+    var prev_textur_but = document.getElementById("textur_but_" + textur_count);
+    var prev_type_but = document.getElementById("type_but_" + type_count);
+    if (prev_textur_but) {
+      prev_textur_but.parentNode.removeChild(prev_textur_but);
+    } else {
+       console.log("noPrevFound");
+     }
+    if (prev_type_but) {
+      prev_type_but.parentNode.removeChild(prev_type_but);
+    } else {
+       console.log("noPrevFound");
+     }
+  }
+
+  //
   ipcRenderer.on('new-doc-sketch', (event, arg) => {
     console.log("sketch: " + arg)
     Level(arg).then((result) => {
