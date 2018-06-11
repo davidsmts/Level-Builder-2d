@@ -4,7 +4,7 @@
  * @Email:  davidschmotz@gmail.com
  * @Filename: main.css
  * @Last modified by:   David
- * @Last modified time: 2018-05-16T23:02:18+02:00
+ * @Last modified time: 2018-06-11T23:00:49+02:00
  */
 
 #p5Area {
@@ -22,4 +22,12 @@ canvas {
 .topBut {
     display: inline-block;
     padding: 10px;
+}
+
+.levelbuilder_menu {
+
+}
+
+.blocktype_menu {
+  
 }

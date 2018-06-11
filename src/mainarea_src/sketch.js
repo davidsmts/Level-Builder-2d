@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-07T00:20:04+02:00
+ * @Last modified time: 2018-06-11T23:33:24+02:00
 */
 
 //"use strict";
@@ -53,7 +53,7 @@ function sketch(p) {
   //  generel global vars
   let idCounter = 0;
   let canvas;
-
+  let selectedBlockType = "normal_block";
 
   p.preload = () => {
     //initialising constants
@@ -85,8 +85,8 @@ function sketch(p) {
       p.line(0, i, LevelWidth, i);
     }
     //  Draw Blocks
-    for (let position of SpritePositions) {
-      p.fill(NORMAL_BLOCK_COLOR);
+    for (var i=0; i<spritePositions.length(); i++) {
+      p.fill(currentColor());
       p.rect(position.x, position.y, CubeWidthAndHeight, CubeWidthAndHeight);
     }
   }
@@ -105,6 +105,19 @@ function sketch(p) {
     }
   }
 
+
+  const currentColor = () => {
+    switch (selectedBlockType) {
+      case "normal_block":
+        return NORMAL_BLOCK_COLOR;
+      case "normal_block_xxx":
+        return FAST_BLOCK_COLOR;
+      default:
+        return BAD_BLOCK_COLOR;
+    }
+  }
+
+
   //
   const handleBlock = (point) => {
     const toRoundX = point.x % 50;
@@ -115,19 +128,25 @@ function sketch(p) {
     let {doesContain, index} = doSpritesContain(blockPosition)
 
     if (!doesContain) { //  doesnt already contain the block
-      //createNewBlock(blockPosition)
-      showContextMenu(point);
+      createNewBlock(blockPosition)
+      console.log(selectedBlockType)
+      //showContextMenu(point);
     } else {            //  already contains the block
       removeBlock(index)
     }
   }
+
 
   //  this function creates a new block at the given position
   //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
   const createNewBlock = (blockPos) => {
     console.log("createNewBlock")
     SpritePositions.push(blockPos);
+
+    //  Check for blocktype and save the type for the corresponding index
+
   }
+
 
   //  this function creates a new block at the given position
   //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
@@ -135,6 +154,7 @@ function sketch(p) {
     console.log("removeBlock")
     SpritePositions.splice(index, 1)
   }
+
 
   //  Loops thorugh the elements of the received xml and pushes the Values into
   //  prepared arrays
@@ -153,6 +173,7 @@ function sketch(p) {
     console.log(SpritePositions)
     console.log(SpriteTypes)
   }
+
 
   //  Loops thorugh the elements of the received xml and pushes the Values into
   //  prepared arrays
@@ -173,6 +194,7 @@ function sketch(p) {
     console.log(SpriteTypes)
   }
 
+
   //  this function checks if the given rectangle contains the given point
   //  rectPosition    : p.Vector2d => Position(x and y) of the rectangle
   //  rectPosition    : p.Vector2d => size(width and height) of the rectangle
@@ -189,6 +211,7 @@ function sketch(p) {
     return false
   }
 
+
   //
   const doSpritesContain = (point) => {
     console.log("doSpritesContain")
@@ -204,20 +227,21 @@ function sketch(p) {
   }
 
   //
-  const showContextMenu = (clickPosition) => {
-    console.log("showContextMenu");
-    closeAllContextMenus();
-    var textur_but = p.createButton("Textur");
-    textur_but.position(clickPosition.x-30, clickPosition.y-10);
-    textur_but.class("button-class");
-    textur_but.id("textur_but_" + idCounter)
-    idCounter++;
-    var type_but = p.createButton("Typ");
-    type_but.position(clickPosition.x+30, clickPosition.y-10);
-    type_but.class("button-class");
-    type_but.id("type_but_" + idCounter);
-    idCounter++;
-  }
+  // const showContextMenu = (clickPosition) => {
+  //   console.log("showContextMenu");
+  //   closeAllContextMenus();
+  //   var textur_but = p.createButton();
+  //   textur_but.position(clickPosition.x-30, clickPosition.y-10);
+  //   textur_but.class("button-class");
+  //   textur_but.id("textur_but_" + idCounter)
+  //   idCounter++;
+  //   var type_but = p.createButton("Typ");
+  //   type_but.position(clickPosition.x+30, clickPosition.y-10);
+  //   type_but.class("button-class");
+  //   type_but.id("type_but_" + idCounter);
+  //   idCounter++;
+  // }
+
 
   //
   const closeAllContextMenus = () => {
@@ -238,6 +262,7 @@ function sketch(p) {
      }
   }
 
+
   //
   ipcRenderer.on('new-doc-sketch', (event, arg) => {
     console.log("sketch: " + arg)
@@ -248,6 +273,14 @@ function sketch(p) {
       console.log(err)
     })
   })
+
+
+  //
+  ipcRenderer.on('change-selected-block', (event, passedBlockType) => {
+    console.log("change-selected-block: " + passedBlockType)
+    selectedBlockType = passedBlockType
+  })
+
 }
 // END OF SKETCH
 

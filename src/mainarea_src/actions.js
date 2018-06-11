@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: actions.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-12T18:04:16+02:00
+ * @Last modified time: 2018-06-11T23:19:16+02:00
 */
 
 const mainarea = require('./mainareaManager');
@@ -18,4 +18,10 @@ widthBut.addEventListener("click", () => {
 const saveBut = document.getElementById("saveBut");
 saveBut.addEventListener("click", () => {
   mainarea.saveXML();
+});
+
+const normal_block = document.getElementById("normal_block");
+normal_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("normal_block_xxx");
 });

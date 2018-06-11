@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: main.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-16T20:16:22+02:00
+ * @Last modified time: 2018-06-11T23:10:24+02:00
 */
 
 const electron = require("electron")
@@ -75,10 +75,19 @@ ipcMain.on("giveme-currentDocumentPath", (event, arg) => {
   currentDocumentPath(fullpath);
 })
 
+ipcMain.on("change-selected-block", (event, arg) => {
+  console.log("main-change: " + arg);
+  changeSelectedBlockTo(arg);
+})
+
 const currentDocumentPath = (currentDocumentPath) => {
   mainWindow.webContents.send('givingyou-currentDocumentPath', currentDocumentPath);
 }
 
 const openNewDocument = (pathToNewDocument) => {
   mainWindow.webContents.send('new-doc-sketch', pathToNewDocument);
+}
+
+const changeSelectedBlockTo = (selectedBlockType) => {
+  mainWindow.webContents.send('change-selected-block', selectedBlockType);
 }
