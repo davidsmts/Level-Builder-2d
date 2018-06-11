@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-11T23:40:08+02:00
+ * @Last modified time: 2018-06-11T23:41:42+02:00
 */
 
 //"use strict";
@@ -114,9 +114,9 @@ function sketch(p) {
       case "wood_block":
         return FAST_BLOCK_COLOR;
       case "stone_block":
-          return FAST_BLOCK_COLOR;
-      default:
         return BAD_BLOCK_COLOR;
+      default:
+        return BREAK_BLOCK_COLOR;
     }
   }
 
