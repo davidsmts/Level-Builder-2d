@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: actions.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-11T23:19:16+02:00
+ * @Last modified time: 2018-06-11T23:39:39+02:00
 */
 
 const mainarea = require('./mainareaManager');
@@ -23,5 +23,17 @@ saveBut.addEventListener("click", () => {
 const normal_block = document.getElementById("normal_block");
 normal_block.addEventListener("click", () => {
   console.log("changeBlockType")
-  mainarea.changeBlockType("normal_block_xxx");
+  mainarea.changeBlockType("normal_block");
+});
+
+const wood_block = document.getElementById("wood_block");
+wood_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("wood_block");
+});
+
+const stone_block = document.getElementById("stone_block");
+stone_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("stone_block");
 });

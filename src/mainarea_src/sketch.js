@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-11T23:33:24+02:00
+ * @Last modified time: 2018-06-11T23:40:08+02:00
 */
 
 //"use strict";
@@ -85,8 +85,9 @@ function sketch(p) {
       p.line(0, i, LevelWidth, i);
     }
     //  Draw Blocks
-    for (var i=0; i<spritePositions.length(); i++) {
-      p.fill(currentColor());
+    for (var i=0; i<SpritePositions.length; i++) {
+      let position = SpritePositions[i];
+      p.fill(currentColor(SpriteTypes[i]));
       p.rect(position.x, position.y, CubeWidthAndHeight, CubeWidthAndHeight);
     }
   }
@@ -106,12 +107,14 @@ function sketch(p) {
   }
 
 
-  const currentColor = () => {
-    switch (selectedBlockType) {
+  const currentColor = (type) => {
+    switch (type) {
       case "normal_block":
         return NORMAL_BLOCK_COLOR;
-      case "normal_block_xxx":
+      case "wood_block":
         return FAST_BLOCK_COLOR;
+      case "stone_block":
+          return FAST_BLOCK_COLOR;
       default:
         return BAD_BLOCK_COLOR;
     }
@@ -141,10 +144,10 @@ function sketch(p) {
   //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
   const createNewBlock = (blockPos) => {
     console.log("createNewBlock")
+    //  Push Position
     SpritePositions.push(blockPos);
-
     //  Check for blocktype and save the type for the corresponding index
-
+    SpriteTypes.push(selectedBlockType);
   }
 
 
