@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: mainareaManager.js
  * @Last modified by:   David
- * @Last modified time: 2018-05-15T22:16:59+02:00
+ * @Last modified time: 2018-06-11T23:17:34+02:00
 */
 
 const sketch = require("./sketch");
@@ -59,12 +59,17 @@ const buildJsonObject = () => {
   return obj
 }
 
+const changeBlockType = (selectedBlockType) => {
+  ipcRenderer.send('change-selected-block', selectedBlockType);
+}
+
 ipcRenderer.on('new-doc-sketch', (event, path) => {
   console.log("mainarea creates sketch");
 })
 
 module.exports = {
-  saveXML
+  saveXML,
+  changeBlockType
 }
 
 // const xml =

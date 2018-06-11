@@ -4,19 +4,30 @@
  * @Email:  davidschmotz@gmail.com
  * @Filename: main.css
  * @Last modified by:   David
- * @Last modified time: 2018-05-13T22:53:01+02:00
+ * @Last modified time: 2018-06-11T23:00:49+02:00
  */
 
 #p5Area {
-  overflow: scroll;
+  overflow: auto;
+  width: 100%;
+  height: 90%;
 }
 
 canvas {
   display: block;
   pointer-events: none;
+  overflow: auto;
 }
 
 .topBut {
     display: inline-block;
     padding: 10px;
+}
+
+.levelbuilder_menu {
+
+}
+
+.blocktype_menu {
+  
 }
