@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: main.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-11T23:10:24+02:00
+ * @Last modified time: 2018-06-12T18:35:57+02:00
 */
 
 const electron = require("electron")
@@ -86,6 +86,7 @@ const currentDocumentPath = (currentDocumentPath) => {
 
 const openNewDocument = (pathToNewDocument) => {
   mainWindow.webContents.send('new-doc-sketch', pathToNewDocument);
+  mainWindow.webContents.send('new-doc-mainareaManager', documents);
 }
 
 const changeSelectedBlockTo = (selectedBlockType) => {

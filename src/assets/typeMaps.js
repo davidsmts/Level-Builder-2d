@@ -4,7 +4,7 @@
  * @Email:  davidschmotz@gmail.com
  * @Filename: nameToTypeMap.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-11T23:48:04+02:00
+ * @Last modified time: 2018-06-12T18:24:27+02:00
  */
 
 const nameToInt_TypeMap = () => {

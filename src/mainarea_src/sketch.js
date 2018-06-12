@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-11T23:41:42+02:00
+ * @Last modified time: 2018-06-12T18:47:10+02:00
 */
 
 //"use strict";
@@ -297,5 +297,6 @@ module.exports = {
   LevelHeight,
   Level,
   Path,
-  SpritePositions
+  SpritePositions,
+  SpriteTypes
 }
