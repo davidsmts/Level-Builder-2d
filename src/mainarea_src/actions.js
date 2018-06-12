@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: actions.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-12T18:23:23+02:00
+ * @Last modified time: 2018-06-12T23:22:47+02:00
 */
 
 const mainarea = require('./mainareaManager');
@@ -42,5 +42,5 @@ stone_block.addEventListener("click", () => {
 const spawn_block = document.getElementById("spawn_block");
 spawn_block.addEventListener("click", () => {
   console.log("changeBlockType")
-  mainarea.changeBlockType("spawn_block");
+  mainarea.changeBlockType("player");
 });

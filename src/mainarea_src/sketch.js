@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-12T18:47:10+02:00
+ * @Last modified time: 2018-06-12T23:57:36+02:00
 */
 
 //"use strict";
@@ -58,9 +58,9 @@ function sketch(p) {
   p.preload = () => {
     //initialising constants
     NORMAL_BLOCK_COLOR = p.color(204, 102, 0);
-    BAD_BLOCK_COLOR = p.color(20, 102, 0);
-    FAST_BLOCK_COLOR = p.color(204, 12, 0);
-    BREAK_BLOCK_COLOR = p.color(204, 102, 100);
+    WOOD_BLOCK_COLOR = p.color(210, 105, 30);
+    STONE_BLOCK_COLOR = p.color(100, 100, 100);
+    PLAYER_BLOCK_COLOR = p.color(0, 200, 0);
   }
 
   p.setup = () => {
@@ -71,6 +71,7 @@ function sketch(p) {
     // const parentElement = document.getElementById(PARENT_ID);
     // parentElement.style.width = LevelWidth + "px";
     // parentElement.style.height = LevelHeight + "px";
+    p.noLoop();
   };
 
   p.draw = () => {
@@ -86,9 +87,12 @@ function sketch(p) {
     }
     //  Draw Blocks
     for (var i=0; i<SpritePositions.length; i++) {
+      p.push();
       let position = SpritePositions[i];
-      p.fill(currentColor(SpriteTypes[i]));
+      let colorForBlock = currentColor(SpriteTypes[i]);
+      p.fill(colorForBlock);
       p.rect(position.x, position.y, CubeWidthAndHeight, CubeWidthAndHeight);
+      p.pop();
     }
   }
 
@@ -110,13 +114,25 @@ function sketch(p) {
   const currentColor = (type) => {
     switch (type) {
       case "normal_block":
+        console.log("normal_blockkkkk");
         return NORMAL_BLOCK_COLOR;
+        break;
       case "wood_block":
-        return FAST_BLOCK_COLOR;
+        console.log("wood_blockkkk");
+        return WOOD_BLOCK_COLOR;
+        break;
       case "stone_block":
-        return BAD_BLOCK_COLOR;
+        console.log("stone_blockkkk");
+        return STONE_BLOCK_COLOR;
+        break;
+      case "player":
+        console.log("playerrrr");
+        return PLAYER_BLOCK_COLOR;
+        break;
       default:
-        return BREAK_BLOCK_COLOR;
+        console.log("!!!!!DEFAULT COLOR STATE!!!!!");
+        return p.color(0,0,0);
+        break;
     }
   }
 
@@ -147,7 +163,11 @@ function sketch(p) {
     //  Push Position
     SpritePositions.push(blockPos);
     //  Check for blocktype and save the type for the corresponding index
+    console.log("pushing: " + selectedBlockType)
     SpriteTypes.push(selectedBlockType);
+    console.log(SpriteTypes.length)
+    console.log(SpritePositions.length)
+    p.redraw();
   }
 
 
@@ -156,7 +176,9 @@ function sketch(p) {
   const removeBlock = (index) => {
     console.log("removeBlock")
     SpritePositions.splice(index, 1)
-  }
+    SpritePositions.splice(index, 1)
+    p.redraw();
+}
 
 
   //  Loops thorugh the elements of the received xml and pushes the Values into
@@ -175,6 +197,7 @@ function sketch(p) {
     }
     console.log(SpritePositions)
     console.log(SpriteTypes)
+    p.redraw();
   }
 
 
@@ -182,6 +205,7 @@ function sketch(p) {
   //  prepared arrays
   const interpretLevelObjectV2 = (obj) => {
     console.log("interpretLevelObjectV2")
+    flushCurrentLevel();
     const elements = obj.elementCollection.element
     for (let element of elements) {
       element = element.$
@@ -195,6 +219,7 @@ function sketch(p) {
     }
     console.log(SpritePositions)
     console.log(SpriteTypes)
+    p.redraw();
   }
 
 
@@ -229,41 +254,14 @@ function sketch(p) {
     return {doesContain: false, index: 0};
   }
 
-  //
-  // const showContextMenu = (clickPosition) => {
-  //   console.log("showContextMenu");
-  //   closeAllContextMenus();
-  //   var textur_but = p.createButton();
-  //   textur_but.position(clickPosition.x-30, clickPosition.y-10);
-  //   textur_but.class("button-class");
-  //   textur_but.id("textur_but_" + idCounter)
-  //   idCounter++;
-  //   var type_but = p.createButton("Typ");
-  //   type_but.position(clickPosition.x+30, clickPosition.y-10);
-  //   type_but.class("button-class");
-  //   type_but.id("type_but_" + idCounter);
-  //   idCounter++;
-  // }
-
 
   //
-  const closeAllContextMenus = () => {
-    console.log("closeAllMenus");
-    textur_count = idCounter-2;
-    type_count = idCounter-1;
-    var prev_textur_but = document.getElementById("textur_but_" + textur_count);
-    var prev_type_but = document.getElementById("type_but_" + type_count);
-    if (prev_textur_but) {
-      prev_textur_but.parentNode.removeChild(prev_textur_but);
-    } else {
-       console.log("noPrevFound");
-     }
-    if (prev_type_but) {
-      prev_type_but.parentNode.removeChild(prev_type_but);
-    } else {
-       console.log("noPrevFound");
-     }
+  //
+  const flushCurrentLevel = () => {
+    SpriteTypes.splice(0,SpriteTypes.length)
+    SpritePositions.splice(0,SpritePositions.length)
   }
+
 
 
   //
@@ -282,6 +280,7 @@ function sketch(p) {
   ipcRenderer.on('change-selected-block', (event, passedBlockType) => {
     console.log("change-selected-block: " + passedBlockType)
     selectedBlockType = passedBlockType
+    console.log("selectedBlockType after: " + selectedBlockType)
   })
 
 }

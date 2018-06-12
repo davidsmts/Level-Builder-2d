@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: mainareaManager.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-12T18:38:20+02:00
+ * @Last modified time: 2018-06-12T23:21:45+02:00
 */
 
 const sketch = require("./sketch");
@@ -60,7 +60,7 @@ const buildJsonObject = () => {
     let tempObj = {$:{
       id: i.toString(),
       prefab: 0,
-      type: "normal_block",
+      type: spriteTypes[i],
       xPosition: translatedX.toString(),
       yPosition: translatedY.toString()
     }}
