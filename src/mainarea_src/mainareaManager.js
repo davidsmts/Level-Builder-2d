@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: mainareaManager.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-12T23:21:45+02:00
+ * @Last modified time: 2018-06-16T21:16:54+02:00
 */
 
 const sketch = require("./sketch");
@@ -42,6 +42,13 @@ const saveXML = () => {
     }
     console.log("successfull save")
   })
+}
+
+
+//
+const changeZoom = () => {
+  const {dialog} = require('electron').remote
+  console.log(dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}))
 }
 
 
@@ -87,7 +94,8 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
 
 module.exports = {
   saveXML,
-  changeBlockType
+  changeBlockType,
+  changeZoom
 }
 
 // const xml =

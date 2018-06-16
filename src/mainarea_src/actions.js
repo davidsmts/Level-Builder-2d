@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: actions.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-12T23:22:47+02:00
+ * @Last modified time: 2018-06-16T21:16:35+02:00
 */
 
 const mainarea = require('./mainareaManager');
@@ -19,6 +19,12 @@ widthBut.addEventListener("click", () => {
 const saveBut = document.getElementById("saveBut");
 saveBut.addEventListener("click", () => {
   mainarea.saveXML();
+});
+
+const zoomBut = document.getElementById("zoomBut");
+zoomBut.addEventListener("click", () => {
+  console.log("zoomBut")
+  mainarea.changeZoom();
 });
 
 const normal_block = document.getElementById("normal_block");

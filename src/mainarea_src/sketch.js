@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-12T23:57:36+02:00
+ * @Last modified time: 2018-06-12T23:58:48+02:00
 */
 
 //"use strict";
@@ -261,7 +261,6 @@ function sketch(p) {
     SpriteTypes.splice(0,SpriteTypes.length)
     SpritePositions.splice(0,SpritePositions.length)
   }
-
 
 
   //
