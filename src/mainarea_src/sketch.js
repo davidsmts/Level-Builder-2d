@@ -176,7 +176,7 @@ function sketch(p) {
   const removeBlock = (index) => {
     console.log("removeBlock")
     SpritePositions.splice(index, 1)
-    SpritePositions.splice(index, 1)
+    SpriteTypes.splice(index, 1)
     p.redraw();
 }
 
