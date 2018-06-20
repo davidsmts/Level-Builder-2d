@@ -27,6 +27,12 @@ zoomBut.addEventListener("click", () => {
   mainarea.changeZoom();
 });
 
+const cleanBut = document.getElementById("cleanBut");
+cleanBut.addEventListener("click", () => {
+  console.log("cleanBut")
+  mainarea.clean();
+});
+
 const normal_block = document.getElementById("normal_block");
 normal_block.addEventListener("click", () => {
   console.log("changeBlockType")

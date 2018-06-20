@@ -76,6 +76,10 @@ const buildJsonObject = () => {
   return obj
 }
 
+const clean = () => {
+  console.log("clean")
+}
+
 const changeBlockType = (selectedBlockType) => {
   ipcRenderer.send('change-selected-block', selectedBlockType);
 }
@@ -95,7 +99,8 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
 module.exports = {
   saveXML,
   changeBlockType,
-  changeZoom
+  changeZoom,
+  clean
 }
 
 // const xml =
