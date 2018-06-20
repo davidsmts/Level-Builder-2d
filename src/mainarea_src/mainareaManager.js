@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: mainareaManager.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-11T23:17:34+02:00
+ * @Last modified time: 2018-06-16T21:16:54+02:00
 */
 
 const sketch = require("./sketch");
@@ -14,13 +14,22 @@ const setXml = require("../file/savefile.js");
 const xml2js = require("xml2js");
 const fs = require('fs');
 const {ipcRenderer} = require("electron");
+const maps = require('../assets/typeMaps');
 
 const app = new p5(sketch.sketch);
+
+const nameToInt_TypeMap = maps.nameToInt_TypeMap;
+const intToName_TypeMap = maps.intToName_TypeMap;
+const documents = {
+  currentPath: "",
+  currentDocumentName: "",
+  currentFullPath: ""
+}
 
 //
 const saveXML = () => {
 
-  const path  = __dirname + '/output2.xml';
+  const path  = documents.currentPath + '/' + documents.currentDocumentName;
   console.log(path)
   const obj = buildJsonObject()
   console.log(obj)
@@ -36,9 +45,17 @@ const saveXML = () => {
 }
 
 
+//
+const changeZoom = () => {
+  const {dialog} = require('electron').remote
+  console.log(dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}))
+}
+
+
 //  builds a json object of the provided information and turns it into an xml
 const buildJsonObject = () => {
   const spritePositions = sketch.SpritePositions
+  const spriteTypes = sketch.spriteTypes
   let obj = { elementCollection: {
     element: []
   }}
@@ -49,14 +66,18 @@ const buildJsonObject = () => {
     const translatedY = spritePositions[i].y / dimension;
     let tempObj = {$:{
       id: i.toString(),
-      prefab: "0",
-      type: "sprite",
+      prefab: 0,
+      type: spriteTypes[i],
       xPosition: translatedX.toString(),
       yPosition: translatedY.toString()
     }}
     obj.elementCollection.element.push(tempObj)
   }
   return obj
+}
+
+const clean = () => {
+  console.log("clean")
 }
 
 const changeBlockType = (selectedBlockType) => {
@@ -67,9 +88,19 @@ ipcRenderer.on('new-doc-sketch', (event, path) => {
   console.log("mainarea creates sketch");
 })
 
+
+ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
+  console.log("mainarea receives new doc");
+  documents.currentPath = documentsOfMain.currentPath;
+  documents.currentFullPath = documentsOfMain.currentFullPath;
+  documents.currentDocumentName = documentsOfMain.currentDocumentName;
+})
+
 module.exports = {
   saveXML,
-  changeBlockType
+  changeBlockType,
+  changeZoom,
+  clean
 }
 
 // const xml =
