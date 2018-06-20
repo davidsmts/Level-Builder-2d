@@ -3,8 +3,8 @@
 * @Date:   2018-05-01T20:06:17+02:00
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
- * @Last modified by:   David
- * @Last modified time: 2018-06-12T23:58:48+02:00
+* @Last modified by:   David
+* @Last modified time: 2018-06-12T23:58:48+02:00
 */
 
 //"use strict";
@@ -74,6 +74,8 @@ function sketch(p) {
     p.noLoop();
   };
 
+
+  //
   p.draw = () => {
     p.background(200);
     p.fill(255);
@@ -114,25 +116,25 @@ function sketch(p) {
   const currentColor = (type) => {
     switch (type) {
       case "normal_block":
-        console.log("normal_blockkkkk");
-        return NORMAL_BLOCK_COLOR;
-        break;
+      console.log("normal_blockkkkk");
+      return NORMAL_BLOCK_COLOR;
+      break;
       case "wood_block":
-        console.log("wood_blockkkk");
-        return WOOD_BLOCK_COLOR;
-        break;
+      console.log("wood_blockkkk");
+      return WOOD_BLOCK_COLOR;
+      break;
       case "stone_block":
-        console.log("stone_blockkkk");
-        return STONE_BLOCK_COLOR;
-        break;
+      console.log("stone_blockkkk");
+      return STONE_BLOCK_COLOR;
+      break;
       case "player":
-        console.log("playerrrr");
-        return PLAYER_BLOCK_COLOR;
-        break;
+      console.log("playerrrr");
+      return PLAYER_BLOCK_COLOR;
+      break;
       default:
-        console.log("!!!!!DEFAULT COLOR STATE!!!!!");
-        return p.color(0,0,0);
-        break;
+      console.log("!!!!!DEFAULT COLOR STATE!!!!!");
+      return p.color(0,0,0);
+      break;
     }
   }
 
@@ -176,9 +178,9 @@ function sketch(p) {
   const removeBlock = (index) => {
     console.log("removeBlock")
     SpritePositions.splice(index, 1)
-    SpritePositions.splice(index, 1)
+    SpriteTypes.splice(index, 1)
     p.redraw();
-}
+  }
 
 
   //  Loops thorugh the elements of the received xml and pushes the Values into
@@ -260,6 +262,7 @@ function sketch(p) {
   const flushCurrentLevel = () => {
     SpriteTypes.splice(0,SpriteTypes.length)
     SpritePositions.splice(0,SpritePositions.length)
+    p.redraw();
   }
 
 
@@ -280,6 +283,16 @@ function sketch(p) {
     console.log("change-selected-block: " + passedBlockType)
     selectedBlockType = passedBlockType
     console.log("selectedBlockType after: " + selectedBlockType)
+  })
+
+
+  //
+  ipcRenderer.on('clean-all', (event) => {
+    console.log("clean-all sketch")
+    SpriteTypes = new Array(0);
+    SpritePositions = new Array(0)
+    console.log(SpritePositions)
+    p.redraw();
   })
 
 }

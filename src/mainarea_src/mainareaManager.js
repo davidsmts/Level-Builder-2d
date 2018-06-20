@@ -54,14 +54,21 @@ const changeZoom = () => {
 
 //  builds a json object of the provided information and turns it into an xml
 const buildJsonObject = () => {
-  const spritePositions = sketch.SpritePositions
-  const spriteTypes = sketch.spriteTypes
+  let spritePositions = sketch.SpritePositions
+  let spriteTypes = sketch.SpriteTypes
+  const LevelHeight = sketch.LevelHeight
+
   let obj = { elementCollection: {
     element: []
   }}
+
+  let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight);
+  spritePositions = sortedPositions
+  spriteTypes = sortedTypes
+  const dimension = sketch.CubeWidthAndHeight;
+
   for (let i = 0; i < spritePositions.length; i++) {
     //  calculate positions in unity dimension
-    const dimension = sketch.CubeWidthAndHeight;
     const translatedX = spritePositions[i].x / dimension;
     const translatedY = spritePositions[i].y / dimension;
     let tempObj = {$:{
@@ -76,8 +83,29 @@ const buildJsonObject = () => {
   return obj
 }
 
+
+//
+//
+const sortVectors = (SpritePositions, SpriteTypes, LevelHeight) => {
+  let sortedPositions = [];
+  let sortedTypes = [];
+  console.log(SpritePositions)
+  for (let i=0; i<LevelHeight; i+=50) {
+    for (let j=0; j<SpritePositions.length; j++) {
+      position = SpritePositions[j];
+      if (position.y == i) {
+        console.log(i + " vs. " + position.y + " -> worked")
+        sortedPositions.push(position);
+        sortedTypes.push(SpriteTypes[j]);
+      }
+    }
+  }
+  return {sortedPositions, sortedTypes}
+}
+
 const clean = () => {
   console.log("clean")
+  ipcRenderer.send('clean-all');
 }
 
 const changeBlockType = (selectedBlockType) => {
@@ -95,6 +123,7 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
   documents.currentFullPath = documentsOfMain.currentFullPath;
   documents.currentDocumentName = documentsOfMain.currentDocumentName;
 })
+
 
 module.exports = {
   saveXML,
