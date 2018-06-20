@@ -3,8 +3,8 @@
 * @Date:   2018-05-01T19:19:10+02:00
 * @Email:  davidschmotz@gmail.com
 * @Filename: main.js
- * @Last modified by:   David
- * @Last modified time: 2018-06-12T18:35:57+02:00
+* @Last modified by:   David
+* @Last modified time: 2018-06-12T18:35:57+02:00
 */
 
 const electron = require("electron")
@@ -13,6 +13,8 @@ const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const url = require('url')
 const ipcMain = electron.ipcMain
+const Menu = electron.Menu
+const {dialog} = require("electron");
 
 let mainWindow
 
@@ -26,6 +28,28 @@ function createWindow() {
   }))
 
   mainWindow.openDevTools()
+
+  const name = electron.app.getName()
+  const template = [
+    {
+      label: name,
+      submenu: [{
+        label: "Open",
+        click: _ => {
+          console.log("open")
+          openFileDialog()
+        },
+      }, {
+        type: "separator"
+      }, {
+        label: "Quit",
+        click: _ => { app.quit() },
+        accelerator: "Cmd+Q"
+      }]
+    }
+  ]
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
 
   mainWindow.on("closed", _ => {
     mainWindow = null
@@ -47,6 +71,19 @@ app.on("activate", function () {
     createWindow()
   }
 })
+
+//  Opens File Dialog and messages all endpoints the new path
+const openFileDialog = () => {
+  dialog.showOpenDialog({
+    properties: ['openDirectory']
+  }, function (files) {
+    if (files !== undefined) {
+      console.log(files)
+      const Path = files[0]
+      //  ipc sends
+    }
+  })
+}
 
 //  ToDo: find a better describing comment here
 //  Current Path and Current Document logic

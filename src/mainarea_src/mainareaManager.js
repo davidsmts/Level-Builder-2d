@@ -124,6 +124,7 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
   documents.currentDocumentName = documentsOfMain.currentDocumentName;
 })
 
+
 module.exports = {
   saveXML,
   changeBlockType,
