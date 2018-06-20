@@ -80,6 +80,11 @@ ipcMain.on("change-selected-block", (event, arg) => {
   changeSelectedBlockTo(arg);
 })
 
+ipcMain.on("clean-all", (event) => {
+  console.log("clean-all main");
+  cleanAllSpriteArrays();
+})
+
 const currentDocumentPath = (currentDocumentPath) => {
   mainWindow.webContents.send('givingyou-currentDocumentPath', currentDocumentPath);
 }
@@ -91,4 +96,8 @@ const openNewDocument = (pathToNewDocument) => {
 
 const changeSelectedBlockTo = (selectedBlockType) => {
   mainWindow.webContents.send('change-selected-block', selectedBlockType);
+}
+
+const cleanAllSpriteArrays = () => {
+  mainWindow.webContents.send('clean-all');
 }

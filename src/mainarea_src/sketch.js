@@ -262,6 +262,7 @@ function sketch(p) {
   const flushCurrentLevel = () => {
     SpriteTypes.splice(0,SpriteTypes.length)
     SpritePositions.splice(0,SpritePositions.length)
+    p.redraw();
   }
 
 
@@ -282,6 +283,16 @@ function sketch(p) {
     console.log("change-selected-block: " + passedBlockType)
     selectedBlockType = passedBlockType
     console.log("selectedBlockType after: " + selectedBlockType)
+  })
+
+
+  //
+  ipcRenderer.on('clean-all', (event) => {
+    console.log("clean-all sketch")
+    SpriteTypes = new Array(0);
+    SpritePositions = new Array(0)
+    console.log(SpritePositions)
+    p.redraw();
   })
 
 }

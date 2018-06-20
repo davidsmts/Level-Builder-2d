@@ -105,6 +105,7 @@ const sortVectors = (SpritePositions, SpriteTypes, LevelHeight) => {
 
 const clean = () => {
   console.log("clean")
+  ipcRenderer.send('clean-all');
 }
 
 const changeBlockType = (selectedBlockType) => {
