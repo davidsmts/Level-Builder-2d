@@ -66,10 +66,10 @@ const messageMainPath = (path) => {
   ipcRenderer.send('new-path', path)
 }
 
-// ipcRenderer.on('new-doc-sketch', (event, arg) => {
-//   console.log(this)
-//   console.log(arg)
-// })
+ipcRenderer.on('givingyou-currentDocumentPath', (event, path) => {
+  console.log(path)
+  openPath(path)
+})
 
 
 module.exports = {

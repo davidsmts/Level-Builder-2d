@@ -78,9 +78,11 @@ const openFileDialog = () => {
     properties: ['openDirectory']
   }, function (files) {
     if (files !== undefined) {
-      console.log(files)
       const Path = files[0]
       //  ipc sends
+      console.log(Path)
+      documents.currentPath = Path;
+      currentDocumentPath(Path)
     }
   })
 }
