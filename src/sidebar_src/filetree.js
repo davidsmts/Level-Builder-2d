@@ -26,9 +26,13 @@ function openPath(path) {
     if (err) throw  err;
     //the files parameter is an array of the files and folders in the path we passed. So we loop through the array, printing each file and folder
     for (let file of files) {
-      filesOfCurrentPath.push(file);
-      console.log(file);
-      document.getElementById("display-files").innerHTML += `<a class="file">${file}</a>`;
+      let fileEnding = getFileEnding(file)
+      console.log(fileEnding)
+      if (fileEnding == "xml") {
+        filesOfCurrentPath.push(file);
+        console.log(file);
+        document.getElementById("display-files").innerHTML += `<a class="file">${file}</a>`;
+      }
     }
     addListenersForFiles()
   });
@@ -44,6 +48,11 @@ function addListenersForFiles(classname = "file") {
       messageMainDoc(filename);
     })
   }
+}
+
+const getFileEnding = (filename) => {
+  let filenameParts = filename.split(".")
+  return filenameParts[filenameParts.length-1]
 }
 
 //  sends the new path to the ipc main proccess

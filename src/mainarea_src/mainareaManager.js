@@ -116,6 +116,8 @@ const sortVectors = (SpritePositions, SpriteTypes, LevelHeight, LevelWidth) => {
 }
 
 
+//
+//
 const sortByX = (LevelWidth, positions, types) => {
   let xSortedPositions = [];
   let xSortedTypes = [];
