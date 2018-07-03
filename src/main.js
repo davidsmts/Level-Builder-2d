@@ -40,6 +40,12 @@ function createWindow() {
           openFileDialog()
         },
       }, {
+        label: "New",
+        click: _ => {
+          console.log("new")
+          newXmlFile()
+        },
+      }, {
         type: "separator"
       }, {
         label: "Quit",
@@ -72,6 +78,7 @@ app.on("activate", function () {
   }
 })
 
+
 //  Opens File Dialog and messages all endpoints the new path
 const openFileDialog = () => {
   dialog.showOpenDialog({
@@ -86,6 +93,13 @@ const openFileDialog = () => {
     }
   })
 }
+
+
+//  creates a new xml Level File
+const newXmlFile = () => {
+
+}
+
 
 //  ToDo: find a better describing comment here
 //  Current Path and Current Document logic
