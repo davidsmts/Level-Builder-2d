@@ -31,7 +31,7 @@ const saveXML = () => {
 
   const path  = documents.currentPath + '/' + documents.currentDocumentName;
   console.log(path)
-  const obj = buildJsonObject()
+  let obj = buildJsonObject()
   console.log(obj)
   const builder = new xml2js.Builder()
   const xml = builder.buildObject(obj)
@@ -56,6 +56,7 @@ const changeZoom = () => {
 const buildJsonObject = () => {
   let spritePositions = sketch.SpritePositions
   let spriteTypes = sketch.SpriteTypes
+  console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
   const LevelHeight = sketch.LevelHeight
   const LevelWidth = sketch.LevelWidth
 

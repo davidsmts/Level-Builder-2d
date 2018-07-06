@@ -289,8 +289,7 @@ function sketch(p) {
   //
   ipcRenderer.on('clean-all', (event) => {
     console.log("clean-all sketch")
-    SpriteTypes = new Array(0);
-    SpritePositions = new Array(0)
+    flushCurrentLevel();
     console.log(SpritePositions)
     p.redraw();
   })
