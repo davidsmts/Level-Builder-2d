@@ -41,10 +41,11 @@ const Level = (path) => {
 function sketch(p) {
 
   //  function dependant constants
-  let NORMAL_BLOCK_COLOR;
-  let BAD_BLOCK_COLOR;
-  let FAST_BLOCK_COLOR;
-  let BREAK_BLOCK_COLOR;
+  let NORMAL_COLOR;
+  let WOOD_COLOR;
+  let STONE_COLOR;
+  let PLAYER_COLOR;
+  let FINISH_COLOR;
 
   //  constants
   const PARENT_ID = "p5Area";
@@ -57,10 +58,11 @@ function sketch(p) {
 
   p.preload = () => {
     //initialising constants
-    NORMAL_BLOCK_COLOR = p.color(204, 102, 0);
-    WOOD_BLOCK_COLOR = p.color(210, 105, 30);
-    STONE_BLOCK_COLOR = p.color(100, 100, 100);
-    PLAYER_BLOCK_COLOR = p.color(0, 200, 0);
+    NORMAL_COLOR = p.color(204, 102, 0);
+    WOOD_COLOR = p.color(210, 105, 30);
+    STONE_COLOR = p.color(100, 100, 100);
+    PLAYER_COLOR = p.color(0, 200, 0);
+    FINISH_COLOR = p.color(255, 0, 0);
   }
 
   p.setup = () => {
@@ -116,25 +118,24 @@ function sketch(p) {
   const currentColor = (type) => {
     switch (type) {
       case "normal_block":
-      console.log("normal_blockkkkk");
-      return NORMAL_BLOCK_COLOR;
-      break;
+        return NORMAL_COLOR;
+        break;
       case "wood_block":
-      console.log("wood_blockkkk");
-      return WOOD_BLOCK_COLOR;
-      break;
+        return WOOD_COLOR;
+        break;
       case "stone_block":
-      console.log("stone_blockkkk");
-      return STONE_BLOCK_COLOR;
-      break;
+        return STONE_COLOR;
+        break;
       case "player":
-      console.log("playerrrr");
-      return PLAYER_BLOCK_COLOR;
-      break;
+        return PLAYER_COLOR;
+        break;
+      case "finish":
+        return FINISH_COLOR;
+        break;
       default:
-      console.log("!!!!!DEFAULT COLOR STATE!!!!!");
-      return p.color(0,0,0);
-      break;
+        console.log("!!!!!DEFAULT COLOR STATE!!!!!");
+        return p.color(0,0,0);
+        break;
     }
   }
 
