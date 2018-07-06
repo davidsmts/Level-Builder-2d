@@ -56,3 +56,9 @@ spawn_block.addEventListener("click", () => {
   console.log("changeBlockType")
   mainarea.changeBlockType("player");
 });
+
+const finish_block = document.getElementById("finish_block");
+finish_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("finish");
+});

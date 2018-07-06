@@ -91,11 +91,9 @@ const buildJsonObject = () => {
 const sortVectors = (SpritePositions, SpriteTypes, LevelHeight, LevelWidth) => {
   let sortedPositions = [];
   let sortedTypes = [];
-  console.log(SpritePositions)
   for (let i=0; i<LevelHeight; i+=50) {
     let spritePositionsOfRowI = [];
     let spriteTypesOfRowI = [];
-
     //  Get all sprites with i's y-coordinate
     for (let j=0; j<SpritePositions.length; j++) {
       let position = SpritePositions[j];
@@ -105,14 +103,12 @@ const sortVectors = (SpritePositions, SpriteTypes, LevelHeight, LevelWidth) => {
         spriteTypesOfRowI.push(SpriteTypes[j]);
       }
     }
-    // console.log(spritePositionsOfRowI);
-    // console.log(spriteTypesOfRowI);
 
     let {xSortedPositions, xSortedTypes} = sortByX(LevelWidth, spritePositionsOfRowI, spriteTypesOfRowI)
     sortedPositions = sortedPositions.concat(xSortedPositions)
     sortedTypes = sortedTypes.concat(xSortedTypes)
-    console.log(sortedPositions)
   }
+
   return {sortedPositions, sortedTypes}
 }
 
