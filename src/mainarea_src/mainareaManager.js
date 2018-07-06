@@ -57,12 +57,13 @@ const buildJsonObject = () => {
   let spritePositions = sketch.SpritePositions
   let spriteTypes = sketch.SpriteTypes
   const LevelHeight = sketch.LevelHeight
+  const LevelWidth = sketch.LevelWidth
 
   let obj = { elementCollection: {
     element: []
   }}
 
-  let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight);
+  let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight, LevelWidth);
   spritePositions = sortedPositions
   spriteTypes = sortedTypes
   const dimension = sketch.CubeWidthAndHeight;
@@ -86,21 +87,53 @@ const buildJsonObject = () => {
 
 //
 //
-const sortVectors = (SpritePositions, SpriteTypes, LevelHeight) => {
+const sortVectors = (SpritePositions, SpriteTypes, LevelHeight, LevelWidth) => {
   let sortedPositions = [];
   let sortedTypes = [];
   console.log(SpritePositions)
   for (let i=0; i<LevelHeight; i+=50) {
+    let spritePositionsOfRowI = [];
+    let spriteTypesOfRowI = [];
+
+    //  Get all sprites with i's y-coordinate
     for (let j=0; j<SpritePositions.length; j++) {
-      position = SpritePositions[j];
+      let position = SpritePositions[j];
       if (position.y == i) {
-        console.log(i + " vs. " + position.y + " -> worked")
-        sortedPositions.push(position);
-        sortedTypes.push(SpriteTypes[j]);
+        //console.log(i + " vs. " + position.y + " -> worked")
+        spritePositionsOfRowI.push(position);
+        spriteTypesOfRowI.push(SpriteTypes[j]);
+      }
+    }
+    // console.log(spritePositionsOfRowI);
+    // console.log(spriteTypesOfRowI);
+
+    let {xSortedPositions, xSortedTypes} = sortByX(LevelWidth, spritePositionsOfRowI, spriteTypesOfRowI)
+    sortedPositions = sortedPositions.concat(xSortedPositions)
+    sortedTypes = sortedTypes.concat(xSortedTypes)
+    console.log(sortedPositions)
+  }
+  return {sortedPositions, sortedTypes}
+}
+
+
+//
+//
+const sortByX = (LevelWidth, positions, types) => {
+  let xSortedPositions = [];
+  let xSortedTypes = [];
+
+  //  Sort the sprites for the -> i y coordinate by their x value
+  for (let x=0; x<LevelWidth; x+=50) {
+    for (let j=0; j<positions.length; j++) {
+      let position = positions[j];
+      if (position.x == x) {
+        //console.log(x + " vs. " + position.x + " -> worked")
+        xSortedPositions.push(position);
+        xSortedTypes.push(types[j]);
       }
     }
   }
-  return {sortedPositions, sortedTypes}
+  return {xSortedPositions, xSortedTypes}
 }
 
 const clean = () => {

@@ -26,9 +26,13 @@ function openPath(path) {
     if (err) throw  err;
     //the files parameter is an array of the files and folders in the path we passed. So we loop through the array, printing each file and folder
     for (let file of files) {
-      filesOfCurrentPath.push(file);
-      console.log(file);
-      document.getElementById("display-files").innerHTML += `<a class="file">${file}</a>`;
+      let fileEnding = getFileEnding(file)
+      console.log(fileEnding)
+      if (fileEnding == "xml") {
+        filesOfCurrentPath.push(file);
+        console.log(file);
+        document.getElementById("display-files").innerHTML += `<a class="file">${file}</a>`;
+      }
     }
     addListenersForFiles()
   });
@@ -46,6 +50,11 @@ function addListenersForFiles(classname = "file") {
   }
 }
 
+const getFileEnding = (filename) => {
+  let filenameParts = filename.split(".")
+  return filenameParts[filenameParts.length-1]
+}
+
 //  sends the new path to the ipc main proccess
 const messageMainDoc = (filename) => {
   console.log("messaging name : " + filename);
@@ -57,10 +66,10 @@ const messageMainPath = (path) => {
   ipcRenderer.send('new-path', path)
 }
 
-// ipcRenderer.on('new-doc-sketch', (event, arg) => {
-//   console.log(this)
-//   console.log(arg)
-// })
+ipcRenderer.on('givingyou-currentDocumentPath', (event, path) => {
+  console.log(path)
+  openPath(path)
+})
 
 
 module.exports = {
