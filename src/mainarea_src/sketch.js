@@ -46,6 +46,7 @@ function sketch(p) {
   let STONE_COLOR;
   let PLAYER_COLOR;
   let FINISH_COLOR;
+  let OPPONENT1_COLOR;
 
   //  constants
   const PARENT_ID = "p5Area";
@@ -63,6 +64,7 @@ function sketch(p) {
     STONE_COLOR = p.color(100, 100, 100);
     PLAYER_COLOR = p.color(0, 200, 0);
     FINISH_COLOR = p.color(255, 0, 0);
+    OPPONENT1_COLOR = p.color(0, 0, 0);
   }
 
   p.setup = () => {
@@ -131,6 +133,9 @@ function sketch(p) {
         break;
       case "finish":
         return FINISH_COLOR;
+        break;
+      case "OPPONENT1":
+        return OPPONENT1_COLOR;
         break;
       default:
         console.log("!!!!!DEFAULT COLOR STATE!!!!!");
