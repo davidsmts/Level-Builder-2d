@@ -62,3 +62,9 @@ finish_block.addEventListener("click", () => {
   console.log("changeBlockType")
   mainarea.changeBlockType("finish");
 });
+
+const opponent1_block = document.getElementById("opponent1_block");
+opponent1_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("opponent1");
+});
