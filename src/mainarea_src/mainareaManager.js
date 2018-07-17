@@ -27,8 +27,15 @@ const documents = {
 }
 
 //
-const saveXML = () => {
+const changeSize = () => {
+  console.log("change Size")
+  sketch.LevelWidth = 4000
+  sketch.LevelHeight = 4000
+  ipcRenderer.send('redraw-sketch', 4000, 4000);
+}
 
+//
+const saveXML = () => {
   const path  = documents.currentPath + '/' + documents.currentDocumentName;
   console.log(path)
   let obj = buildJsonObject()
@@ -156,6 +163,7 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
 
 
 module.exports = {
+  changeSize,
   saveXML,
   changeBlockType,
   changeZoom,

@@ -138,6 +138,11 @@ ipcMain.on("clean-all", (event) => {
   cleanAllSpriteArrays();
 })
 
+ipcMain.on("redraw-sketch", (event, width, height) => {
+  console.log("clean-all main");
+  redrawSketch(width, height);
+})
+
 const currentDocumentPath = (currentDocumentPath) => {
   mainWindow.webContents.send('givingyou-currentDocumentPath', currentDocumentPath);
 }
@@ -153,4 +158,9 @@ const changeSelectedBlockTo = (selectedBlockType) => {
 
 const cleanAllSpriteArrays = () => {
   mainWindow.webContents.send('clean-all');
+}
+
+const redrawSketch = (width, height) => {
+  console.log("redraw-sketch main")
+  mainWindow.webContents.send('redraw-sketch', width, height);
 }

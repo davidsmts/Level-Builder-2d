@@ -16,8 +16,8 @@ const {ipcRenderer} = require("electron");
 
 //  global vars that are getting edited by outside
 let CubeWidthAndHeight = 50;
-let LevelWidth = 4000;
-let LevelHeight = 5000;
+let LevelWidth = 1000;
+let LevelHeight = 1000;
 let Path = "";
 let SpritePositions = new Array();
 let SpriteTypes = new Array();
@@ -83,6 +83,7 @@ function sketch(p) {
   p.draw = () => {
     p.background(200);
     p.fill(255);
+    console.log("draw: " + LevelHeight + " - " + LevelWidth)
     //  Draw Vetical Lines
     for (var i=0; i<LevelHeight; i+=CubeWidthAndHeight) {
       p.line(i, 0, i, LevelHeight);
@@ -297,6 +298,16 @@ function sketch(p) {
     console.log("clean-all sketch")
     flushCurrentLevel();
     console.log(SpritePositions)
+    p.redraw();
+  })
+
+
+  //
+  ipcRenderer.on('redraw-sketch', (event, width, height) => {
+    console.log("redraw-sketch sketch")
+    LevelWidth = width
+    LevelHeight = height
+    p.resizeCanvas(width, height)
     p.redraw();
   })
 

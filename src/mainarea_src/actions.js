@@ -11,9 +11,9 @@ const mainarea = require('./mainareaManager');
 const maps = require('../assets/typeMaps');
 
 
-const widthBut = document.getElementById("changeWidthBut");
-widthBut.addEventListener("click", () => {
-  mainarea.loadXML();
+const changeSizeBut = document.getElementById("changeSizeBut");
+changeSizeBut.addEventListener("click", () => {
+  mainarea.changeSize();
 });
 
 const saveBut = document.getElementById("saveBut");
