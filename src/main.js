@@ -170,17 +170,17 @@ const cleanAllSpriteArrays = () => {
   mainWindow.webContents.send('clean-all');
 }
 
-const redrawSketch = (width, height) => {
+const redrawSketch = () => {
   console.log("redraw-sketch main")
-  mainWindow.webContents.send('redraw-sketch', width, height);
+  mainWindow.webContents.send('redraw-sketch');
 }
 
 const changeSize = (width, height) => {
-  console.log("redraw-sketch main")
-  mainWindow.webContents.send('redraw-sketch', width, height);
+  console.log("changeSize main")
+  mainWindow.webContents.send('changeSize-sketch', width, height);
 }
 
 const changeZoom = (newZoom) => {
-  console.log("redraw-sketch main")
-  mainWindow.webContents.send('redraw-sketch', newZoom);
+  console.log("changeZoom main")
+  mainWindow.webContents.send('changeZoom-sketch', newZoom);
 }

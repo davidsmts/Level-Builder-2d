@@ -17,6 +17,7 @@ const {ipcRenderer} = require("electron");
 //  global vars that are getting edited by outside
 const STANDARD_ZOOM = 50;
 let CubeWidthAndHeight = STANDARD_ZOOM;
+let CurrentZoomLevel = 1.0;
 let LevelWidth = 1000;
 let LevelHeight = 1000;
 let Path = "";
@@ -99,7 +100,8 @@ function sketch(p) {
       let position = SpritePositions[i];
       let colorForBlock = currentColor(SpriteTypes[i]);
       p.fill(colorForBlock);
-      p.rect(position.x, position.y, CubeWidthAndHeight, CubeWidthAndHeight);
+      let renderPosition = p.createVector(position.x * CurrentZoomLevel, position.y * CurrentZoomLevel)
+      p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
       p.pop();
     }
   }
@@ -304,7 +306,7 @@ function sketch(p) {
 
 
   //
-  ipcRenderer.on('redraw-sketch', (event, width, height) => {
+  ipcRenderer.on('redraw-sketch', (event) => {
     console.log("redraw-sketch sketch")
     p.redraw();
   })
@@ -322,7 +324,8 @@ function sketch(p) {
   //
   ipcRenderer.on('changeZoom-sketch', (event, newZoom) => {
     console.log("changeZoom sketch")
-    CubeWidthAndHeight = STANDARD_ZOOM / newZoom
+    CubeWidthAndHeight = STANDARD_ZOOM * newZoom
+    CurrentZoomLevel = newZoom
     p.redraw();
   })
 

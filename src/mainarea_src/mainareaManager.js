@@ -27,12 +27,6 @@ const documents = {
 }
 
 //
-const changeSize = (width, height) => {
-  console.log("change Size")
-  ipcRenderer.send('redraw-sketch', width, height);
-}
-
-//
 const saveXML = () => {
   const path  = documents.currentPath + '/' + documents.currentDocumentName;
   console.log(path)
@@ -47,13 +41,6 @@ const saveXML = () => {
     }
     console.log("successfull save")
   })
-}
-
-
-//
-const changeZoom = () => {
-  const {dialog} = require('electron').remote
-  console.log(dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}))
 }
 
 
@@ -145,6 +132,24 @@ const clean = () => {
 
 const changeBlockType = (selectedBlockType) => {
   ipcRenderer.send('change-selected-block', selectedBlockType);
+}
+
+//
+const redrawSketch = () => {
+  console.log("redrawSketch mainareaManager")
+  ipcRenderer.send('redraw-sketch');
+}
+
+//
+const changeSize = (width, height) => {
+  console.log("change Size mainareaManager")
+  ipcRenderer.send('changeSize-sketch', width, height);
+}
+
+//
+const changeZoom = (zoom) => {
+  console.log("change zoom mainareaManager")
+  ipcRenderer.send('changeZoom-sketch', zoom);
 }
 
 ipcRenderer.on('new-doc-sketch', (event, path) => {
