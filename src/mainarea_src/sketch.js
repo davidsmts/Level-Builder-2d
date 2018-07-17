@@ -15,7 +15,8 @@ const {ipcRenderer} = require("electron");
 
 
 //  global vars that are getting edited by outside
-let CubeWidthAndHeight = 50;
+const STANDARD_ZOOM = 50;
+let CubeWidthAndHeight = STANDARD_ZOOM;
 let LevelWidth = 1000;
 let LevelHeight = 1000;
 let Path = "";
@@ -84,12 +85,12 @@ function sketch(p) {
     p.background(200);
     p.fill(255);
     console.log("draw: " + LevelHeight + " - " + LevelWidth)
-    //  Draw Vetical Lines
-    for (var i=0; i<LevelHeight; i+=CubeWidthAndHeight) {
+    //  Draw Vertical Lines
+    for (var i=0; i<LevelWidth; i+=CubeWidthAndHeight) {
       p.line(i, 0, i, LevelHeight);
     }
     //  Draw Horizontal Lines
-    for (var i=0; i<LevelWidth; i+=CubeWidthAndHeight) {
+    for (var i=0; i<LevelHeight; i+=CubeWidthAndHeight) {
       p.line(0, i, LevelWidth, i);
     }
     //  Draw Blocks
@@ -305,9 +306,23 @@ function sketch(p) {
   //
   ipcRenderer.on('redraw-sketch', (event, width, height) => {
     console.log("redraw-sketch sketch")
+    p.redraw();
+  })
+
+
+  //
+  ipcRenderer.on('changeSize-sketch', (event, width, height) => {
+    console.log("changeSize sketch")
     LevelWidth = width
     LevelHeight = height
     p.resizeCanvas(width, height)
+    p.redraw();
+  })
+
+  //
+  ipcRenderer.on('changeZoom-sketch', (event, newZoom) => {
+    console.log("changeZoom sketch")
+    CubeWidthAndHeight = STANDARD_ZOOM / newZoom
     p.redraw();
   })
 

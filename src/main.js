@@ -143,6 +143,16 @@ ipcMain.on("redraw-sketch", (event, width, height) => {
   redrawSketch(width, height);
 })
 
+ipcMain.on("changeSize-sketch", (event, width, height) => {
+  console.log("clean-all main");
+  changeSize(width, height);
+})
+
+ipcMain.on("changeZoom-sketch", (event, width, height) => {
+  console.log("clean-all main");
+  changeZoom(width, height);
+})
+
 const currentDocumentPath = (currentDocumentPath) => {
   mainWindow.webContents.send('givingyou-currentDocumentPath', currentDocumentPath);
 }
@@ -163,4 +173,14 @@ const cleanAllSpriteArrays = () => {
 const redrawSketch = (width, height) => {
   console.log("redraw-sketch main")
   mainWindow.webContents.send('redraw-sketch', width, height);
+}
+
+const changeSize = (width, height) => {
+  console.log("redraw-sketch main")
+  mainWindow.webContents.send('redraw-sketch', width, height);
+}
+
+const changeZoom = (newZoom) => {
+  console.log("redraw-sketch main")
+  mainWindow.webContents.send('redraw-sketch', newZoom);
 }

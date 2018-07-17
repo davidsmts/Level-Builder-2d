@@ -27,11 +27,9 @@ const documents = {
 }
 
 //
-const changeSize = () => {
+const changeSize = (width, height) => {
   console.log("change Size")
-  sketch.LevelWidth = 4000
-  sketch.LevelHeight = 4000
-  ipcRenderer.send('redraw-sketch', 4000, 4000);
+  ipcRenderer.send('redraw-sketch', width, height);
 }
 
 //

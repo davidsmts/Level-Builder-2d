@@ -13,7 +13,8 @@ const maps = require('../assets/typeMaps');
 
 const changeSizeBut = document.getElementById("changeSizeBut");
 changeSizeBut.addEventListener("click", () => {
-  mainarea.changeSize();
+  let changeSizeContainer = document.getElementById("size_container");
+  changeSizeContainer.style.display = "inline-block"
 });
 
 const saveBut = document.getElementById("saveBut");
@@ -67,4 +68,18 @@ const opponent1_block = document.getElementById("opponent1_block");
 opponent1_block.addEventListener("click", () => {
   console.log("changeBlockType")
   mainarea.changeBlockType("opponent1");
+});
+
+//  gets inpout values when confirm button is pressed and forwards them to the main proccess
+const changeSizeConfirm_button = document.getElementById("changeSizeConfirm_button");
+changeSizeConfirm_button.addEventListener("click", () => {
+  console.log("changeSizeConfirm_button")
+  let widthInput = document.getElementById("width_input")
+  let heightInput = document.getElementById("height_input")
+  let width = widthInput.value
+  let height = heightInput.value
+  let changeSizeContainer = document.getElementById("size_container");
+  changeSizeContainer.style.display = "none"
+  console.log(width + " <- width, " + height + " <- height")
+  mainarea.changeSize(width, height);
 });
