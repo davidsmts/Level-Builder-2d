@@ -100,12 +100,16 @@ function sketch(p) {
       let position = SpritePositions[i];
       let colorForBlock = currentColor(SpriteTypes[i]);
       p.fill(colorForBlock);
+      //  renderPosition is the position at which the cube is to be displayed in the Builder
+      //  because the position is 50:1 while we actually need it to be zoom:1
       let renderPosition = p.createVector(position.x * CurrentZoomLevel, position.y * CurrentZoomLevel)
       p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
       p.pop();
     }
   }
 
+  //  Called when you press anything on the Electron Window what means that everything outside
+  //  the sketch has to be catched
   p.mousePressed = () => {
     const mouse = p.createVector(p.mouseX, p.mouseY);
     const sketchElement = document.getElementById(CANVAS_CLASSNAME)
@@ -151,10 +155,11 @@ function sketch(p) {
 
   //
   const handleBlock = (point) => {
-    const toRoundX = point.x % 50;
-    const toRoundY = point.y % 50;
-    const x = point.x - toRoundX;
-    const y = point.y - toRoundY;
+    const renderedPoint = p.createVector(point.x * CurrentZoomLevel, point.y * CurrentZoomLevel)
+    const toRoundX = renderedPoint.x % 50;
+    const toRoundY = renderedPoint.y % 50;
+    const x = renderedPoint.x - toRoundX;
+    const y = renderedPoint.y - toRoundY;
     const blockPosition = p.createVector(x,y);
     let {doesContain, index} = doSpritesContain(blockPosition)
 
@@ -252,7 +257,7 @@ function sketch(p) {
   }
 
 
-  //
+  //  checks if the SpritePositions Array contains the passed point
   const doSpritesContain = (point) => {
     console.log("doSpritesContain")
     for (let i = 0; i < SpritePositions.length; i++) {

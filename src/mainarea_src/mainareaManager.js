@@ -44,6 +44,24 @@ const saveXML = () => {
 }
 
 
+//
+const saveXMLV2 = () => {
+  const path  = documents.currentPath + '/' + documents.currentDocumentName;
+  console.log(path)
+  let obj = buildJsonObjectV2()
+  console.log(obj)
+  const builder = new xml2js.Builder()
+  const xml = builder.buildObject(obj)
+  console.log(xml)
+  fs.writeFile(path, xml, (err) => {
+    if (err) {
+      console.log("Error saving the xml: " + err)
+    }
+    console.log("successfull save")
+  })
+}
+
+
 //  builds a json object of the provided information and turns it into an xml
 const buildJsonObject = () => {
   let spritePositions = sketch.SpritePositions
@@ -53,7 +71,8 @@ const buildJsonObject = () => {
   const LevelWidth = sketch.LevelWidth
 
   let obj = { elementCollection: {
-    element: []
+    element: [],
+    info: []
   }}
 
   let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight, LevelWidth);
@@ -65,15 +84,63 @@ const buildJsonObject = () => {
     //  calculate positions in unity dimension
     const translatedX = spritePositions[i].x / dimension;
     const translatedY = spritePositions[i].y / dimension;
+    let block_attributes = maps.block_attributes[spriteTypes[i]];
     let tempObj = {$:{
       id: i.toString(),
       prefab: 0,
       type: spriteTypes[i],
       xPosition: translatedX.toString(),
-      yPosition: translatedY.toString()
+      yPosition: translatedY.toString(),
+      hitbox: block_attributes.hitbox
     }}
     obj.elementCollection.element.push(tempObj)
   }
+
+  return obj
+}
+
+
+//  builds a json object of the provided information and turns it into an xml
+const buildJsonObjectV2 = () => {
+  let spritePositions = sketch.SpritePositions
+  let spriteTypes = sketch.SpriteTypes
+  console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
+  const LevelHeight = sketch.LevelHeight
+  const LevelWidth = sketch.LevelWidth
+
+  let obj = { collection: {
+    header: {
+      levelwidth: 1000,
+      levelheight: 2000,
+      info: 3000,
+      bg: "sand"
+    },
+    elements: {
+      element: []
+    }
+  }}
+
+  let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight, LevelWidth);
+  spritePositions = sortedPositions
+  spriteTypes = sortedTypes
+  const dimension = sketch.CubeWidthAndHeight;
+
+  for (let i = 0; i < spritePositions.length; i++) {
+    //  calculate positions in unity dimension
+    const translatedX = spritePositions[i].x / dimension;
+    const translatedY = spritePositions[i].y / dimension;
+    let block_attributes = maps.block_attributes[spriteTypes[i]];
+    let tempObj = {$:{
+      id: i.toString(),
+      prefab: 0,
+      type: spriteTypes[i],
+      xPosition: translatedX.toString(),
+      yPosition: translatedY.toString(),
+      hitbox: block_attributes.hitbox,
+    }}
+    obj.collection.elements.element.push(tempObj)
+  }
+
   return obj
 }
 
@@ -168,6 +235,7 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
 module.exports = {
   changeSize,
   saveXML,
+  saveXMLV2,
   changeBlockType,
   changeZoom,
   clean
