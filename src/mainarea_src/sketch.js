@@ -9,7 +9,7 @@
 
 //"use strict";
 
-const xml2js = require("xml2js");
+const xml2js = require("xml2json");
 const fs = require('fs');
 const {ipcRenderer} = require("electron");
 
@@ -23,6 +23,7 @@ let LevelHeight = 1000;
 let Path = "";
 let SpritePositions = new Array();
 let SpriteTypes = new Array();
+let LevelInfo = new Array();
 
 const Level = (path) => {
   return new Promise((resolve, reject) => {
@@ -202,12 +203,14 @@ function sketch(p) {
   //  prepared arrays
   const interpretLevelObject = (obj) => {
     console.log("interpretLevelObject")
-    const elements = obj.elementCollection.elements[0].element
+    flushCurrentLevel();
+    const elements = obj.elementCollection.elements
     for (let element of elements) {
-      console.log(element.id[0])
+      element = element.$
+      console.log(element.id)
       //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
-      const vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
-      const type = element.type[0]
+      const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
+      const type = element.type
 
       SpritePositions.push(vector)
       SpriteTypes.push(type)
@@ -222,20 +225,21 @@ function sketch(p) {
   //  prepared arrays
   const interpretLevelObjectV2 = (obj) => {
     console.log("interpretLevelObjectV2")
-    flushCurrentLevel();
-    const elements = obj.elementCollection.element
-    for (let element of elements) {
-      element = element.$
-      console.log(element.id)
-      //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
-      const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
-      const type = element.type
-
-      SpritePositions.push(vector)
-      SpriteTypes.push(type)
-    }
-    console.log(SpritePositions)
-    console.log(SpriteTypes)
+    console.log(obj)
+    const elements = obj.collection.elements
+    console.log(elements)
+    // for (let element of elements) {
+    //   console.log(element.id[0])
+    //   //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
+    //   const vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
+    //   const type = element.type[0]
+    //   const info =
+    //
+    //   SpritePositions.push(vector)
+    //   SpriteTypes.push(type)
+    // }
+    // console.log(SpritePositions)
+    // console.log(SpriteTypes)
     p.redraw();
   }
 
