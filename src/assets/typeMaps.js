@@ -53,7 +53,7 @@ const block_attributes = {
     hitbox: false,
     color: "0;0;0"
   },
-  finish_block : {
+  finish : {
     id: 6,
     hitbox: false,
     color: "255;0;0"
