@@ -12,6 +12,7 @@ const p5 = require('p5');
 const getXml = require("../file/readfile.js");
 const setXml = require("../file/savefile.js");
 const xml2js = require("xml2js");
+const xml2json = require("xml2json");
 const fs = require('fs');
 const {ipcRenderer} = require("electron");
 const maps = require('../assets/typeMaps');
@@ -51,7 +52,7 @@ const saveXMLV2 = () => {
   let obj = buildJsonObjectV2()
   console.log(obj)
   const builder = new xml2js.Builder()
-  const xml = builder.buildObject(obj)
+  const xml = xml2json.toXml(obj)
   console.log(xml)
   fs.writeFile(path, xml, (err) => {
     if (err) {
@@ -107,13 +108,15 @@ const buildJsonObjectV2 = () => {
   console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
   const LevelHeight = sketch.LevelHeight
   const LevelWidth = sketch.LevelWidth
+  var Header = sketch.Header
+  console.log(sketch)
+  console.log(Header)
+  Header[0].value = LevelWidth
+  Header[1].value = LevelHeight
 
   let obj = { collection: {
     header: {
-      levelwidth: 1000,
-      levelheight: 2000,
-      info: 3000,
-      bg: "sand"
+      info: Header
     },
     elements: {
       element: []
@@ -130,14 +133,14 @@ const buildJsonObjectV2 = () => {
     const translatedX = spritePositions[i].x / dimension;
     const translatedY = spritePositions[i].y / dimension;
     let block_attributes = maps.block_attributes[spriteTypes[i]];
-    let tempObj = {$:{
+    let tempObj = {
       id: i.toString(),
       prefab: 0,
       type: spriteTypes[i],
       xPosition: translatedX.toString(),
       yPosition: translatedY.toString(),
       hitbox: block_attributes.hitbox,
-    }}
+    }
     obj.collection.elements.element.push(tempObj)
   }
 

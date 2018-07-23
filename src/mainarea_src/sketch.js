@@ -9,12 +9,12 @@
 
 //"use strict";
 
-const xml2js = require("xml2json");
+const xml2json = require("xml2json");
 const fs = require('fs');
 const {ipcRenderer} = require("electron");
 
 
-//  global vars that are getting edited by outside
+//  global vars that are getting edited by outside aka. public smh
 const STANDARD_ZOOM = 50;
 let CubeWidthAndHeight = STANDARD_ZOOM;
 let CurrentZoomLevel = 1.0;
@@ -23,7 +23,7 @@ let LevelHeight = 1000;
 let Path = "";
 let SpritePositions = new Array();
 let SpriteTypes = new Array();
-let LevelInfo = new Array();
+var Header = new Array();
 
 const Level = (path) => {
   return new Promise((resolve, reject) => {
@@ -35,6 +35,26 @@ const Level = (path) => {
         console.dir(result)
         resolve(result)
       });
+    });
+  })
+}
+
+const Level2 = (path) => {
+  return new Promise((resolve, reject) => {
+    //const path  = __dirname + '/output2.xml';
+    console.log(path);
+    fs.readFile(path, function(err, data) {
+      var options = {
+        object: true,
+        reversible: false,
+        coerce: false,
+        sanitize: true,
+        trim: true,
+        arrayNotation: false,
+        alternateTextNode: false
+      };
+      let json = xml2json.toJson(data, options)
+      resolve(json)
     });
   })
 }
@@ -129,27 +149,27 @@ function sketch(p) {
   const currentColor = (type) => {
     switch (type) {
       case "normal_block":
-        return NORMAL_COLOR;
-        break;
+      return NORMAL_COLOR;
+      break;
       case "wood_block":
-        return WOOD_COLOR;
-        break;
+      return WOOD_COLOR;
+      break;
       case "stone_block":
-        return STONE_COLOR;
-        break;
+      return STONE_COLOR;
+      break;
       case "player":
-        return PLAYER_COLOR;
-        break;
+      return PLAYER_COLOR;
+      break;
       case "finish":
-        return FINISH_COLOR;
-        break;
+      return FINISH_COLOR;
+      break;
       case "OPPONENT1":
-        return OPPONENT1_COLOR;
-        break;
+      return OPPONENT1_COLOR;
+      break;
       default:
-        console.log("!!!!!DEFAULT COLOR STATE!!!!!");
-        return p.color(0,0,0);
-        break;
+      console.log("!!!!!DEFAULT COLOR STATE!!!!!");
+      return p.color(0,0,0);
+      break;
     }
   }
 
@@ -226,20 +246,25 @@ function sketch(p) {
   const interpretLevelObjectV2 = (obj) => {
     console.log("interpretLevelObjectV2")
     console.log(obj)
-    const elements = obj.collection.elements
-    console.log(elements)
-    // for (let element of elements) {
-    //   console.log(element.id[0])
-    //   //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
-    //   const vector = p.createVector(element.xPosition[0]*CubeWidthAndHeight, element.yPosition[0]*CubeWidthAndHeight)
-    //   const type = element.type[0]
-    //   const info =
-    //
-    //   SpritePositions.push(vector)
-    //   SpriteTypes.push(type)
-    // }
-    // console.log(SpritePositions)
-    // console.log(SpriteTypes)
+    const elements = obj.collection.elements.element
+    let header = obj.collection.header.info
+    for (let info of header) {
+      Header.push(info);
+    }
+    width = parseInt(Header[0].value)
+    height = parseInt(Header[1].value)
+    changeSizeOfWorkspace(width, height)
+    for (let element of elements) {
+      console.log(element.id[0])
+      //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
+      const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
+      const type = element.type
+      SpritePositions.push(vector)
+      SpriteTypes.push(type)
+    }
+    console.log(Header)
+    console.log(SpritePositions)
+    console.log(SpriteTypes)
     p.redraw();
   }
 
@@ -286,9 +311,18 @@ function sketch(p) {
 
 
   //
+  const changeSizeOfWorkspace = (width, height) => {
+    LevelWidth = width
+    LevelHeight = height
+    p.resizeCanvas(width, height)
+    p.redraw();
+  }
+
+
+  //
   ipcRenderer.on('new-doc-sketch', (event, arg) => {
     console.log("sketch: " + arg)
-    Level(arg).then((result) => {
+    Level2(arg).then((result) => {
       console.log(result);
       interpretLevelObjectV2(result)
     }, (err) => {
@@ -324,10 +358,7 @@ function sketch(p) {
   //
   ipcRenderer.on('changeSize-sketch', (event, width, height) => {
     console.log("changeSize sketch")
-    LevelWidth = width
-    LevelHeight = height
-    p.resizeCanvas(width, height)
-    p.redraw();
+    changeSizeOfWorkspace(width, height)
   })
 
   //
@@ -349,8 +380,9 @@ module.exports = {
   CubeWidthAndHeight,
   LevelWidth,
   LevelHeight,
+  Header,
   Level,
   Path,
   SpritePositions,
-  SpriteTypes
+  SpriteTypes,
 }
