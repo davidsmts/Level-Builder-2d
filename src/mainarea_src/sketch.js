@@ -248,12 +248,13 @@ function sketch(p) {
     console.log(obj)
     const elements = obj.collection.elements.element
     let header = obj.collection.header.info
+    Header.splice(0, Header.length)
     for (let info of header) {
       Header.push(info);
     }
-    width = parseInt(Header[0].value)
-    height = parseInt(Header[1].value)
-    changeSizeOfWorkspace(width, height)
+    LevelWidth = parseInt(Header[0].value)
+    LevelHeight = parseInt(Header[1].value)
+    changeSizeOfWorkspace(LevelWidth, LevelHeight)
     for (let element of elements) {
       console.log(element.id[0])
       //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
