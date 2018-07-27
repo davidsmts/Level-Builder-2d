@@ -313,9 +313,11 @@ function sketch(p) {
 
   //
   const changeSizeOfWorkspace = (width, height) => {
+    LevelWidth = width
+    LevelHeight = height
     module.exports.LevelWidth = width
     module.exports.LevelHeight = height
-    p.resizeCanvas(width, height)
+    p.resizeCanvas(width, height);
     p.redraw();
   }
 

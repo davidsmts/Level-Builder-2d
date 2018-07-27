@@ -94,6 +94,7 @@ const buildJsonObject = () => {
       yPosition: translatedY.toString(),
       hitbox: block_attributes.hitbox
     }}
+
     obj.elementCollection.element.push(tempObj)
   }
 
@@ -119,7 +120,8 @@ const buildJsonObjectV2 = () => {
       info: Header
     },
     elements: {
-      element: []
+      element: [],
+      opponents: []
     }
   }}
 
