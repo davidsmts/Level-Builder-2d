@@ -207,6 +207,8 @@ function sketch(p) {
 
 
   const interpretLevelBroker = (obj) => {
+    SpritePositions.splice(0, SpritePositions.length)
+    SpriteTypes.splice(0, SpriteTypes.length)
     try {
       let versionStr = obj.collection.header.info[0].value
       console.log(versionStr)
