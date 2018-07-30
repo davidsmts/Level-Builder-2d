@@ -18,14 +18,13 @@ const {ipcRenderer} = require("electron");
 const maps = require('../assets/typeMaps');
 
 const app = new p5(sketch.sketch);
-
-const nameToInt_TypeMap = maps.nameToInt_TypeMap;
-const intToName_TypeMap = maps.intToName_TypeMap;
 const documents = {
   currentPath: "",
   currentDocumentName: "",
   currentFullPath: ""
 }
+const VERSION = 1
+const DefaultHeader = maps.DefaultHeader
 
 //
 const saveXML = () => {
@@ -109,19 +108,16 @@ const buildJsonObjectV2 = () => {
   console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
   const LevelHeight = sketch.LevelHeight
   const LevelWidth = sketch.LevelWidth
-  var Header = sketch.Header
-  console.log(sketch)
-  console.log(Header)
-  Header[0].value = LevelWidth
-  Header[1].value = LevelHeight
-
+  var Header = renewHeader()
   let obj = { collection: {
     header: {
       info: Header
     },
-    elements: {
-      element: [],
-      opponents: []
+    environment: {
+      element: []
+    },
+    interactive: {
+      object: []
     }
   }}
 
@@ -143,12 +139,33 @@ const buildJsonObjectV2 = () => {
       yPosition: translatedY.toString(),
       hitbox: block_attributes.hitbox,
     }
-    obj.collection.elements.element.push(tempObj)
+    if (block_attributes.collection == "environment") {
+      obj.collection.environment.element.push(tempObj)
+    } else if (block_attributes.collection == "interactive") {
+      obj.collection.interactive.object.push(tempObj)
+    }
   }
 
   return obj
 }
 
+
+const renewHeader = () => {
+  const LevelHeight = sketch.LevelHeight
+  const LevelWidth = sketch.LevelWidth
+  var Header = sketch.Header
+  console.log(sketch)
+  if (Header == undefined || Header == null || Header.length < 3) {
+    console.log("undefined")
+    Header = DefaultHeader
+  }
+  console.log(Header)
+
+  Header[0].value = VERSION.toString()
+  Header[1].value = LevelWidth.toString()
+  Header[2].value = LevelHeight.toString()
+  return Header
+}
 
 //
 //

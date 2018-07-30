@@ -27,41 +27,67 @@ const intToName_TypeMap = () => {
   return map
 }
 
+const DefaultHeader = [
+  {
+    name: "version",
+    value: "",
+    description: "Identifier for the xmls structure",
+    type: "int"
+  },{
+    name: "levelwidth",
+    value: "",
+    description: "Obvious",
+    type: "int"
+  },{
+    name: "levelheight",
+    value: "",
+    description: "Obvious",
+    type: "int"
+  }
+]
+
 const block_attributes = {
   normal_block : {
     id: 1,
     hitbox: true,
-    color: "204;102;0"
+    color: "204;102;0",
+    collection: "environment"
   },
   wood_block : {
     id: 2,
     hitbox: true,
-    color: "210;105;30"
+    color: "210;105;30",
+    collection: "environment"
   },
   stone_block : {
     id: 3,
     hitbox: true,
-    color: "100;100;100"
+    color: "100;100;100",
+    collection: "environment"
   },
   player : {
     id: 4,
     hitbox: false,
-    color: "0;200;0"
+    color: "0;200;0",
+    collection: "interactive"
   },
   opponent1 : {
     id: 5,
     hitbox: false,
-    color: "0;0;0"
+    color: "0;0;0",
+    collection: "interactive"
   },
   finish : {
     id: 6,
     hitbox: false,
-    color: "255;0;0"
+    color: "255;0;0",
+    collection: "interactive"
   }
 }
 
 module.exports = {
   nameToInt_TypeMap,
   intToName_TypeMap,
-  block_attributes
+  block_attributes,
+  DefaultHeader
 }
