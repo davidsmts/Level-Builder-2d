@@ -138,6 +138,21 @@ ipcMain.on("clean-all", (event) => {
   cleanAllSpriteArrays();
 })
 
+ipcMain.on("redraw-sketch", (event, width, height) => {
+  console.log("clean-all main");
+  redrawSketch(width, height);
+})
+
+ipcMain.on("changeSize-sketch", (event, width, height) => {
+  console.log("clean-all main");
+  changeSize(width, height);
+})
+
+ipcMain.on("changeZoom-sketch", (event, width, height) => {
+  console.log("clean-all main");
+  changeZoom(width, height);
+})
+
 const currentDocumentPath = (currentDocumentPath) => {
   mainWindow.webContents.send('givingyou-currentDocumentPath', currentDocumentPath);
 }
@@ -153,4 +168,19 @@ const changeSelectedBlockTo = (selectedBlockType) => {
 
 const cleanAllSpriteArrays = () => {
   mainWindow.webContents.send('clean-all');
+}
+
+const redrawSketch = () => {
+  console.log("redraw-sketch main")
+  mainWindow.webContents.send('redraw-sketch');
+}
+
+const changeSize = (width, height) => {
+  console.log("changeSize main")
+  mainWindow.webContents.send('changeSize-sketch', width, height);
+}
+
+const changeZoom = (newZoom) => {
+  console.log("changeZoom main")
+  mainWindow.webContents.send('changeZoom-sketch', newZoom);
 }

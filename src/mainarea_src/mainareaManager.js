@@ -12,23 +12,22 @@ const p5 = require('p5');
 const getXml = require("../file/readfile.js");
 const setXml = require("../file/savefile.js");
 const xml2js = require("xml2js");
+const xml2json = require("xml2json");
 const fs = require('fs');
 const {ipcRenderer} = require("electron");
 const maps = require('../assets/typeMaps');
 
 const app = new p5(sketch.sketch);
-
-const nameToInt_TypeMap = maps.nameToInt_TypeMap;
-const intToName_TypeMap = maps.intToName_TypeMap;
 const documents = {
   currentPath: "",
   currentDocumentName: "",
   currentFullPath: ""
 }
+const VERSION = 1
+const DefaultHeader = maps.DefaultHeader
 
 //
 const saveXML = () => {
-
   const path  = documents.currentPath + '/' + documents.currentDocumentName;
   console.log(path)
   let obj = buildJsonObject()
@@ -46,9 +45,20 @@ const saveXML = () => {
 
 
 //
-const changeZoom = () => {
-  const {dialog} = require('electron').remote
-  console.log(dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}))
+const saveXMLV2 = () => {
+  const path  = documents.currentPath + '/' + documents.currentDocumentName;
+  console.log(path)
+  let obj = buildJsonObjectV2()
+  console.log(obj)
+  const builder = new xml2js.Builder()
+  const xml = xml2json.toXml(obj)
+  console.log(xml)
+  fs.writeFile(path, xml, (err) => {
+    if (err) {
+      console.log("Error saving the xml: " + err)
+    }
+    console.log("successfull save")
+  })
 }
 
 
@@ -61,7 +71,8 @@ const buildJsonObject = () => {
   const LevelWidth = sketch.LevelWidth
 
   let obj = { elementCollection: {
-    element: []
+    element: [],
+    info: []
   }}
 
   let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight, LevelWidth);
@@ -73,18 +84,88 @@ const buildJsonObject = () => {
     //  calculate positions in unity dimension
     const translatedX = spritePositions[i].x / dimension;
     const translatedY = spritePositions[i].y / dimension;
+    let block_attributes = maps.block_attributes[spriteTypes[i]];
     let tempObj = {$:{
       id: i.toString(),
       prefab: 0,
       type: spriteTypes[i],
       xPosition: translatedX.toString(),
-      yPosition: translatedY.toString()
+      yPosition: translatedY.toString(),
+      hitbox: block_attributes.hitbox
     }}
+
     obj.elementCollection.element.push(tempObj)
   }
+
   return obj
 }
 
+
+//  builds a json object of the provided information and turns it into an xml
+const buildJsonObjectV2 = () => {
+  let spritePositions = sketch.SpritePositions
+  let spriteTypes = sketch.SpriteTypes
+  console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
+  const LevelHeight = sketch.LevelHeight
+  const LevelWidth = sketch.LevelWidth
+  var Header = renewHeader()
+  let obj = { collection: {
+    header: {
+      info: Header
+    },
+    environment: {
+      element: []
+    },
+    interactive: {
+      object: []
+    }
+  }}
+
+  let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight, LevelWidth);
+  spritePositions = sortedPositions
+  spriteTypes = sortedTypes
+  const dimension = sketch.CubeWidthAndHeight;
+
+  for (let i = 0; i < spritePositions.length; i++) {
+    //  calculate positions in unity dimension
+    const translatedX = spritePositions[i].x / dimension;
+    const translatedY = spritePositions[i].y / dimension;
+    let block_attributes = maps.block_attributes[spriteTypes[i]];
+    let tempObj = {
+      id: i.toString(),
+      prefab: 0,
+      type: spriteTypes[i],
+      xPosition: translatedX.toString(),
+      yPosition: translatedY.toString(),
+      hitbox: block_attributes.hitbox,
+    }
+    if (block_attributes.collection == "environment") {
+      obj.collection.environment.element.push(tempObj)
+    } else if (block_attributes.collection == "interactive") {
+      obj.collection.interactive.object.push(tempObj)
+    }
+  }
+
+  return obj
+}
+
+
+const renewHeader = () => {
+  const LevelHeight = sketch.LevelHeight
+  const LevelWidth = sketch.LevelWidth
+  var Header = sketch.Header
+  console.log(sketch)
+  if (Header == undefined || Header == null || Header.length < 3) {
+    console.log("undefined")
+    Header = DefaultHeader
+  }
+  console.log(Header)
+
+  Header[0].value = VERSION.toString()
+  Header[1].value = LevelWidth.toString()
+  Header[2].value = LevelHeight.toString()
+  return Header
+}
 
 //
 //
@@ -142,6 +223,24 @@ const changeBlockType = (selectedBlockType) => {
   ipcRenderer.send('change-selected-block', selectedBlockType);
 }
 
+//
+const redrawSketch = () => {
+  console.log("redrawSketch mainareaManager")
+  ipcRenderer.send('redraw-sketch');
+}
+
+//
+const changeSize = (width, height) => {
+  console.log("change Size mainareaManager")
+  ipcRenderer.send('changeSize-sketch', width, height);
+}
+
+//
+const changeZoom = (zoom) => {
+  console.log("change zoom mainareaManager")
+  ipcRenderer.send('changeZoom-sketch', zoom);
+}
+
 ipcRenderer.on('new-doc-sketch', (event, path) => {
   console.log("mainarea creates sketch");
 })
@@ -156,7 +255,9 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
 
 
 module.exports = {
+  changeSize,
   saveXML,
+  saveXMLV2,
   changeBlockType,
   changeZoom,
   clean

@@ -10,13 +10,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron-prebuilt": "^1.4.13"
+    "electron-prebuilt": "^1.4.13",
+    "electron-rebuild": "^1.8.1"
   },
   "dependencies": {
-    "grunt": "^1.0.2",
+    "grunt": "^1.0.3",
     "less": "^3.0.4",
     "p5": "^0.6.1",
     "xml-js": "^1.6.2",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "xml2json": "^0.11.2"
   }
 }

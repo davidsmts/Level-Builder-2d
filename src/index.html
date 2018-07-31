@@ -14,11 +14,12 @@
   </div>
   <div class="levelbuilder">
     <div class="levelbuilder_menu">
-      <div id="changeWidthBut" class="topBut">Change Size</div>
+      <div id="changeSizeBut" class="topBut">Change Size</div>
+      <div id="changeZoomBut" class="topBut">Change Zoom</div>
       <div id="saveBut" class="topBut">Save</div>
       <div id="newBut" class="topBut">New</div>
-      <div id="zoomBut" class="topBut">Zoom</div>
       <div id="cleanBut" class="topBut">Clean</div>
+      <div id="saveButV2" class="topBut">Save V2</div>
     </div>
     <div class="blocktype_menu">
       <div id="normal_block" class="topBut">Default</div>
@@ -27,6 +28,15 @@
       <div id="spawn_block" class="topBut">Spawn</div>
       <div id="finish_block" class="topBut">Finish</div>
       <div id="opponent1_block" class="topBut">Oponent 1</div>
+      <div id="size_container" class="container" style="display:none;">
+        <input id="width_input"/>
+        <input id="height_input"/>
+        <button id="changeSizeConfirm_button">Save</button>
+      </div>
+      <div id="zoom_container" class="container" style="display:none;">
+        <input id="zoom_input"/>
+        <button id="changeZoomConfirm_button">Save</button>
+      </div>
     </div>
     <div id="p5Area"></div>
   </div>

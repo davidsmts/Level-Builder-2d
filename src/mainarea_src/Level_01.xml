@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<elementCollection>
-  <element id="0" prefab="0" type="normal_block" xPosition="0" yPosition="0"/>
-  <element id="1" prefab="0" type="normal_block" xPosition="1" yPosition="0"/>
-  <element id="2" prefab="0" type="normal_block" xPosition="0" yPosition="2"/>
-  <element id="3" prefab="0" type="normal_block" xPosition="0" yPosition="-3"/>
-  <element id="4" prefab="0" type="normal_block" xPosition="-4" yPosition="0"/>
-</elementCollection>

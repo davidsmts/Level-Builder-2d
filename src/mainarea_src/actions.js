@@ -11,9 +11,17 @@ const mainarea = require('./mainareaManager');
 const maps = require('../assets/typeMaps');
 
 
-const widthBut = document.getElementById("changeWidthBut");
-widthBut.addEventListener("click", () => {
-  mainarea.loadXML();
+const changeSizeBut = document.getElementById("changeSizeBut");
+changeSizeBut.addEventListener("click", () => {
+  let changeSizeContainer = document.getElementById("size_container");
+  changeSizeContainer.style.display = "inline-block"
+});
+
+const changeZoomBut = document.getElementById("changeZoomBut");
+changeZoomBut.addEventListener("click", () => {
+  console.log("changeZoom")
+  let changeZoomContainer = document.getElementById("zoom_container");
+  changeZoomContainer.style.display = "inline-block"
 });
 
 const saveBut = document.getElementById("saveBut");
@@ -21,16 +29,15 @@ saveBut.addEventListener("click", () => {
   mainarea.saveXML();
 });
 
-const zoomBut = document.getElementById("zoomBut");
-zoomBut.addEventListener("click", () => {
-  console.log("zoomBut")
-  mainarea.changeZoom();
-});
-
 const cleanBut = document.getElementById("cleanBut");
 cleanBut.addEventListener("click", () => {
   console.log("cleanBut")
   mainarea.clean();
+});
+
+const saveButV2 = document.getElementById("saveButV2");
+saveButV2.addEventListener("click", () => {
+  mainarea.saveXMLV2();
 });
 
 const normal_block = document.getElementById("normal_block");
@@ -67,4 +74,48 @@ const opponent1_block = document.getElementById("opponent1_block");
 opponent1_block.addEventListener("click", () => {
   console.log("changeBlockType")
   mainarea.changeBlockType("opponent1");
+});
+
+//  gets inpout values when confirm button is pressed and forwards them to the main proccess
+const changeSizeConfirm_button = document.getElementById("changeSizeConfirm_button");
+changeSizeConfirm_button.addEventListener("click", () => {
+  console.log("changeSizeConfirm_button")
+  let widthInput = document.getElementById("width_input")
+  let heightInput = document.getElementById("height_input")
+  let widthString = widthInput.value
+  let heightString = heightInput.value
+  let widthInt = 0;
+  let heightInt = 0;
+  try {
+    widthInt = parseInt(widthString)
+    heightInt = parseInt(heightString)
+    console.log("width: " + widthInt + ", height: " + heightInt)
+    mainarea.changeSize(widthInt, heightInt);
+  } catch (err) {
+    console.log("Couldnt parse your input as int : " + err);
+    return;
+  } finally {
+    let changeSizeContainer = document.getElementById("size_container");
+    changeSizeContainer.style.display = "none"
+  }
+});
+
+//  gets inpout values when confirm button is pressed and forwards them to the main proccess
+const changeZoomConfirm_button = document.getElementById("changeZoomConfirm_button");
+changeZoomConfirm_button.addEventListener("click", () => {
+  console.log("changeZoomConfirm_button")
+  let zoomInput = document.getElementById("zoom_input")
+  let zoomString = zoomInput.value
+  let zoomFloat = 0.0;
+  try {
+    zoomFloat = parseFloat(zoomString)
+    console.log("zoom: " + zoomFloat)
+    mainarea.changeZoom(zoomFloat);
+  } catch (err) {
+    console.log("Couldnt parse your input as float : " + err);
+    return;
+  } finally {
+    let changeZoomContainer = document.getElementById("zoom_container");
+    changeZoomContainer.style.display = "none"
+  }
 });
