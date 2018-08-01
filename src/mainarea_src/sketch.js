@@ -12,6 +12,8 @@
 const xml2json = require("xml2json");
 const fs = require('fs');
 const {ipcRenderer} = require("electron");
+const maps = require('../assets/typeMaps');
+const BLOCK_ATTRIBUTES = maps.block_attributes
 
 
 //  global vars that are getting edited by outside aka. public smh
@@ -23,6 +25,7 @@ let LevelHeight = 1000;
 let Path = "";
 let SpritePositions = new Array();
 let SpriteTypes = new Array();
+let Interactives = new Array();
 var Header = new Array();
 
 
@@ -190,6 +193,9 @@ function sketch(p) {
     } else {            //  already contains the block
       if (SpriteTypes[index] == "opponent1") {
         alert("Set the opponents waypoints now")
+        waypointLogic.createdBlocksCounter = 0
+        waypointLogic.preWaypointBlockType = selectedBlockType
+        waypointLogic.opponentsId = index
         selectedBlockType = "waypoint"
       } else {
         removeBlock(index)
@@ -202,31 +208,30 @@ function sketch(p) {
   //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
   const createNewBlock = (blockPos) => {
     console.log("createNewBlock")
-    //  Push Position
-    SpritePositions.push(blockPos);
-    //  Check for blocktype and save the type for the corresponding index
-    switch (selectedBlockType) {
-      case "waypoint":
-      createWaypoint(blockPos)
-      break;
-      case "opponent1":
-      createOpponent(blockPos)
-      break;
-      default:
-      console.log("pushing: " + selectedBlockType)
-      SpriteTypes.push(selectedBlockType);
-      console.log(SpriteTypes.length)
-      console.log(SpritePositions.length)
+    let collection = BLOCK_ATTRIBUTES[selectedBlockType].collection
+    if (collection == "environment") {
+      createEnvironment(blockPos)
+    } else if (collection == "interactive") {
+      createInteractive(blockPos)
+    } else {
+      console.log("unknown collection")
     }
     p.redraw();
   }
 
-  const createOpponent = (position) => {
+  const createInteractive = (position) => {
+    console.log(position)
+    Interactives.Positions.push(position)
+    Interactives.Types.push(selectedBlockType)
 
   }
 
-  const createWaypoint = (position) => {
-
+  const createEnvironment = (position) => {
+    SpritePositions.push(position);
+    console.log("pushing: " + selectedBlockType)
+    SpriteTypes.push(selectedBlockType);
+    console.log(SpriteTypes.length)
+    console.log(SpritePositions.length)
   }
 
   //  this function creates a new block at the given position
@@ -248,12 +253,12 @@ function sketch(p) {
       console.log(versionStr)
       switch (versionStr) {
         case "1":
-          interpretLevelObject(obj);
-          break;
+        interpretLevelObject(obj);
+        break;
         default:
-          console.log("!!CAN'T READ LEVEL VERSION!!")
-          interpretOldLevelObject(obj)
-          break;
+        console.log("!!CAN'T READ LEVEL VERSION!!")
+        interpretOldLevelObject(obj)
+        break;
       }
     } catch (err) {
       console.log("Error: " + err)
@@ -262,168 +267,168 @@ function sketch(p) {
   }
 
 
-//  Loops thorugh the elements of the received xml and pushes the Values into
-//  prepared arrays
-const interpretLevelObject = (obj) => {
-  console.log("interpretLevelObjectV2")
-  console.log(obj)
-  //  Merge different element collections
-  let elements = mergeElements(obj)
-  //  Read Header
-  let header = obj.collection.header.info
-  handleHeader(header)
-  //  Fill Sprites with the parsed elements
-  handleElements(elements)
-  p.redraw()
-}
-
-//
-const interpretOldLevelObject = (obj) => {
-  let elements = obj.elementCollection.element
-  handleElements(elements)
-  p.redraw()
-}
-
-const mergeElements = (obj) => {
-  let environment = obj.collection.environment.element
-  let interactive = obj.collection.interactive.object
-  if (environment == undefined || environment == null) {
-    return interactive
+  //  Loops thorugh the elements of the received xml and pushes the Values into
+  //  prepared arrays
+  const interpretLevelObject = (obj) => {
+    console.log("interpretLevelObjectV2")
+    console.log(obj)
+    //  Merge different element collections
+    let elements = mergeElements(obj)
+    //  Read Header
+    let header = obj.collection.header.info
+    handleHeader(header)
+    //  Fill Sprites with the parsed elements
+    handleElements(elements)
+    p.redraw()
   }
-  if (interactive == undefined || interactive == null) {
-    return environment
+
+  //
+  const interpretOldLevelObject = (obj) => {
+    let elements = obj.elementCollection.element
+    handleElements(elements)
+    p.redraw()
   }
-  let elements = environment.concat(interactive)
-  return elements
-}
 
-const handleHeader = (header) => {
-  Header.splice(0, Header.length)
-  for (let info of header) {
-    Header.push(info);
-  }
-  //  Adjust p5 Workspace to Header Values
-  LevelWidth = parseInt(Header[1].value)
-  LevelHeight = parseInt(Header[2].value)
-  changeSizeOfWorkspace(LevelWidth, LevelHeight)
-}
-
-//
-const handleElements = (elements) => {
-  for (let element of elements) {
-    //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
-    const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
-    const type = element.type
-    SpritePositions.push(vector)
-    SpriteTypes.push(type)
-  }
-  console.log(Header)
-  console.log(SpritePositions)
-  console.log(SpriteTypes)
-}
-
-
-//  this function checks if the given rectangle contains the given point
-//  rectPosition    : p.Vector2d => Position(x and y) of the rectangle
-//  rectPosition    : p.Vector2d => size(width and height) of the rectangle
-//  pointToCheckFor : p.Vector2d => Position of the rectangle
-const rectContains = (rectPosition, rectSize, pointToCheckFor) => {
-  const upperVerticalBound = rectPosition.y
-  const lowerVerticalBound = rectPosition.y + rectSize.y
-  const leftHorizontalBound = rectPosition.x
-  const rightHorizontalBound = rectPosition.x + rectSize.x
-
-  if (pointToCheckFor.x > 0 && pointToCheckFor.y > 0) {
-    return true
-  }
-  return false
-}
-
-
-//  checks if the SpritePositions Array contains the passed point
-const doSpritesContain = (point) => {
-  console.log("doSpritesContain")
-  for (let i = 0; i < SpritePositions.length; i++) {
-    const spritePosition = SpritePositions[i];
-    if (spritePosition.x == point.x && spritePosition.y == point.y) {
-      console.log("y")
-      return {doesContain: true, index: i};
+  const mergeElements = (obj) => {
+    let environment = obj.collection.environment.element
+    let interactive = obj.collection.interactive.object
+    if (environment == undefined || environment == null) {
+      return interactive
     }
+    if (interactive == undefined || interactive == null) {
+      return environment
+    }
+    let elements = environment.concat(interactive)
+    return elements
   }
-  console.log("n")
-  return {doesContain: false, index: 0};
-}
+
+  const handleHeader = (header) => {
+    Header.splice(0, Header.length)
+    for (let info of header) {
+      Header.push(info);
+    }
+    //  Adjust p5 Workspace to Header Values
+    LevelWidth = parseInt(Header[1].value)
+    LevelHeight = parseInt(Header[2].value)
+    changeSizeOfWorkspace(LevelWidth, LevelHeight)
+  }
+
+  //
+  const handleElements = (elements) => {
+    for (let element of elements) {
+      //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
+      const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
+      const type = element.type
+      SpritePositions.push(vector)
+      SpriteTypes.push(type)
+    }
+    console.log(Header)
+    console.log(SpritePositions)
+    console.log(SpriteTypes)
+  }
 
 
-//
-//
-const flushCurrentLevel = () => {
-  SpriteTypes.splice(0,SpriteTypes.length)
-  SpritePositions.splice(0,SpritePositions.length)
-  p.redraw();
-}
+  //  this function checks if the given rectangle contains the given point
+  //  rectPosition    : p.Vector2d => Position(x and y) of the rectangle
+  //  rectPosition    : p.Vector2d => size(width and height) of the rectangle
+  //  pointToCheckFor : p.Vector2d => Position of the rectangle
+  const rectContains = (rectPosition, rectSize, pointToCheckFor) => {
+    const upperVerticalBound = rectPosition.y
+    const lowerVerticalBound = rectPosition.y + rectSize.y
+    const leftHorizontalBound = rectPosition.x
+    const rightHorizontalBound = rectPosition.x + rectSize.x
+
+    if (pointToCheckFor.x > 0 && pointToCheckFor.y > 0) {
+      return true
+    }
+    return false
+  }
 
 
-//
-const changeSizeOfWorkspace = (width, height) => {
-  LevelWidth = width
-  LevelHeight = height
-  module.exports.LevelWidth = width
-  module.exports.LevelHeight = height
-  p.resizeCanvas(width, height);
-  p.redraw();
-}
+  //  checks if the SpritePositions Array contains the passed point
+  const doSpritesContain = (point) => {
+    console.log("doSpritesContain")
+    for (let i = 0; i < SpritePositions.length; i++) {
+      const spritePosition = SpritePositions[i];
+      if (spritePosition.x == point.x && spritePosition.y == point.y) {
+        console.log("y")
+        return {doesContain: true, index: i};
+      }
+    }
+    console.log("n")
+    return {doesContain: false, index: 0};
+  }
 
 
-//
-ipcRenderer.on('new-doc-sketch', (event, arg) => {
-  console.log("sketch: " + arg)
-  Level(arg).then((result) => {
-    console.log(result);
-    interpretLevelBroker(result)
-  }, (err) => {
-    console.log(err)
+  //
+  //
+  const flushCurrentLevel = () => {
+    SpriteTypes.splice(0,SpriteTypes.length)
+    SpritePositions.splice(0,SpritePositions.length)
+    p.redraw();
+  }
+
+
+  //
+  const changeSizeOfWorkspace = (width, height) => {
+    LevelWidth = width
+    LevelHeight = height
+    module.exports.LevelWidth = width
+    module.exports.LevelHeight = height
+    p.resizeCanvas(width, height);
+    p.redraw();
+  }
+
+
+  //
+  ipcRenderer.on('new-doc-sketch', (event, arg) => {
+    console.log("sketch: " + arg)
+    Level(arg).then((result) => {
+      console.log(result);
+      interpretLevelBroker(result)
+    }, (err) => {
+      console.log(err)
+    })
   })
-})
 
 
-//
-ipcRenderer.on('change-selected-block', (event, passedBlockType) => {
-  console.log("change-selected-block: " + passedBlockType)
-  selectedBlockType = passedBlockType
-  console.log("selectedBlockType after: " + selectedBlockType)
-})
+  //
+  ipcRenderer.on('change-selected-block', (event, passedBlockType) => {
+    console.log("change-selected-block: " + passedBlockType)
+    selectedBlockType = passedBlockType
+    console.log("selectedBlockType after: " + selectedBlockType)
+  })
 
 
-//
-ipcRenderer.on('clean-all', (event) => {
-  console.log("clean-all sketch")
-  flushCurrentLevel();
-  console.log(SpritePositions)
-  p.redraw();
-})
+  //
+  ipcRenderer.on('clean-all', (event) => {
+    console.log("clean-all sketch")
+    flushCurrentLevel();
+    console.log(SpritePositions)
+    p.redraw();
+  })
 
 
-//
-ipcRenderer.on('redraw-sketch', (event) => {
-  console.log("redraw-sketch sketch")
-  p.redraw();
-})
+  //
+  ipcRenderer.on('redraw-sketch', (event) => {
+    console.log("redraw-sketch sketch")
+    p.redraw();
+  })
 
 
-//
-ipcRenderer.on('changeSize-sketch', (event, width, height) => {
-  console.log("changeSize sketch")
-  changeSizeOfWorkspace(width, height)
-})
+  //
+  ipcRenderer.on('changeSize-sketch', (event, width, height) => {
+    console.log("changeSize sketch")
+    changeSizeOfWorkspace(width, height)
+  })
 
-//
-ipcRenderer.on('changeZoom-sketch', (event, newZoom) => {
-  console.log("changeZoom sketch")
-  CubeWidthAndHeight = STANDARD_ZOOM * newZoom
-  CurrentZoomLevel = newZoom
-  p.redraw();
-})
+  //
+  ipcRenderer.on('changeZoom-sketch', (event, newZoom) => {
+    console.log("changeZoom sketch")
+    CubeWidthAndHeight = STANDARD_ZOOM * newZoom
+    CurrentZoomLevel = newZoom
+    p.redraw();
+  })
 
 }
 // END OF SKETCH
@@ -441,4 +446,5 @@ module.exports = {
   Path,
   SpritePositions,
   SpriteTypes,
+  Interactives
 }
