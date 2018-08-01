@@ -46,41 +46,64 @@ const DefaultHeader = [
   }
 ]
 
+const DEFAULT_OBJECT = {
+  id: "",
+  prefab: 0,
+  type: "",
+  xPosition: "",
+  yPosition: "",
+  hitbox: false,
+  pointsTo: "",
+}
+
 const block_attributes = {
   normal_block : {
     id: 1,
+    name: "normal_block",
     hitbox: true,
     color: "204;102;0",
     collection: "environment"
   },
   wood_block : {
     id: 2,
+    name: "wood_block",
     hitbox: true,
     color: "210;105;30",
     collection: "environment"
   },
   stone_block : {
     id: 3,
+    name: "stone_block",
     hitbox: true,
     color: "100;100;100",
     collection: "environment"
   },
   player : {
     id: 4,
+    name: "player",
     hitbox: false,
     color: "0;200;0",
     collection: "interactive"
   },
   opponent1 : {
     id: 5,
+    name: "opponent1",
     hitbox: false,
     color: "0;0;0",
     collection: "interactive"
   },
   finish : {
     id: 6,
+    name: "finish",
     hitbox: false,
     color: "255;0;0",
+    collection: "interactive"
+  },
+  waypoint : {
+    id: 7,
+    name: "waypoint",
+    hitbox: false,
+    color: "126, 51, 212",
     collection: "interactive"
   }
 }

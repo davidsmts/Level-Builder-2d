@@ -57,15 +57,23 @@ function sketch(p) {
   let PLAYER_COLOR;
   let FINISH_COLOR;
   let OPPONENT1_COLOR;
+  let WAYPOINT_COLOR;
 
   //  constants
   const PARENT_ID = "p5Area";
   const CANVAS_CLASSNAME = "sketch";
 
   //  generel global vars
-  let idCounter = 0;
+  let opponentIdCounter = 0;
   let canvas;
   let selectedBlockType = "normal_block";
+  let waypointLogic = {
+    createdBlocksCounter: 0,
+    preWaypointBlockType: "",
+    opponentsId: "",
+    waypoints: new Object(),
+    opponents: new Object()
+  }
 
   p.preload = () => {
     //initialising constants
@@ -75,6 +83,7 @@ function sketch(p) {
     PLAYER_COLOR = p.color(0, 200, 0);
     FINISH_COLOR = p.color(255, 0, 0);
     OPPONENT1_COLOR = p.color(0, 0, 0);
+    WAYPOINT_COLOR = p.color(126, 51, 212);
   }
 
   p.setup = () => {
@@ -153,6 +162,9 @@ function sketch(p) {
       case "OPPONENT1":
       return OPPONENT1_COLOR;
       break;
+      case "waypoint":
+      return WAYPOINT_COLOR;
+      break;
       default:
       console.log("!!!!!DEFAULT COLOR STATE!!!!!");
       return p.color(0,0,0);
@@ -176,7 +188,12 @@ function sketch(p) {
       console.log(selectedBlockType)
       //showContextMenu(point);
     } else {            //  already contains the block
-      removeBlock(index)
+      if (SpriteTypes[index] == "opponent1") {
+        alert("Set the opponents waypoints now")
+        selectedBlockType = "waypoint"
+      } else {
+        removeBlock(index)
+      }
     }
   }
 
@@ -188,13 +205,29 @@ function sketch(p) {
     //  Push Position
     SpritePositions.push(blockPos);
     //  Check for blocktype and save the type for the corresponding index
-    console.log("pushing: " + selectedBlockType)
-    SpriteTypes.push(selectedBlockType);
-    console.log(SpriteTypes.length)
-    console.log(SpritePositions.length)
+    switch (selectedBlockType) {
+      case "waypoint":
+      createWaypoint(blockPos)
+      break;
+      case "opponent1":
+      createOpponent(blockPos)
+      break;
+      default:
+      console.log("pushing: " + selectedBlockType)
+      SpriteTypes.push(selectedBlockType);
+      console.log(SpriteTypes.length)
+      console.log(SpritePositions.length)
+    }
     p.redraw();
   }
 
+  const createOpponent = (position) => {
+
+  }
+
+  const createWaypoint = (position) => {
+
+  }
 
   //  this function creates a new block at the given position
   //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
@@ -204,6 +237,7 @@ function sketch(p) {
     SpriteTypes.splice(index, 1)
     p.redraw();
   }
+
 
 
   const interpretLevelBroker = (obj) => {
