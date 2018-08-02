@@ -23,7 +23,7 @@ const documents = {
   currentDocumentName: "",
   currentFullPath: ""
 }
-const VERSION = 1
+const VERSION = 2
 
 //
 const saveXML = () => {
@@ -104,7 +104,7 @@ const buildJsonObject = () => {
 const buildJsonObjectV2 = () => {
   let spritePositions = sketch.SpritePositions
   let spriteTypes = sketch.SpriteTypes
-  let Interactivess = sketch.Interactives
+  let Interactives = sketch.Interactives
   console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
   const LevelHeight = sketch.LevelHeight
   const LevelWidth = sketch.LevelWidth
@@ -147,20 +147,21 @@ const buildJsonObjectV2 = () => {
   }
 
   //  Fill Interactives
-  for (let Interactive of Interactives) {
-    let block_attributes = maps.block_attributes[Interactive.Type];
+  for (let i = 0; i < Interactives.length; i++) {
+    let Interactive = Interactives[i]
+    let block_attributes = maps.block_attributes[Interactive.type];
     //  calculate positions in unified dimension
-    const translatedX = Interactive.Position.x / dimension;
-    const translatedY = Interactive.Position.y / dimension;
+    const translatedX = Interactive.position.x / dimension;
+    const translatedY = Interactive.position.y / dimension;
     //  Prepare a temporary object
     let tempObj = maps.DEFAULT_OBJECT;
     tempObj.id = i.toString();
     tempObj.prefab = 0;
-    tempObj.type = Interactive.Type;
+    tempObj.type = Interactive.type;
     tempObj.xPosition = translatedX.toString();
     tempObj.yPosition = translatedY.toString();
     tempObj.hitbox = block_attributes.hitbox;
-    tempObj.additionals = Interactive.Additionals;
+    tempObj.additionals = Interactive.additionals;
     //  Add tempObj to environment container
     obj.collection.interactive.object.push(tempObj)
   }

@@ -114,10 +114,17 @@ const DEFAULT_ADDITIONAL = {
   poinstToType: ""
 }
 
+const DEFAULT_LOCAL_INTERACTIVE = {
+  position: 0,
+  type: "",
+  additionals: new Array()
+}
+
 module.exports = {
 
   block_attributes,
   DefaultHeader,
   DEFAULT_ELEMENT,
-  DEFAULT_OBJECT
+  DEFAULT_OBJECT,
+  DEFAULT_LOCAL_INTERACTIVE
 }

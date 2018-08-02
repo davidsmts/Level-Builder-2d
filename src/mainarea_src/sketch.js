@@ -128,7 +128,7 @@ function sketch(p) {
     //  Draw Interactives
     for (let interactive of Interactives) {
       p.push();
-      let colorForBlock = currentColor(interactive.Type);
+      let colorForBlock = currentColor(interactive.type);
       p.fill(colorForBlock);
       //  renderPosition is the position at which the cube is to be displayed in the Builder
       //  because the position is 50:1 while we actually need it to be zoom:1
@@ -136,7 +136,7 @@ function sketch(p) {
       p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
       if (interactive.additionals.length >= 1) {
         for (let addtional of interactive.additionals) {
-          let colorForBlock = currentColor(additional.Type);
+          let colorForBlock = currentColor(additional.type);
           p.fill(colorForBlock);
           let renderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
           p.ellipse(renderPosition.x, renderPosition.y, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
@@ -214,8 +214,12 @@ function sketch(p) {
   //  Creates a new Interactive at the given position
   const createInteractive = (position) => {
     console.log(position)
-    Interactives.Positions.push(position)
-    Interactives.Types.push(selectedBlockType)
+    let tempInteractive = maps.DEFAULT_LOCAL_INTERACTIVE
+    console.log(tempInteractive)
+    tempInteractive.position = position
+    tempInteractive.type = selectedBlockType
+    tempInteractive.additionals = new Array();
+    Interactives.push(tempInteractive)
   }
 
   //  Creates new environment element at given position with currently selectedBlockType
@@ -238,8 +242,8 @@ function sketch(p) {
     additional.xPosition = position.x
     additional.yPosition = position.y
     additional.pointsTo = id
-    additional.pointsToType = Interactives[id].Type
-    Interactives[id].Additionals.push(additional)
+    additional.pointsToType = Interactives[id].type
+    Interactives[id].additionals.push(additional)
     waypointLogic.createdBlocksCounter++;
     if (waypointLogic.createdBlocksCounter >= 2) {
       selectedBlockType = waypointLogic.preWaypointBlockType
@@ -252,7 +256,7 @@ function sketch(p) {
   //
   const handleExistingObjectClick = (position, index) => {
     console.log("handleExistingObjectClick")
-    let typeAttributes = maps.block_attributes[Interactives[i].Type]
+    let typeAttributes = maps.block_attributes[Interactives[i].type]
     if (typeAttributes.hasAdditionals) {
       removeWaypointsFor(index)
       waypointLogic.createdBlocksCounter = 0
@@ -291,7 +295,7 @@ function sketch(p) {
   //
   const removeWaypointsFor = (index) => {
     console.log("removeWaypointsFor")
-    let additionals = Interactives[index].Additionals
+    let additionals = Interactives[index].additionals
     for (let i = 0; i < additionals.length; i++) {
       if (additionals[i].type == "waypoint") {
         additionals.splice(i, 1);
@@ -310,12 +314,15 @@ function sketch(p) {
       console.log(versionStr)
       switch (versionStr) {
         case "1":
-        interpretLevelObject(obj);
-        break;
+          interpretLevelObject(obj);
+          break;
+        case "2":
+          interpretLevelObjectV2(obj);
+          break;
         default:
-        console.log("!!CAN'T READ LEVEL VERSION!!")
-        interpretOldLevelObject(obj)
-        break;
+          console.log("!!CAN'T READ LEVEL VERSION!!")
+          interpretOldLevelObject(obj)
+          break;
       }
     } catch (err) {
       console.log("Error: " + err)
@@ -336,6 +343,20 @@ function sketch(p) {
     handleHeader(header)
     //  Fill Sprites with the parsed elements
     handleElements(elements)
+    p.redraw()
+  }
+
+  //  Version with Additionals
+  const interpretLevelObjectV2 = (obj) => {
+    console.log("interpretLevelObjectV2")
+    console.log(obj)
+    //  Read Header
+    let header = obj.collection.header.info
+    handleHeader(header)
+    //  Fill Sprites with the parsed elements
+    handleElements(obj.collection.environment.element)
+    //  Fill Interactives with the parsed elements
+    handleInteractives(obj.collection.interactive.object)
     p.redraw()
   }
 
@@ -382,6 +403,19 @@ function sketch(p) {
     console.log(Header)
     console.log(SpritePositions)
     console.log(SpriteTypes)
+  }
+
+  //
+  const handleInteractives = (interactives) => {
+    for (let interactive of interactives) {
+      const vector = p.createVector(interactive.xPosition*CubeWidthAndHeight, interactive.yPosition*CubeWidthAndHeight)
+      const type = interactive.type
+      let tempInteractive = maps.DEFAULT_LOCAL_INTERACTIVE
+      tempInteractive.position = vector
+      tempInteractive.type = type
+      tempInteractive.additionals = interactive.addtionals
+      Interactives.push(tempInteractive)
+    }
   }
 
 
