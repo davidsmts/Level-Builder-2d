@@ -25,7 +25,11 @@ let LevelHeight = 1000;
 let Path = "";
 let SpritePositions = new Array();
 let SpriteTypes = new Array();
-let Interactives = new Array();
+let Interactives = {
+  Positions: [],
+  Types: [],
+  Additionals: []
+};
 var Header = new Array();
 
 

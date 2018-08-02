@@ -24,7 +24,6 @@ const documents = {
   currentFullPath: ""
 }
 const VERSION = 1
-const DefaultHeader = maps.DefaultHeader
 
 //
 const saveXML = () => {
@@ -105,9 +104,13 @@ const buildJsonObject = () => {
 const buildJsonObjectV2 = () => {
   let spritePositions = sketch.SpritePositions
   let spriteTypes = sketch.SpriteTypes
+  let Interactivess = sketch.Interactives
   console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
   const LevelHeight = sketch.LevelHeight
   const LevelWidth = sketch.LevelWidth
+  const dimension = sketch.CubeWidthAndHeight;
+
+  //  Fill Header
   var Header = renewHeader()
   let obj = { collection: {
     header: {
@@ -121,32 +124,54 @@ const buildJsonObjectV2 = () => {
     }
   }}
 
+  //  Prepare Environment Elements
   let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight, LevelWidth);
   spritePositions = sortedPositions
   spriteTypes = sortedTypes
-  const dimension = sketch.CubeWidthAndHeight;
-
+  //  Fill Environment Elements
   for (let i = 0; i < spritePositions.length; i++) {
-    //  calculate positions in unity dimension
+    let block_attributes = maps.block_attributes[spriteTypes[i]];
+    //  calculate positions in unified dimension
     const translatedX = spritePositions[i].x / dimension;
     const translatedY = spritePositions[i].y / dimension;
-    let block_attributes = maps.block_attributes[spriteTypes[i]];
-    let tempObj = {
-      id: i.toString(),
-      prefab: 0,
-      type: spriteTypes[i],
-      xPosition: translatedX.toString(),
-      yPosition: translatedY.toString(),
-      hitbox: block_attributes.hitbox,
-    }
-    if (block_attributes.collection == "environment") {
-      obj.collection.environment.element.push(tempObj)
-    } else if (block_attributes.collection == "interactive") {
-      obj.collection.interactive.object.push(tempObj)
-    }
+    //  Prepare a temporary object
+    let tempObj = maps.DEFAULT_ELEMENT;
+    tempObj.id = i.toString();
+    tempObj.prefab = 0;
+    tempObj.type = spriteTypes[i];
+    tempObj.xPosition = translatedX.toString();
+    tempObj.yPosition = translatedY.toString();
+    tempObj.hitbox = block_attributes.hitbox;
+    //  Add tempObj to environment container
+    obj.collection.environment.element.push(tempObj)
+  }
+
+  //  Fill Interactives
+  for (let i = 0; i < Interactives.Positions.length; i++) {
+    let block_attributes = maps.block_attributes[Interactives.Types[i]];
+    //  calculate positions in unified dimension
+    const translatedX = Interactives.Positions[i].x / dimension;
+    const translatedY = Interactives.Positions[i].y / dimension;
+    //  Prepare a temporary object
+    let tempObj = maps.DEFAULT_OBJECT;
+    tempObj.id = i.toString();
+    tempObj.prefab = 0;
+    tempObj.type = Interactives.Types[i];
+    tempObj.xPosition = translatedX.toString();
+    tempObj.yPosition = translatedY.toString();
+    tempObj.hitbox = block_attributes.hitbox;
+    let additionals = InteractivesAdditionals(Interactives);
+    tempObj.additionals = addtionals
+    //  Add tempObj to environment container
+    obj.collection.interactive.object.push(tempObj)
   }
 
   return obj
+}
+
+
+const InteractivesAdditionals = (Interactives) => {
+  
 }
 
 
