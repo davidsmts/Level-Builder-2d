@@ -124,6 +124,26 @@ function sketch(p) {
       p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
       p.pop();
     }
+
+    //  Draw Interactives
+    for (let interactive of Interactives) {
+      p.push();
+      let colorForBlock = currentColor(interactive.Type);
+      p.fill(colorForBlock);
+      //  renderPosition is the position at which the cube is to be displayed in the Builder
+      //  because the position is 50:1 while we actually need it to be zoom:1
+      let renderPosition = p.createVector(interactive.position.x * CurrentZoomLevel, interactive.position.y * CurrentZoomLevel)
+      p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
+      if (interactive.additionals.length >= 1) {
+        for (let addtional of interactive.additionals) {
+          let colorForBlock = currentColor(additional.Type);
+          p.fill(colorForBlock);
+          let renderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
+          p.ellipse(renderPosition.x, renderPosition.y, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
+        }
+      }
+      p.pop();
+    }
   }
 
   //  Called when you press anything on the Electron Window what means that everything outside

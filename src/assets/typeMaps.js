@@ -115,8 +115,7 @@ const DEFAULT_ADDITIONAL = {
 }
 
 module.exports = {
-  nameToInt_TypeMap,
-  intToName_TypeMap,
+
   block_attributes,
   DefaultHeader,
   DEFAULT_ELEMENT,
