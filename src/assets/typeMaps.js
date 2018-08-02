@@ -72,28 +72,36 @@ const block_attributes = {
     name: "player",
     hitbox: false,
     color: "0;200;0",
-    collection: "interactive"
+    collection: "interactive",
+    hasAdditionals: false,
+    isAdditional: false
   },
   opponent1 : {
     id: 5,
     name: "opponent1",
     hitbox: false,
     color: "0;0;0",
-    collection: "interactive"
+    collection: "interactive",
+    hasAdditionals: true,
+    isAdditional: false
   },
   finish : {
     id: 6,
     name: "finish",
     hitbox: false,
     color: "255;0;0",
-    collection: "interactive"
+    collection: "interactive",
+    hasAdditionals: false,
+    isAdditional: false
   },
   waypoint : {
     id: 7,
     name: "waypoint",
     hitbox: false,
     color: "126, 51, 212",
-    collection: "interactive"
+    collection: "interactive",
+    hasAdditionals: false,
+    isAdditional: true
   }
 }
 

@@ -73,9 +73,7 @@ function sketch(p) {
   let waypointLogic = {
     createdBlocksCounter: 0,
     preWaypointBlockType: "",
-    opponentsId: "",
-    waypoints: new Object(),
-    opponents: new Object()
+    opponentsId: 0
   }
 
   p.preload = () => {
@@ -154,6 +152,11 @@ function sketch(p) {
     const y = renderedPoint.y - toRoundY;
     const blockPosition = p.createVector(x,y);
     let {doesContain, index, collection} = doesPointExist(blockPosition)
+    //  Waypoints must be set over other blocks as well
+    if (selectedBlockType == "waypoint") {
+      createNewBlock(blockPosition)
+      return;
+    }
 
     if (!doesContain) { //  doesnt already contain the block
       createNewBlock(blockPosition)
@@ -161,7 +164,7 @@ function sketch(p) {
       if (collection = "Object") {
         handleExistingObjectClick(blockPosition, index)
       } else if (collection = "Element") {
-        removeBlock(index);
+        removeElement(index);
       } else {
         console.log("unknown collection returned in handleBlock");
       }
@@ -173,11 +176,15 @@ function sketch(p) {
   //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
   const createNewBlock = (blockPos) => {
     console.log("createNewBlock")
-    let collection = BLOCK_ATTRIBUTES[selectedBlockType].collection
-    if (collection == "environment") {
+    let attributes = BLOCK_ATTRIBUTES[selectedBlockType]
+    if (attributes.collection == "environment") {
       createEnvironment(blockPos)
-    } else if (collection == "interactive") {
-      createInteractive(blockPos)
+    } else if (attributes.collection == "interactive") {
+      if (attributes.isAdditional) {
+        createAdditional(blockPos)
+      } else {
+        createInteractive(blockPos)
+      }
     } else {
       console.log("unknown collection")
     }
@@ -189,7 +196,6 @@ function sketch(p) {
     console.log(position)
     Interactives.Positions.push(position)
     Interactives.Types.push(selectedBlockType)
-
   }
 
   //  Creates new environment element at given position with currently selectedBlockType
@@ -201,23 +207,81 @@ function sketch(p) {
     console.log(SpritePositions.length)
   }
 
+  //  Creates a new Additional for an Interactive, that is saved in the waypointLogic,
+  //  at the given position
+  //
+  const createAdditional = (position) => {
+    console.log(position)
+    let id = waypointLogic.opponentsId
+    let additional = maps.DEFAULT_ADDITIONAL
+    additional.type = selectedBlockType
+    additional.xPosition = position.x
+    additional.yPosition = position.y
+    additional.pointsTo = id
+    additional.pointsToType = Interactives[id].Type
+    Interactives[id].Additionals.push(additional)
+    waypointLogic.createdBlocksCounter++;
+    if (waypointLogic.createdBlocksCounter >= 2) {
+      selectedBlockType = waypointLogic.preWaypointBlockType
+      waypointLogic.createdBlocksCounter = 0
+    }
+  }
+
   //  This function is called to decide wether or not to add additionals when
   //  the object is clicked.
   //
   const handleExistingObjectClick = (position, index) => {
     console.log("handleExistingObjectClick")
+    let typeAttributes = maps.block_attributes[Interactives[i].Type]
+    if (typeAttributes.hasAdditionals) {
+      removeWaypointsFor(index)
+      waypointLogic.createdBlocksCounter = 0
+      waypointLogic.preWaypointBlockType = selectedBlockType
+      waypointLogic.opponentsId = index
+      selectedBlockType = "waypoint"
+    } else {
+      removeObject(index)
+    }
   }
 
-  //  this function creates a new block at the given position
-  //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
-  const removeBlock = (index) => {
-    console.log("removeBlock")
+  //
+  //
+  const removeElement = (index) => {
+    console.log("removeElement")
     SpritePositions.splice(index, 1)
     SpriteTypes.splice(index, 1)
     p.redraw();
   }
 
+  //
+  //
+  const removeObject = (index) => {
+    console.log("removeObject")
+    Interactives.splice(index, 1)
+    p.redraw();
+  }
 
+  //  Function removes Waypoints from the Additionals array of the Interactive Object
+  //  at the given index. It does so by looping over the array until it finds an additional
+  //  with the type: waypoint. The iterator variable "i" has to be decremented by one in
+  //  that case because otherwise you would either leave out an element because the
+  //  next element is now at the current "i" value which is going to be inceremented by one
+  //  in the next iteration, or you could get an error because you ran out of the array if the
+  //  deleted element was the last one.
+  //
+  const removeWaypointsFor = (index) => {
+    console.log("removeWaypointsFor")
+    let additionals = Interactives[index].Additionals
+    for (let i = 0; i < additionals.length; i++) {
+      if (additionals[i].type == "waypoint") {
+        additionals.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
+  //
+  //
   const interpretLevelBroker = (obj) => {
     SpritePositions.splice(0, SpritePositions.length)
     SpriteTypes.splice(0, SpriteTypes.length)
