@@ -144,7 +144,6 @@ function sketch(p) {
           }
         }
       }
-
       p.pop();
     }
   }
@@ -425,7 +424,7 @@ function sketch(p) {
         let tempInteractive = Object.assign({}, maps.DEFAULT_LOCAL_INTERACTIVE)
         tempInteractive.position = vector
         tempInteractive.type = type
-        tempInteractive.additionals = interactive.addtionals
+        tempInteractive.additionals = interactive.additionals
         Interactives.push(tempInteractive)
       }
     } else {
@@ -434,7 +433,7 @@ function sketch(p) {
       let tempInteractive = Object.assign({}, maps.DEFAULT_LOCAL_INTERACTIVE)
       tempInteractive.position = vector
       tempInteractive.type = type
-      tempInteractive.additionals = interactives.addtionals
+      tempInteractive.additionals = interactives.additionals
       Interactives.push(tempInteractive)
     }
     p.redraw()
