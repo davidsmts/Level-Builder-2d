@@ -25,11 +25,7 @@ let LevelHeight = 1000;
 let Path = "";
 let SpritePositions = new Array();
 let SpriteTypes = new Array();
-let Interactives = {
-  Positions: [],
-  Types: [],
-  Additionals: []
-};
+let Interactives = new Array();
 var Header = new Array();
 
 
@@ -149,37 +145,6 @@ function sketch(p) {
   }
 
 
-  const currentColor = (type) => {
-    switch (type) {
-      case "normal_block":
-      return NORMAL_COLOR;
-      break;
-      case "wood_block":
-      return WOOD_COLOR;
-      break;
-      case "stone_block":
-      return STONE_COLOR;
-      break;
-      case "player":
-      return PLAYER_COLOR;
-      break;
-      case "finish":
-      return FINISH_COLOR;
-      break;
-      case "OPPONENT1":
-      return OPPONENT1_COLOR;
-      break;
-      case "waypoint":
-      return WAYPOINT_COLOR;
-      break;
-      default:
-      console.log("!!!!!DEFAULT COLOR STATE!!!!!");
-      return p.color(0,0,0);
-      break;
-    }
-  }
-
-
   //
   const handleBlock = (point) => {
     const renderedPoint = p.createVector(point.x * CurrentZoomLevel, point.y * CurrentZoomLevel)
@@ -188,21 +153,17 @@ function sketch(p) {
     const x = renderedPoint.x - toRoundX;
     const y = renderedPoint.y - toRoundY;
     const blockPosition = p.createVector(x,y);
-    let {doesContain, index} = doSpritesContain(blockPosition)
+    let {doesContain, index, collection} = doesPointExist(blockPosition)
 
     if (!doesContain) { //  doesnt already contain the block
       createNewBlock(blockPosition)
-      console.log(selectedBlockType)
-      //showContextMenu(point);
     } else {            //  already contains the block
-      if (SpriteTypes[index] == "opponent1") {
-        alert("Set the opponents waypoints now")
-        waypointLogic.createdBlocksCounter = 0
-        waypointLogic.preWaypointBlockType = selectedBlockType
-        waypointLogic.opponentsId = index
-        selectedBlockType = "waypoint"
+      if (collection = "Object") {
+        handleExistingObjectClick(blockPosition, index)
+      } else if (collection = "Element") {
+        removeBlock(index);
       } else {
-        removeBlock(index)
+        console.log("unknown collection returned in handleBlock");
       }
     }
   }
@@ -223,6 +184,7 @@ function sketch(p) {
     p.redraw();
   }
 
+  //  Creates a new Interactive at the given position
   const createInteractive = (position) => {
     console.log(position)
     Interactives.Positions.push(position)
@@ -230,12 +192,20 @@ function sketch(p) {
 
   }
 
+  //  Creates new environment element at given position with currently selectedBlockType
   const createEnvironment = (position) => {
     SpritePositions.push(position);
     console.log("pushing: " + selectedBlockType)
     SpriteTypes.push(selectedBlockType);
     console.log(SpriteTypes.length)
     console.log(SpritePositions.length)
+  }
+
+  //  This function is called to decide wether or not to add additionals when
+  //  the object is clicked.
+  //
+  const handleExistingObjectClick = (position, index) => {
+    console.log("handleExistingObjectClick")
   }
 
   //  this function creates a new block at the given position
@@ -246,7 +216,6 @@ function sketch(p) {
     SpriteTypes.splice(index, 1)
     p.redraw();
   }
-
 
 
   const interpretLevelBroker = (obj) => {
@@ -349,26 +318,35 @@ function sketch(p) {
   }
 
 
-  //  checks if the SpritePositions Array contains the passed point
-  const doSpritesContain = (point) => {
-    console.log("doSpritesContain")
+  //  checks if any Element Container contains the passed point
+  const doesPointExist = (point) => {
+    console.log("doesPointExist")
     for (let i = 0; i < SpritePositions.length; i++) {
       const spritePosition = SpritePositions[i];
       if (spritePosition.x == point.x && spritePosition.y == point.y) {
         console.log("y")
-        return {doesContain: true, index: i};
+        return {doesContain: true, index: i, container: "Elements"};
       }
     }
-    console.log("n")
-    return {doesContain: false, index: 0};
+    console.log("not in sprites")
+    for (let i = 0; i < Interactives.length; i++) {
+      const position = Interactives[i].position;
+      if (position.x == point.x && position.y == point.y) {
+        console.log("y")
+        return {doesContain: true, index: i, container: "Objects"};
+      }
+    }
+    console.log("not in interactives")
+    return {doesContain: false, index: 0, container: "none"};
   }
 
 
   //
   //
   const flushCurrentLevel = () => {
-    SpriteTypes.splice(0,SpriteTypes.length)
-    SpritePositions.splice(0,SpritePositions.length)
+    SpriteTypes.splice(0, SpriteTypes.length)
+    SpritePositions.splice(0, SpritePositions.length)
+    Interactives.splice(0, Interactives.length)
     p.redraw();
   }
 
@@ -433,6 +411,36 @@ function sketch(p) {
     CurrentZoomLevel = newZoom
     p.redraw();
   })
+
+  const currentColor = (type) => {
+    switch (type) {
+      case "normal_block":
+      return NORMAL_COLOR;
+      break;
+      case "wood_block":
+      return WOOD_COLOR;
+      break;
+      case "stone_block":
+      return STONE_COLOR;
+      break;
+      case "player":
+      return PLAYER_COLOR;
+      break;
+      case "finish":
+      return FINISH_COLOR;
+      break;
+      case "OPPONENT1":
+      return OPPONENT1_COLOR;
+      break;
+      case "waypoint":
+      return WAYPOINT_COLOR;
+      break;
+      default:
+      console.log("!!!!!DEFAULT COLOR STATE!!!!!");
+      return p.color(0,0,0);
+      break;
+    }
+  }
 
 }
 // END OF SKETCH

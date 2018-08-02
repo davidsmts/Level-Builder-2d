@@ -147,31 +147,25 @@ const buildJsonObjectV2 = () => {
   }
 
   //  Fill Interactives
-  for (let i = 0; i < Interactives.Positions.length; i++) {
-    let block_attributes = maps.block_attributes[Interactives.Types[i]];
+  for (let Interactive of Interactives) {
+    let block_attributes = maps.block_attributes[Interactive.Type];
     //  calculate positions in unified dimension
-    const translatedX = Interactives.Positions[i].x / dimension;
-    const translatedY = Interactives.Positions[i].y / dimension;
+    const translatedX = Interactive.Position.x / dimension;
+    const translatedY = Interactive.Position.y / dimension;
     //  Prepare a temporary object
     let tempObj = maps.DEFAULT_OBJECT;
     tempObj.id = i.toString();
     tempObj.prefab = 0;
-    tempObj.type = Interactives.Types[i];
+    tempObj.type = Interactive.Type;
     tempObj.xPosition = translatedX.toString();
     tempObj.yPosition = translatedY.toString();
     tempObj.hitbox = block_attributes.hitbox;
-    let additionals = InteractivesAdditionals(Interactives);
-    tempObj.additionals = addtionals
+    tempObj.additionals = Interactive.Additionals;
     //  Add tempObj to environment container
     obj.collection.interactive.object.push(tempObj)
   }
 
   return obj
-}
-
-
-const InteractivesAdditionals = (Interactives) => {
-  
 }
 
 
