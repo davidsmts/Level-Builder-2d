@@ -134,13 +134,13 @@ function sketch(p) {
       //  because the position is 50:1 while we actually need it to be zoom:1
       let renderPosition = p.createVector(interactive.position.x * CurrentZoomLevel, interactive.position.y * CurrentZoomLevel)
       p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
-      if (interactive.addtionals != undefined && interactive.addtionals != null && interactive.addtionals instanceof Array) {
+      if (interactive.additionals != undefined && interactive.additionals != null && interactive.additionals instanceof Array) {
         if (interactive.additionals.length >= 1) {
-          for (let addtional of interactive.additionals) {
+          for (let additional of interactive.additionals) {
             let colorForBlock = currentColor(additional.type);
             p.fill(colorForBlock);
-            let renderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
-            p.ellipse(renderPosition.x, renderPosition.y, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
+            let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
+            p.ellipse(additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
           }
         }
       }
@@ -192,6 +192,7 @@ function sketch(p) {
         console.log("unknown collection returned in handleBlock");
       }
     }
+    p.redraw();
   }
 
 
@@ -246,7 +247,9 @@ function sketch(p) {
     additional.yPosition = position.y
     additional.pointsTo = id
     additional.pointsToType = Interactives[id].type
+    console.log(additional)
     Interactives[id].additionals.push(additional)
+    console.log(Interactives)
     waypointLogic.createdBlocksCounter++;
     if (waypointLogic.createdBlocksCounter >= 2) {
       selectedBlockType = waypointLogic.preWaypointBlockType
@@ -269,6 +272,7 @@ function sketch(p) {
     } else {
       removeObject(index)
     }
+    p.redraw();
   }
 
   //
@@ -285,8 +289,8 @@ function sketch(p) {
   const removeObject = (index) => {
     console.log("removeObject")
     Interactives.splice(index, 1)
-    p.redraw();
   }
+
 
   //  Function removes Waypoints from the Additionals array of the Interactive Object
   //  at the given index. It does so by looping over the array until it finds an additional
@@ -299,6 +303,7 @@ function sketch(p) {
   const removeWaypointsFor = (index) => {
     console.log("removeWaypointsFor")
     let additionals = Interactives[index].additionals
+    console.log(Interactives[index])
     for (let i = 0; i < additionals.length; i++) {
       if (additionals[i].type == "waypoint") {
         additionals.splice(i, 1);
