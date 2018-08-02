@@ -134,14 +134,17 @@ function sketch(p) {
       //  because the position is 50:1 while we actually need it to be zoom:1
       let renderPosition = p.createVector(interactive.position.x * CurrentZoomLevel, interactive.position.y * CurrentZoomLevel)
       p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
-      if (interactive.additionals.length >= 1) {
-        for (let addtional of interactive.additionals) {
-          let colorForBlock = currentColor(additional.type);
-          p.fill(colorForBlock);
-          let renderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
-          p.ellipse(renderPosition.x, renderPosition.y, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
+      if (interactive.addtionals != undefined && interactive.addtionals != null && interactive.addtionals instanceof Array) {
+        if (interactive.additionals.length >= 1) {
+          for (let addtional of interactive.additionals) {
+            let colorForBlock = currentColor(additional.type);
+            p.fill(colorForBlock);
+            let renderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
+            p.ellipse(renderPosition.x, renderPosition.y, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
+          }
         }
       }
+
       p.pop();
     }
   }
@@ -196,7 +199,7 @@ function sketch(p) {
   //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
   const createNewBlock = (blockPos) => {
     console.log("createNewBlock")
-    let attributes = BLOCK_ATTRIBUTES[selectedBlockType]
+    let attributes = Object.assign({}, BLOCK_ATTRIBUTES[selectedBlockType])
     if (attributes.collection == "environment") {
       createEnvironment(blockPos)
     } else if (attributes.collection == "interactive") {
@@ -214,7 +217,7 @@ function sketch(p) {
   //  Creates a new Interactive at the given position
   const createInteractive = (position) => {
     console.log(position)
-    let tempInteractive = maps.DEFAULT_LOCAL_INTERACTIVE
+    let tempInteractive = Object.assign({}, maps.DEFAULT_LOCAL_INTERACTIVE)
     console.log(tempInteractive)
     tempInteractive.position = position
     tempInteractive.type = selectedBlockType
@@ -237,7 +240,7 @@ function sketch(p) {
   const createAdditional = (position) => {
     console.log(position)
     let id = waypointLogic.opponentsId
-    let additional = maps.DEFAULT_ADDITIONAL
+    let additional = Object.assign({}, maps.DEFAULT_ADDITIONAL)
     additional.type = selectedBlockType
     additional.xPosition = position.x
     additional.yPosition = position.y
@@ -256,7 +259,7 @@ function sketch(p) {
   //
   const handleExistingObjectClick = (position, index) => {
     console.log("handleExistingObjectClick")
-    let typeAttributes = maps.block_attributes[Interactives[i].type]
+    let typeAttributes = maps.block_attributes[Interactives[index].type]
     if (typeAttributes.hasAdditionals) {
       removeWaypointsFor(index)
       waypointLogic.createdBlocksCounter = 0
@@ -307,8 +310,7 @@ function sketch(p) {
   //
   //
   const interpretLevelBroker = (obj) => {
-    SpritePositions.splice(0, SpritePositions.length)
-    SpriteTypes.splice(0, SpriteTypes.length)
+    flushCurrentLevel()
     try {
       let versionStr = obj.collection.header.info[0].value
       console.log(versionStr)
@@ -407,15 +409,30 @@ function sketch(p) {
 
   //
   const handleInteractives = (interactives) => {
-    for (let interactive of interactives) {
-      const vector = p.createVector(interactive.xPosition*CubeWidthAndHeight, interactive.yPosition*CubeWidthAndHeight)
-      const type = interactive.type
-      let tempInteractive = maps.DEFAULT_LOCAL_INTERACTIVE
+    console.log(interactives)
+    if (interactives == undefined || interactives == null) {
+      return
+    }
+    if (interactives instanceof Array) {
+      for (let interactive of interactives) {
+        const vector = p.createVector(interactive.xPosition*CubeWidthAndHeight, interactive.yPosition*CubeWidthAndHeight)
+        const type = interactive.type
+        let tempInteractive = Object.assign({}, maps.DEFAULT_LOCAL_INTERACTIVE)
+        tempInteractive.position = vector
+        tempInteractive.type = type
+        tempInteractive.additionals = interactive.addtionals
+        Interactives.push(tempInteractive)
+      }
+    } else {
+      const vector = p.createVector(interactives.xPosition*CubeWidthAndHeight, interactives.yPosition*CubeWidthAndHeight)
+      const type = interactives.type
+      let tempInteractive = Object.assign({}, maps.DEFAULT_LOCAL_INTERACTIVE)
       tempInteractive.position = vector
       tempInteractive.type = type
-      tempInteractive.additionals = interactive.addtionals
+      tempInteractive.additionals = interactives.addtionals
       Interactives.push(tempInteractive)
     }
+    p.redraw()
   }
 
 

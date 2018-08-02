@@ -135,13 +135,14 @@ const buildJsonObjectV2 = () => {
     const translatedX = spritePositions[i].x / dimension;
     const translatedY = spritePositions[i].y / dimension;
     //  Prepare a temporary object
-    let tempObj = maps.DEFAULT_ELEMENT;
+    let tempObj = Object.assign({},maps.DEFAULT_ELEMENT);
     tempObj.id = i.toString();
     tempObj.prefab = 0;
     tempObj.type = spriteTypes[i];
     tempObj.xPosition = translatedX.toString();
     tempObj.yPosition = translatedY.toString();
     tempObj.hitbox = block_attributes.hitbox;
+    console.log(tempObj)
     //  Add tempObj to environment container
     obj.collection.environment.element.push(tempObj)
   }
@@ -154,7 +155,7 @@ const buildJsonObjectV2 = () => {
     const translatedX = Interactive.position.x / dimension;
     const translatedY = Interactive.position.y / dimension;
     //  Prepare a temporary object
-    let tempObj = maps.DEFAULT_OBJECT;
+    let tempObj = Object.assign({},maps.DEFAULT_OBJECT);
     tempObj.id = i.toString();
     tempObj.prefab = 0;
     tempObj.type = Interactive.type;
@@ -165,7 +166,7 @@ const buildJsonObjectV2 = () => {
     //  Add tempObj to environment container
     obj.collection.interactive.object.push(tempObj)
   }
-
+  console.log(obj)
   return obj
 }
 
