@@ -120,11 +120,16 @@ const DEFAULT_LOCAL_INTERACTIVE = {
   additionals: new Array()
 }
 
+const ACTION_MENU = {
+  opponent1: ["Delete", "Waypoint", "Set Radius"]
+}
+
 module.exports = {
 
   block_attributes,
   DefaultHeader,
   DEFAULT_ELEMENT,
   DEFAULT_OBJECT,
-  DEFAULT_LOCAL_INTERACTIVE
+  DEFAULT_LOCAL_INTERACTIVE,
+  ACTION_MENU
 }
