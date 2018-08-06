@@ -185,10 +185,18 @@ function sketch(p) {
       button.addEventListener("click", () => {
         console.log(data)
         action(index)
+        flushMenu();
       });
       actionMenu.appendChild(button)
     }
   }
+
+  const flushMenu = () => {
+    let actionMenu = document.getElementById("action_menu")
+    console.log(actionMenu.children)
+    while (actionMenu.firstChild) {
+        actionMenu.removeChild(actionMenu.firstChild);
+    }  }
 
   //
   let defaultAction = (index) => {
@@ -361,6 +369,10 @@ function sketch(p) {
     console.log("removeWaypointsFor")
     let additionals = Interactives[index].additionals
     console.log(Interactives[index])
+    if (additionals == undefined) {
+      Interactives[index].additionals = new Array()
+      return
+    }
     for (let i = 0; i < additionals.length; i++) {
       if (additionals[i].type == "waypoint") {
         additionals.splice(i, 1);
