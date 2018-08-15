@@ -125,6 +125,7 @@ function sketch(p) {
       p.pop();
     }
 
+
     //  Draw Interactives
     for (let interactive of Interactives) {
       p.push();
@@ -148,6 +149,7 @@ function sketch(p) {
     }
   }
 
+
   //  Called when you press anything on the Electron Window what means that everything outside
   //  the sketch has to be catched
   p.mousePressed = () => {
@@ -166,6 +168,64 @@ function sketch(p) {
 
 
   //
+  //
+  const showMenu = (index) => {
+    console.log(index)
+    let type = Interactives[index].type
+    console.log(type)
+    let actionMenu = document.getElementById("action_menu")
+    let arr = maps.ACTION_MENU[type]
+    for (let data of arr) {
+      var button = document.createElement("div");
+      var node = document.createTextNode(data)
+      button.appendChild(node)
+      button.classList.add("topBut")
+      let action = actionForIdentifier(data)
+      console.log(action)
+      button.addEventListener("click", () => {
+        console.log(data)
+        action(index)
+        flushMenu();
+      });
+      actionMenu.appendChild(button)
+    }
+  }
+
+  const flushMenu = () => {
+    let actionMenu = document.getElementById("action_menu")
+    console.log(actionMenu.children)
+    while (actionMenu.firstChild) {
+        actionMenu.removeChild(actionMenu.firstChild);
+    }  }
+
+  //
+  let defaultAction = (index) => {
+    console.log(index)
+    console.log("default action")
+  }
+
+  //
+  const actionForIdentifier = (action) => {
+
+    switch (action) {
+      case "Waypoint":
+        console.log("Waypoint")
+        return startWaypointSetting
+        break;
+      case "Delete":
+        console.log("Delete")
+        return removeObject
+        break;
+      default:
+        console.log("default")
+        return defaultAction
+        break;
+    }
+
+  }
+
+
+  //
   const handleBlock = (point) => {
     const renderedPoint = p.createVector(point.x * CurrentZoomLevel, point.y * CurrentZoomLevel)
     const toRoundX = renderedPoint.x % 50;
@@ -173,7 +233,7 @@ function sketch(p) {
     const x = renderedPoint.x - toRoundX;
     const y = renderedPoint.y - toRoundY;
     const blockPosition = p.createVector(x,y);
-    let {doesContain, index, collection} = doesPointExist(blockPosition)
+    let {doesContain, index, container} = doesPointExist(blockPosition)
     //  Waypoints must be set over other blocks as well
     if (selectedBlockType == "waypoint") {
       createNewBlock(blockPosition)
@@ -183,9 +243,10 @@ function sketch(p) {
     if (!doesContain) { //  doesnt already contain the block
       createNewBlock(blockPosition)
     } else {            //  already contains the block
-      if (collection = "Object") {
+      console.log(container)
+      if (container == "Objects") {
         handleExistingObjectClick(blockPosition, index)
-      } else if (collection = "Element") {
+      } else if (container == "Elements") {
         removeElement(index);
       } else {
         console.log("unknown collection returned in handleBlock");
@@ -262,12 +323,8 @@ function sketch(p) {
   const handleExistingObjectClick = (position, index) => {
     console.log("handleExistingObjectClick")
     let typeAttributes = maps.block_attributes[Interactives[index].type]
-    if (typeAttributes.hasAdditionals) {
-      removeWaypointsFor(index)
-      waypointLogic.createdBlocksCounter = 0
-      waypointLogic.preWaypointBlockType = selectedBlockType
-      waypointLogic.opponentsId = index
-      selectedBlockType = "waypoint"
+    if (typeAttributes.hasAdditionals) {  //  This is basically checking wether or not we need to display a menu
+      showMenu(index)
     } else {
       removeObject(index)
     }
@@ -288,8 +345,17 @@ function sketch(p) {
   const removeObject = (index) => {
     console.log("removeObject")
     Interactives.splice(index, 1)
+    p.redraw()
   }
 
+
+  const startWaypointSetting = (index) => {
+    removeWaypointsFor(index)
+    waypointLogic.createdBlocksCounter = 0
+    waypointLogic.preWaypointBlockType = selectedBlockType
+    waypointLogic.opponentsId = index
+    selectedBlockType = "waypoint"
+  }
 
   //  Function removes Waypoints from the Additionals array of the Interactive Object
   //  at the given index. It does so by looping over the array until it finds an additional
@@ -303,12 +369,17 @@ function sketch(p) {
     console.log("removeWaypointsFor")
     let additionals = Interactives[index].additionals
     console.log(Interactives[index])
+    if (additionals == undefined) {
+      Interactives[index].additionals = new Array()
+      return
+    }
     for (let i = 0; i < additionals.length; i++) {
       if (additionals[i].type == "waypoint") {
         additionals.splice(i, 1);
         i--;
       }
     }
+    p.redraw()
   }
 
   //
@@ -320,15 +391,15 @@ function sketch(p) {
       console.log(versionStr)
       switch (versionStr) {
         case "1":
-          interpretLevelObject(obj);
-          break;
+        interpretLevelObject(obj);
+        break;
         case "2":
-          interpretLevelObjectV2(obj);
-          break;
+        interpretLevelObjectV2(obj);
+        break;
         default:
-          console.log("!!CAN'T READ LEVEL VERSION!!")
-          interpretOldLevelObject(obj)
-          break;
+        console.log("!!CAN'T READ LEVEL VERSION!!")
+        interpretOldLevelObject(obj)
+        break;
       }
     } catch (err) {
       console.log("Error: " + err)

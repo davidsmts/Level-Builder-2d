@@ -281,7 +281,9 @@ module.exports = {
   saveXMLV2,
   changeBlockType,
   changeZoom,
-  clean
+  clean,
+  app,
+  sketch,
 }
 
 // const xml =
