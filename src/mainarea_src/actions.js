@@ -35,11 +35,6 @@ cleanBut.addEventListener("click", () => {
   mainarea.clean();
 });
 
-const saveButV2 = document.getElementById("saveButV2");
-saveButV2.addEventListener("click", () => {
-  mainarea.saveXMLV2();
-});
-
 const normal_block = document.getElementById("normal_block");
 normal_block.addEventListener("click", () => {
   console.log("changeBlockType")

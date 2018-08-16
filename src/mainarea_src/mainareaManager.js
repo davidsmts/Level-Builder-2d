@@ -25,29 +25,12 @@ const documents = {
 }
 const VERSION = 2
 
+
 //
 const saveXML = () => {
   const path  = documents.currentPath + '/' + documents.currentDocumentName;
   console.log(path)
   let obj = buildJsonObject()
-  console.log(obj)
-  const builder = new xml2js.Builder()
-  const xml = builder.buildObject(obj)
-  console.log(xml)
-  fs.writeFile(path, xml, (err) => {
-    if (err) {
-      console.log("Error saving the xml: " + err)
-    }
-    console.log("successfull save")
-  })
-}
-
-
-//
-const saveXMLV2 = () => {
-  const path  = documents.currentPath + '/' + documents.currentDocumentName;
-  console.log(path)
-  let obj = buildJsonObjectV2()
   console.log(obj)
   const builder = new xml2js.Builder()
   const xml = xml2json.toXml(obj)
@@ -65,53 +48,14 @@ const saveXMLV2 = () => {
 const buildJsonObject = () => {
   let spritePositions = sketch.SpritePositions
   let spriteTypes = sketch.SpriteTypes
-  console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
-  const LevelHeight = sketch.LevelHeight
-  const LevelWidth = sketch.LevelWidth
-
-  let obj = { elementCollection: {
-    element: [],
-    info: []
-  }}
-
-  let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight, LevelWidth);
-  spritePositions = sortedPositions
-  spriteTypes = sortedTypes
-  const dimension = sketch.CubeWidthAndHeight;
-
-  for (let i = 0; i < spritePositions.length; i++) {
-    //  calculate positions in unity dimension
-    const translatedX = spritePositions[i].x / dimension;
-    const translatedY = spritePositions[i].y / dimension;
-    let block_attributes = maps.block_attributes[spriteTypes[i]];
-    let tempObj = {$:{
-      id: i.toString(),
-      prefab: 0,
-      type: spriteTypes[i],
-      xPosition: translatedX.toString(),
-      yPosition: translatedY.toString(),
-      hitbox: block_attributes.hitbox
-    }}
-
-    obj.elementCollection.element.push(tempObj)
-  }
-
-  return obj
-}
-
-
-//  builds a json object of the provided information and turns it into an xml
-const buildJsonObjectV2 = () => {
-  let spritePositions = sketch.SpritePositions
-  let spriteTypes = sketch.SpriteTypes
   let Interactives = sketch.Interactives
   console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
+  const DIMENSION = sketch.CubeWidthAndHeight;
   const LevelHeight = sketch.LevelHeight
   const LevelWidth = sketch.LevelWidth
-  const dimension = sketch.CubeWidthAndHeight;
 
   //  Fill Header
-  var Header = renewHeader()
+  var Header = renewHeader(DIMENSION)
   let obj = { collection: {
     header: {
       info: Header
@@ -128,12 +72,13 @@ const buildJsonObjectV2 = () => {
   let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight, LevelWidth);
   spritePositions = sortedPositions
   spriteTypes = sortedTypes
+  console.log("after sorting: " + spritePositions.length + " and : " + spriteTypes.length)
   //  Fill Environment Elements
   for (let i = 0; i < spritePositions.length; i++) {
     let block_attributes = maps.block_attributes[spriteTypes[i]];
     //  calculate positions in unified dimension
-    const translatedX = spritePositions[i].x / dimension;
-    const translatedY = spritePositions[i].y / dimension;
+    const translatedX = spritePositions[i].x / DIMENSION;
+    const translatedY = spritePositions[i].y / DIMENSION;
     //  Prepare a temporary object
     let tempObj = Object.assign({},maps.DEFAULT_ELEMENT);
     tempObj.id = i.toString();
@@ -146,14 +91,14 @@ const buildJsonObjectV2 = () => {
     //  Add tempObj to environment container
     obj.collection.environment.element.push(tempObj)
   }
-
+  console.log(obj.collection.environment.element)
   //  Fill Interactives
   for (let i = 0; i < Interactives.length; i++) {
     let Interactive = Interactives[i]
     let block_attributes = maps.block_attributes[Interactive.type];
     //  calculate positions in unified dimension
-    const translatedX = Interactive.position.x / dimension;
-    const translatedY = Interactive.position.y / dimension;
+    const translatedX = Interactive.position.x / DIMENSION;
+    const translatedY = Interactive.position.y / DIMENSION;
     //  Prepare a temporary object
     let tempObj = Object.assign({},maps.DEFAULT_OBJECT);
     tempObj.id = i.toString();
@@ -163,6 +108,12 @@ const buildJsonObjectV2 = () => {
     tempObj.yPosition = translatedY.toString();
     tempObj.hitbox = block_attributes.hitbox;
     tempObj.additionals = Interactive.additionals;
+    if (tempObj.additionals != undefined) {
+      for (let additional of tempObj.additionals) {
+        additional.xPosition = additional.xPosition / DIMENSION
+        additional.yPosition = additional.yPosition / DIMENSION
+      }
+    }
     //  Add tempObj to environment container
     obj.collection.interactive.object.push(tempObj)
   }
@@ -171,9 +122,9 @@ const buildJsonObjectV2 = () => {
 }
 
 
-const renewHeader = () => {
-  const LevelHeight = sketch.LevelHeight
-  const LevelWidth = sketch.LevelWidth
+const renewHeader = (dimension) => {
+  const LevelHeight = sketch.LevelHeight / dimension
+  const LevelWidth = sketch.LevelWidth / dimension
   var Header = sketch.Header
   console.log(sketch)
   if (Header == undefined || Header == null || Header.length < 3) {
@@ -191,6 +142,7 @@ const renewHeader = () => {
 //
 //
 const sortVectors = (SpritePositions, SpriteTypes, LevelHeight, LevelWidth) => {
+  console.log(LevelHeight)
   let sortedPositions = [];
   let sortedTypes = [];
   for (let i=0; i<LevelHeight; i+=50) {
@@ -278,7 +230,6 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
 module.exports = {
   changeSize,
   saveXML,
-  saveXMLV2,
   changeBlockType,
   changeZoom,
   clean,

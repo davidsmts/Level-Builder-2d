@@ -463,8 +463,8 @@ function sketch(p) {
       Header.push(info);
     }
     //  Adjust p5 Workspace to Header Values
-    LevelWidth = parseInt(Header[1].value)
-    LevelHeight = parseInt(Header[2].value)
+    LevelWidth = parseInt(Header[1].value*CubeWidthAndHeight)
+    LevelHeight = parseInt(Header[2].value*CubeWidthAndHeight)
     changeSizeOfWorkspace(LevelWidth, LevelHeight)
   }
 
@@ -495,7 +495,7 @@ function sketch(p) {
         let tempInteractive = Object.assign({}, maps.DEFAULT_LOCAL_INTERACTIVE)
         tempInteractive.position = vector
         tempInteractive.type = type
-        tempInteractive.additionals = interactive.additionals
+        tempInteractive.additionals = handleAdditionals(interactive.additionals)
         Interactives.push(tempInteractive)
       }
     } else {
@@ -504,10 +504,28 @@ function sketch(p) {
       let tempInteractive = Object.assign({}, maps.DEFAULT_LOCAL_INTERACTIVE)
       tempInteractive.position = vector
       tempInteractive.type = type
-      tempInteractive.additionals = interactives.additionals
+      tempInteractive.additionals = handleAdditionals(interactives.additionals)
       Interactives.push(tempInteractive)
     }
     p.redraw()
+  }
+
+
+  const handleAdditionals = (additionals) => {
+    if (additionals == undefined || additionals == null) {
+      return
+    }
+    if (additionals instanceof Array) {
+      for (let additional of additionals) {
+        additional.xPosition = additional.xPosition*CubeWidthAndHeight
+        additional.yPosition = additional.yPosition*CubeWidthAndHeight
+      }
+      return additionals
+    } else {
+      additionals.xPosition = additionals.xPosition*CubeWidthAndHeight
+      additionals.yPosition = additionals.yPosition*CubeWidthAndHeight
+      return additionals
+    }
   }
 
 
