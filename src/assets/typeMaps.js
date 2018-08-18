@@ -7,6 +7,13 @@
 * @Last modified time: 2018-06-12T23:22:41+02:00
 */
 
+const DEFAULT_HEADER_ELEMENT = {
+  name: "",
+  value: "",
+  description: "",
+  type: ""
+}
+
 const DefaultHeader = [
   {
     name: "version",
@@ -121,7 +128,7 @@ const DEFAULT_LOCAL_INTERACTIVE = {
 }
 
 const ACTION_MENU = {
-  opponent1: ["Delete", "Waypoint", "Set Radius"]
+  opponent1: ["Delete", "Waypoint", "Set Radius", "Close"]
 }
 
 module.exports = {
@@ -131,5 +138,6 @@ module.exports = {
   DEFAULT_ELEMENT,
   DEFAULT_OBJECT,
   DEFAULT_LOCAL_INTERACTIVE,
-  ACTION_MENU
+  ACTION_MENU,
+  DEFAULT_HEADER_ELEMENT
 }

@@ -191,6 +191,18 @@ function sketch(p) {
     }
   }
 
+
+  //
+  //
+  const setRadius = () => {
+    checkIfHeaderContains("sight_radius")
+    let headerElement = Object.assign({}, maps.DEFAULT_HEADER_ELEMENT)
+    Header.push()
+  }
+
+
+  //
+  //
   const flushMenu = () => {
     let actionMenu = document.getElementById("action_menu")
     console.log(actionMenu.children)
@@ -215,6 +227,14 @@ function sketch(p) {
       case "Delete":
         console.log("Delete")
         return removeObject
+        break;
+      case "Close":
+        console.log("Delete")
+        return flushMenu
+        break;
+      case "Set Radius":
+        console.log("Set Radius")
+        return setRadius
         break;
       default:
         console.log("default")
@@ -587,6 +607,20 @@ function sketch(p) {
     module.exports.LevelHeight = height
     p.resizeCanvas(width, height);
     p.redraw();
+  }
+
+
+  //
+  const syncExports = () => {
+    module.exports.LevelWidth = LevelWidth
+    module.exports.LevelHeight = LevelHeight
+    module.exports.CubeWidthAndHeight = CubeWidthAndHeight
+    module.exports.Header = Header
+    module.exports.Level = Level
+    module.exports.Path = Path
+    module.exports.SpritePositions = SpritePositions
+    module.exports.SpriteTypes = SpriteTypes
+    module.exports.Interactives = Interactives
   }
 
 
