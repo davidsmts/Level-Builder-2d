@@ -71,6 +71,18 @@ opponent1_block.addEventListener("click", () => {
   mainarea.changeBlockType("opponent1");
 });
 
+const dirt_block = document.getElementById("dirt_block");
+dirt_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("dirt_block");
+});
+
+const grass_block = document.getElementById("grass_block");
+grass_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("grass_block");
+});
+
 //  gets inpout values when confirm button is pressed and forwards them to the main proccess
 const changeSizeConfirm_button = document.getElementById("changeSizeConfirm_button");
 changeSizeConfirm_button.addEventListener("click", () => {

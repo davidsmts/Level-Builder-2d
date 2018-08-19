@@ -87,7 +87,6 @@ const buildJsonObject = () => {
     tempObj.xPosition = translatedX.toString();
     tempObj.yPosition = translatedY.toString();
     tempObj.hitbox = block_attributes.hitbox;
-    console.log(tempObj)
     //  Add tempObj to environment container
     obj.collection.environment.element.push(tempObj)
   }
