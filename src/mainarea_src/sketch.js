@@ -54,13 +54,15 @@ const Level = (path) => {
 function sketch(p) {
 
   //  function dependant constants
-  let NORMAL_COLOR;
-  let WOOD_COLOR;
-  let STONE_COLOR;
-  let PLAYER_COLOR;
-  let FINISH_COLOR;
-  let OPPONENT1_COLOR;
-  let WAYPOINT_COLOR;
+  let NORMAL_TEXTURE;
+  let WOOD_TEXTURE;
+  let STONE_TEXTURE;
+  let PLAYER_TEXTURE;
+  let FINISH_TEXTURE;
+  let OPPONENT1_TEXTURE;
+  let WAYPOINT_TEXTURE;
+  let GRASS_TEXTURE;
+  let DIRT_TEXTURE;
 
   //  constants
   const PARENT_ID = "p5Area";
@@ -78,13 +80,15 @@ function sketch(p) {
 
   p.preload = () => {
     //initialising constants
-    NORMAL_COLOR = p.color(204, 102, 0);
-    WOOD_COLOR = p.color(210, 105, 30);
-    STONE_COLOR = p.color(100, 100, 100);
-    PLAYER_COLOR = p.color(0, 200, 0);
-    FINISH_COLOR = p.color(255, 0, 0);
-    OPPONENT1_COLOR = p.color(0, 0, 0);
-    WAYPOINT_COLOR = p.color(126, 51, 212);
+    NORMAL_TEXTURE = p.color(204, 102, 0);
+    WOOD_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.wood_block.imagePath);
+    STONE_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.stone_block.imagePath);
+    PLAYER_TEXTURE = p.color(0, 200, 0);
+    FINISH_TEXTURE = p.color(255, 0, 0);
+    OPPONENT1_TEXTURE = p.color(0, 0, 0);
+    WAYPOINT_TEXTURE = p.color(126, 51, 212);
+    GRASS_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.grass_block.imagePath);
+    DIRT_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.dirt_block.imagePath);
   }
 
   p.setup = () => {
@@ -116,32 +120,45 @@ function sketch(p) {
     for (var i=0; i<SpritePositions.length; i++) {
       p.push();
       let position = SpritePositions[i];
-      let colorForBlock = currentColor(SpriteTypes[i]);
-      p.fill(colorForBlock);
       //  renderPosition is the position at which the cube is to be displayed in the Builder
       //  because the position is 50:1 while we actually need it to be zoom:1
       let renderPosition = p.createVector(position.x * CurrentZoomLevel, position.y * CurrentZoomLevel)
-      p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
+      let {hasImage, texture} = getTextureOfType(SpriteTypes[i]);
+      if (hasImage) {
+        p.image(texture, renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight)
+      } else {
+        p.fill(texture);
+        p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
+      }
       p.pop();
     }
-
 
     //  Draw Interactives
     for (let interactive of Interactives) {
       p.push();
-      let colorForBlock = currentColor(interactive.type);
-      p.fill(colorForBlock);
+
       //  renderPosition is the position at which the cube is to be displayed in the Builder
       //  because the position is 50:1 while we actually need it to be zoom:1
       let renderPosition = p.createVector(interactive.position.x * CurrentZoomLevel, interactive.position.y * CurrentZoomLevel)
-      p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
+      let {hasImage, texture} = getTextureOfType(interactive.type);
+      if (hasImage) {
+        p.image(texture, renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight)
+      } else {
+        p.fill(texture);
+        p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
+      }
+
       if (interactive.additionals != undefined && interactive.additionals != null && interactive.additionals instanceof Array) {
         if (interactive.additionals.length >= 1) {
           for (let additional of interactive.additionals) {
-            let colorForBlock = currentColor(additional.type);
-            p.fill(colorForBlock);
             let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
-            p.ellipse(additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
+            let {hasImage, texture} = getTextureOfType(additional.type);
+            if (hasImage) {
+              p.image(texture, additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2)
+            } else {
+              p.fill(texture);
+              p.ellipse(additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
+            }
           }
         }
       }
@@ -191,6 +208,18 @@ function sketch(p) {
     }
   }
 
+
+  //
+  //
+  const setRadius = () => {
+    checkIfHeaderContains("sight_radius")
+    let headerElement = Object.assign({}, maps.DEFAULT_HEADER_ELEMENT)
+    Header.push()
+  }
+
+
+  //
+  //
   const flushMenu = () => {
     let actionMenu = document.getElementById("action_menu")
     console.log(actionMenu.children)
@@ -215,6 +244,14 @@ function sketch(p) {
       case "Delete":
         console.log("Delete")
         return removeObject
+        break;
+      case "Close":
+        console.log("Delete")
+        return flushMenu
+        break;
+      case "Set Radius":
+        console.log("Set Radius")
+        return setRadius
         break;
       default:
         console.log("default")
@@ -386,24 +423,19 @@ function sketch(p) {
   //
   const interpretLevelBroker = (obj) => {
     flushCurrentLevel()
-    try {
-      let versionStr = obj.collection.header.info[0].value
-      console.log(versionStr)
-      switch (versionStr) {
-        case "1":
-        interpretLevelObject(obj);
-        break;
-        case "2":
-        interpretLevelObjectV2(obj);
-        break;
-        default:
-        console.log("!!CAN'T READ LEVEL VERSION!!")
-        interpretOldLevelObject(obj)
-        break;
-      }
-    } catch (err) {
-      console.log("Error: " + err)
+    let versionStr = obj.collection.header.info[0].value
+    console.log(versionStr)
+    switch (versionStr) {
+      case "1":
+      interpretLevelObject(obj);
+      break;
+      case "2":
+      interpretLevelObjectV2(obj);
+      break;
+      default:
+      console.log("!!CAN'T READ LEVEL VERSION!!")
       interpretOldLevelObject(obj)
+      break;
     }
   }
 
@@ -444,6 +476,7 @@ function sketch(p) {
     p.redraw()
   }
 
+  //
   const mergeElements = (obj) => {
     let environment = obj.collection.environment.element
     let interactive = obj.collection.interactive.object
@@ -457,29 +490,41 @@ function sketch(p) {
     return elements
   }
 
+  //
   const handleHeader = (header) => {
     Header.splice(0, Header.length)
     for (let info of header) {
       Header.push(info);
     }
     //  Adjust p5 Workspace to Header Values
-    LevelWidth = parseInt(Header[1].value)
-    LevelHeight = parseInt(Header[2].value)
+    LevelWidth = parseInt(Header[1].value*CubeWidthAndHeight)
+    LevelHeight = parseInt(Header[2].value*CubeWidthAndHeight)
     changeSizeOfWorkspace(LevelWidth, LevelHeight)
   }
 
   //
   const handleElements = (elements) => {
-    for (let element of elements) {
+    if (elements == undefined || elements == null) {
+      return
+    }
+    if (elements instanceof Array) {
+      for (let element of elements) {
+        //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
+        const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
+        const type = element.type
+        SpritePositions.push(vector)
+        SpriteTypes.push(type)
+      }
+      console.log(Header)
+      console.log(SpritePositions)
+      console.log(SpriteTypes)
+    } else {
       //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
-      const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
-      const type = element.type
+      const vector = p.createVector(elements.xPosition*CubeWidthAndHeight, elements.yPosition*CubeWidthAndHeight)
+      const type = elements.type
       SpritePositions.push(vector)
       SpriteTypes.push(type)
     }
-    console.log(Header)
-    console.log(SpritePositions)
-    console.log(SpriteTypes)
   }
 
   //
@@ -495,7 +540,7 @@ function sketch(p) {
         let tempInteractive = Object.assign({}, maps.DEFAULT_LOCAL_INTERACTIVE)
         tempInteractive.position = vector
         tempInteractive.type = type
-        tempInteractive.additionals = interactive.additionals
+        tempInteractive.additionals = handleAdditionals(interactive.additionals)
         Interactives.push(tempInteractive)
       }
     } else {
@@ -504,10 +549,28 @@ function sketch(p) {
       let tempInteractive = Object.assign({}, maps.DEFAULT_LOCAL_INTERACTIVE)
       tempInteractive.position = vector
       tempInteractive.type = type
-      tempInteractive.additionals = interactives.additionals
+      tempInteractive.additionals = handleAdditionals(interactives.additionals)
       Interactives.push(tempInteractive)
     }
     p.redraw()
+  }
+
+
+  const handleAdditionals = (additionals) => {
+    if (additionals == undefined || additionals == null) {
+      return
+    }
+    if (additionals instanceof Array) {
+      for (let additional of additionals) {
+        additional.xPosition = additional.xPosition*CubeWidthAndHeight
+        additional.yPosition = additional.yPosition*CubeWidthAndHeight
+      }
+      return additionals
+    } else {
+      additionals.xPosition = additionals.xPosition*CubeWidthAndHeight
+      additionals.yPosition = additionals.yPosition*CubeWidthAndHeight
+      return additionals
+    }
   }
 
 
@@ -573,6 +636,20 @@ function sketch(p) {
 
 
   //
+  const syncExports = () => {
+    module.exports.LevelWidth = LevelWidth
+    module.exports.LevelHeight = LevelHeight
+    module.exports.CubeWidthAndHeight = CubeWidthAndHeight
+    module.exports.Header = Header
+    module.exports.Level = Level
+    module.exports.Path = Path
+    module.exports.SpritePositions = SpritePositions
+    module.exports.SpriteTypes = SpriteTypes
+    module.exports.Interactives = Interactives
+  }
+
+
+  //
   ipcRenderer.on('new-doc-sketch', (event, arg) => {
     console.log("sketch: " + arg)
     Level(arg).then((result) => {
@@ -622,34 +699,42 @@ function sketch(p) {
     p.redraw();
   })
 
-  const currentColor = (type) => {
+  const getTextureOfType = (type) => {
+    let hasImage = BLOCK_ATTRIBUTES[type].hasImage
+    let texture = p.color(0,0,0)
     switch (type) {
       case "normal_block":
-      return NORMAL_COLOR;
+      texture = NORMAL_TEXTURE
       break;
       case "wood_block":
-      return WOOD_COLOR;
+      texture = WOOD_TEXTURE
       break;
       case "stone_block":
-      return STONE_COLOR;
+      texture = STONE_TEXTURE
       break;
       case "player":
-      return PLAYER_COLOR;
+      texture = PLAYER_TEXTURE
       break;
       case "finish":
-      return FINISH_COLOR;
+      texture = FINISH_TEXTURE
       break;
-      case "OPPONENT1":
-      return OPPONENT1_COLOR;
+      case "opponent1":
+      texture = OPPONENT1_TEXTURE
       break;
       case "waypoint":
-      return WAYPOINT_COLOR;
+      texture = WAYPOINT_TEXTURE
+      break;
+      case "dirt_block":
+      texture = DIRT_TEXTURE
+      break;
+      case "grass_block":
+      texture = GRASS_TEXTURE
       break;
       default:
       console.log("!!!!!DEFAULT COLOR STATE!!!!!");
-      return p.color(0,0,0);
       break;
     }
+    return {hasImage, texture};
   }
 
 }

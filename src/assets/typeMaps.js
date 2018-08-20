@@ -7,6 +7,13 @@
 * @Last modified time: 2018-06-12T23:22:41+02:00
 */
 
+const DEFAULT_HEADER_ELEMENT = {
+  name: "",
+  value: "",
+  description: "",
+  type: ""
+}
+
 const DefaultHeader = [
   {
     name: "version",
@@ -51,21 +58,26 @@ const block_attributes = {
     name: "normal_block",
     hitbox: true,
     color: "204;102;0",
-    collection: "environment"
+    collection: "environment",
+    hasImage: false
   },
   wood_block : {
     id: 2,
     name: "wood_block",
     hitbox: true,
     color: "210;105;30",
-    collection: "environment"
+    collection: "environment",
+    hasImage: true,
+    imagePath: "assets/textures/wood.png"
   },
   stone_block : {
     id: 3,
     name: "stone_block",
     hitbox: true,
     color: "100;100;100",
-    collection: "environment"
+    collection: "environment",
+    hasImage: true,
+    imagePath: "assets/textures/stone.png"
   },
   player : {
     id: 4,
@@ -74,7 +86,8 @@ const block_attributes = {
     color: "0;200;0",
     collection: "interactive",
     hasAdditionals: false,
-    isAdditional: false
+    isAdditional: false,
+    hasImage: false
   },
   opponent1 : {
     id: 5,
@@ -83,7 +96,8 @@ const block_attributes = {
     color: "0;0;0",
     collection: "interactive",
     hasAdditionals: true,
-    isAdditional: false
+    isAdditional: false,
+    hasImage: false
   },
   finish : {
     id: 6,
@@ -92,7 +106,8 @@ const block_attributes = {
     color: "255;0;0",
     collection: "interactive",
     hasAdditionals: false,
-    isAdditional: false
+    isAdditional: false,
+    hasImage: false
   },
   waypoint : {
     id: 7,
@@ -101,7 +116,30 @@ const block_attributes = {
     color: "126, 51, 212",
     collection: "interactive",
     hasAdditionals: false,
-    isAdditional: true
+    isAdditional: true,
+    hasImage: false
+  },
+  grass_block : {
+    id: 8,
+    name: "grass_block",
+    hitbox: true,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: true,
+    imagePath: "assets/textures/grass.png"
+  },
+  dirt_block : {
+    id: 9,
+    name: "dirt_block",
+    hitbox: true,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: true,
+    imagePath: "assets/textures/dirt.png"
   }
 }
 
@@ -121,7 +159,7 @@ const DEFAULT_LOCAL_INTERACTIVE = {
 }
 
 const ACTION_MENU = {
-  opponent1: ["Delete", "Waypoint", "Set Radius"]
+  opponent1: ["Delete", "Waypoint", "Set Radius", "Close"]
 }
 
 module.exports = {
@@ -131,5 +169,6 @@ module.exports = {
   DEFAULT_ELEMENT,
   DEFAULT_OBJECT,
   DEFAULT_LOCAL_INTERACTIVE,
-  ACTION_MENU
+  ACTION_MENU,
+  DEFAULT_HEADER_ELEMENT
 }

@@ -35,11 +35,6 @@ cleanBut.addEventListener("click", () => {
   mainarea.clean();
 });
 
-const saveButV2 = document.getElementById("saveButV2");
-saveButV2.addEventListener("click", () => {
-  mainarea.saveXMLV2();
-});
-
 const normal_block = document.getElementById("normal_block");
 normal_block.addEventListener("click", () => {
   console.log("changeBlockType")
@@ -74,6 +69,18 @@ const opponent1_block = document.getElementById("opponent1_block");
 opponent1_block.addEventListener("click", () => {
   console.log("changeBlockType")
   mainarea.changeBlockType("opponent1");
+});
+
+const dirt_block = document.getElementById("dirt_block");
+dirt_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("dirt_block");
+});
+
+const grass_block = document.getElementById("grass_block");
+grass_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("grass_block");
 });
 
 //  gets inpout values when confirm button is pressed and forwards them to the main proccess
