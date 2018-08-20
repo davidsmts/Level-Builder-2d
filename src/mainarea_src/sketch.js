@@ -476,6 +476,7 @@ function sketch(p) {
     p.redraw()
   }
 
+  //
   const mergeElements = (obj) => {
     let environment = obj.collection.environment.element
     let interactive = obj.collection.interactive.object
@@ -489,6 +490,7 @@ function sketch(p) {
     return elements
   }
 
+  //
   const handleHeader = (header) => {
     Header.splice(0, Header.length)
     for (let info of header) {
