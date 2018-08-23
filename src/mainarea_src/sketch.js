@@ -77,6 +77,10 @@ function sketch(p) {
     preWaypointBlockType: "",
     opponentsId: 0
   }
+  let sketchElement
+  let sketchPosition
+  let sketchSize
+  let parentElement
 
   p.preload = () => {
     //initialising constants
@@ -96,9 +100,12 @@ function sketch(p) {
     canvas = p.createCanvas(LevelWidth, LevelHeight);
     canvas.parent(PARENT_ID);
     canvas.id(CANVAS_CLASSNAME);
-    // const parentElement = document.getElementById(PARENT_ID);
-    // parentElement.style.width = LevelWidth + "px";
-    // parentElement.style.height = LevelHeight + "px";
+    sketchElement = document.getElementById(CANVAS_CLASSNAME)
+    sketchPosition = p.createVector(sketchElement.offsetLeft, sketchElement.offsetTop)
+    sketchSize = p.createVector(sketchElement.width, sketchElement.height)
+    parentElement = document.getElementById(PARENT_ID);
+
+
     p.noLoop();
   }
 
@@ -171,9 +178,6 @@ function sketch(p) {
   //  the sketch has to be catched
   p.mousePressed = () => {
     const mouse = p.createVector(p.mouseX, p.mouseY);
-    const sketchElement = document.getElementById(CANVAS_CLASSNAME)
-    const sketchPosition = p.createVector(sketchElement.offsetLeft, sketchElement.offsetTop)
-    const sketchSize = p.createVector(sketchElement.width, sketchElement.height)
     console.log(mouse)
     if (rectContains(sketchPosition, sketchSize, mouse)) {
       console.log("in bound")
@@ -181,6 +185,21 @@ function sketch(p) {
     } else {
       console.log("not in bounds")
     }
+  }
+
+  p.touchMoved = (touch) => {
+    const mouse = p.createVector(p.mouseX, p.mouseY);
+    if (rectContains(sketchPosition, sketchSize, mouse)) {
+      console.log("in bound")
+      let shiftIsPressed = touch.shiftKey
+      // console.log(shiftIsPressed)
+      // console.log(mouse)
+      // console.log(p.mouseY)
+      handleDragBlock(mouse, shiftIsPressed)
+    } else {
+      console.log("not in bounds")
+    }
+
   }
 
 
@@ -259,6 +278,36 @@ function sketch(p) {
         break;
     }
 
+  }
+
+
+  //
+  const handleDragBlock = (point, deleteOnly) => {
+    const renderedPoint = p.createVector(point.x * CurrentZoomLevel, point.y * CurrentZoomLevel)
+    const toRoundX = renderedPoint.x % 50;
+    const toRoundY = renderedPoint.y % 50;
+    const x = renderedPoint.x - toRoundX;
+    const y = renderedPoint.y - toRoundY;
+    const blockPosition = p.createVector(x,y);
+    let {doesContain, index, container} = doesPointExist(blockPosition)
+    //  Waypoints must be set over other blocks as well
+    if (selectedBlockType == "waypoint") {
+      return;
+    }
+
+    if (!doesContain && !deleteOnly) { //  doesnt already contain the block
+      createNewBlock(blockPosition)
+    } else if (doesContain && deleteOnly) {            //  already contains the block
+      console.log(container)
+      if (container == "Objects") {
+        handleExistingObjectClick(blockPosition, index)
+      } else if (container == "Elements") {
+        removeElement(index);
+      } else {
+        console.log("unknown collection returned in handleBlock");
+      }
+    }
+    p.redraw();
   }
 
 
@@ -579,12 +628,10 @@ function sketch(p) {
   //  rectPosition    : p.Vector2d => size(width and height) of the rectangle
   //  pointToCheckFor : p.Vector2d => Position of the rectangle
   const rectContains = (rectPosition, rectSize, pointToCheckFor) => {
-    const upperVerticalBound = rectPosition.y
-    const lowerVerticalBound = rectPosition.y + rectSize.y
-    const leftHorizontalBound = rectPosition.x
-    const rightHorizontalBound = rectPosition.x + rectSize.x
+    const x = pointToCheckFor.x - parentElement.scrollLeft
+    const y = pointToCheckFor.y - parentElement.scrollTop
 
-    if (pointToCheckFor.x > 0 && pointToCheckFor.y > 0) {
+    if (x > 0 && y > 0) {
       return true
     }
     return false
