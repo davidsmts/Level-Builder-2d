@@ -11,6 +11,29 @@ const mainarea = require('./mainareaManager');
 const maps = require('../assets/typeMaps');
 
 
+const getGenerelInput = (type) => {
+  let generelInputContainer = document.getElementById("generelInput_container");
+  generelInputContainer.style.display = "inline-block"
+  //  gets inpout values when confirm button is pressed and forwards them to the main proccess
+  const generelInputConfirm_button = document.getElementById("generelInputConfirm_button");
+  generelInputConfirm_button.addEventListener("click", () => {
+    console.log("generelInputConfirm_button")
+    let input = document.getElementById("generel_input")
+    let inputString = input.value
+    let inputInt = 0;
+    try {
+      inputInt = parseInt(inputString)
+      console.log("input: " + inputInt)
+      mainarea.generelInputConfirm(inputInt);
+    } catch (err) {
+      console.log("Couldnt parse your input as int : " + err);
+      return;
+    } finally {
+      generelInputContainer.style.display = "none"
+    }
+  });
+}
+
 const changeSizeBut = document.getElementById("changeSizeBut");
 changeSizeBut.addEventListener("click", () => {
   let changeSizeContainer = document.getElementById("size_container");
@@ -83,6 +106,12 @@ grass_block.addEventListener("click", () => {
   mainarea.changeBlockType("grass_block");
 });
 
+const checkpoint = document.getElementById("checkpoint");
+checkpoint.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("checkpoint");
+});
+
 //  gets inpout values when confirm button is pressed and forwards them to the main proccess
 const changeSizeConfirm_button = document.getElementById("changeSizeConfirm_button");
 changeSizeConfirm_button.addEventListener("click", () => {
@@ -126,3 +155,8 @@ changeZoomConfirm_button.addEventListener("click", () => {
     changeZoomContainer.style.display = "none"
   }
 });
+
+module.exports = {
+  //  global vars that are getting edited by outside
+  getGenerelInput
+}

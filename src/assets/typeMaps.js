@@ -3,8 +3,8 @@
 * @Date:   2018-06-11T23:44:30+02:00
 * @Email:  davidschmotz@gmail.com
 * @Filename: nameToTypeMap.js
-* @Last modified by:   David
-* @Last modified time: 2018-06-12T23:22:41+02:00
+ * @Last modified by:   David
+ * @Last modified time: 2018-08-27T19:22:16+02:00
 */
 
 const DEFAULT_HEADER_ELEMENT = {
@@ -140,6 +140,17 @@ const block_attributes = {
     isAdditional: false,
     hasImage: true,
     imagePath: "assets/textures/dirt.png"
+  },
+  checkpoint : {
+    id: 10,
+    name: "checkpoint",
+    hitbox: false,
+    color: "",
+    collection: "interactive",
+    hasAdditionals: true,
+    isAdditional: false,
+    hasImage: false,
+    imagePath: "assets/textures/dirt.png"
   }
 }
 
@@ -149,7 +160,8 @@ const DEFAULT_ADDITIONAL = {
   xPosition: 0,
   yPosition: 0,
   pointsTo: "",
-  poinstToType: ""
+  poinstToType: "",
+  value: ""
 }
 
 const DEFAULT_LOCAL_INTERACTIVE = {
@@ -159,7 +171,8 @@ const DEFAULT_LOCAL_INTERACTIVE = {
 }
 
 const ACTION_MENU = {
-  opponent1: ["Delete", "Waypoint", "Set Radius", "Close"]
+  opponent1: ["Waypoint", "Set Radius"],
+  checkpoint: ["Set Order"]
 }
 
 module.exports = {

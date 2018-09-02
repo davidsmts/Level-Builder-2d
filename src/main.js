@@ -153,6 +153,11 @@ ipcMain.on("changeZoom-sketch", (event, width, height) => {
   changeZoom(width, height);
 })
 
+ipcMain.on("generelInputConfirm-sketch", (event, value) => {
+  console.log("generelInputConfirm main");
+  generelInputConfirm(value);
+})
+
 const currentDocumentPath = (currentDocumentPath) => {
   mainWindow.webContents.send('givingyou-currentDocumentPath', currentDocumentPath);
 }
@@ -183,4 +188,9 @@ const changeSize = (width, height) => {
 const changeZoom = (newZoom) => {
   console.log("changeZoom main")
   mainWindow.webContents.send('changeZoom-sketch', newZoom);
+}
+
+const generelInputConfirm = (value) => {
+  console.log("generelInputConfirm main")
+  mainWindow.webContents.send('generelInputConfirm-sketch', value);
 }

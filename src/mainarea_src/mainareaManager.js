@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: mainareaManager.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-16T21:16:54+02:00
+ * @Last modified time: 2018-08-27T19:28:28+02:00
 */
 
 const sketch = require("./sketch");
@@ -111,6 +111,9 @@ const buildJsonObject = () => {
       for (let additional of tempObj.additionals) {
         additional.xPosition = additional.xPosition / DIMENSION
         additional.yPosition = additional.yPosition / DIMENSION
+        if (additional.value == null || additional.value == undefined) {
+          additional.value = ""
+        }
       }
     }
     //  Add tempObj to environment container
@@ -211,6 +214,12 @@ const changeSize = (width, height) => {
 const changeZoom = (zoom) => {
   console.log("change zoom mainareaManager")
   ipcRenderer.send('changeZoom-sketch', zoom);
+}
+
+//
+const generelInputConfirm = (inputInt) => {
+  console.log("change zoom mainareaManager")
+  ipcRenderer.send('generelInputConfirm-sketch', inputInts);
 }
 
 ipcRenderer.on('new-doc-sketch', (event, path) => {

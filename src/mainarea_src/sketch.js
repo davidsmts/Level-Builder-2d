@@ -3,8 +3,8 @@
 * @Date:   2018-05-01T20:06:17+02:00
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
-* @Last modified by:   David
-* @Last modified time: 2018-06-12T23:58:48+02:00
+ * @Last modified by:   David
+ * @Last modified time: 2018-08-27T19:24:57+02:00
 */
 
 //"use strict";
@@ -14,6 +14,7 @@ const fs = require('fs');
 const {ipcRenderer} = require("electron");
 const maps = require('../assets/typeMaps');
 const BLOCK_ATTRIBUTES = maps.block_attributes
+const actions = require('./actions');
 
 
 //  global vars that are getting edited by outside aka. public smh
@@ -63,6 +64,7 @@ function sketch(p) {
   let WAYPOINT_TEXTURE;
   let GRASS_TEXTURE;
   let DIRT_TEXTURE;
+  let CHECKPOINT_TEXTURE;
 
   //  constants
   const PARENT_ID = "p5Area";
@@ -76,6 +78,9 @@ function sketch(p) {
     createdBlocksCounter: 0,
     preWaypointBlockType: "",
     opponentsId: 0
+  }
+  let menuLogic = {
+    currentMenuIndex = 0
   }
   let sketchElement
   let sketchPosition
@@ -93,6 +98,7 @@ function sketch(p) {
     WAYPOINT_TEXTURE = p.color(126, 51, 212);
     GRASS_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.grass_block.imagePath);
     DIRT_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.dirt_block.imagePath);
+    CHECKPOINT_TEXTURE = p.color(50, 180, 100);
   }
 
   p.setup = () => {
@@ -209,9 +215,11 @@ function sketch(p) {
     console.log(index)
     let type = Interactives[index].type
     console.log(type)
+    let defaultActions = ["Delete", "Close"]
     let actionMenu = document.getElementById("action_menu")
-    let arr = maps.ACTION_MENU[type]
-    for (let data of arr) {
+    let specificActions = maps.ACTION_MENU[type]
+    let actions = defaultActions.concat(specificActions)
+    for (let data of actions) {
       var button = document.createElement("div");
       var node = document.createTextNode(data)
       button.appendChild(node)
@@ -234,6 +242,21 @@ function sketch(p) {
     checkIfHeaderContains("sight_radius")
     let headerElement = Object.assign({}, maps.DEFAULT_HEADER_ELEMENT)
     Header.push()
+  }
+
+
+  //
+  //
+  const startOrderSetting = (index) => {
+    menuLogic.currentMenuIndex = index
+    actions.getGenerelInput(index)
+  }
+
+  //
+  //
+  const setOrder = (value) => {
+    let position = p.createVector(0,0)
+    createAdditional(position, value, menuLogic.currentMenuIndex)
   }
 
 
@@ -271,6 +294,10 @@ function sketch(p) {
       case "Set Radius":
         console.log("Set Radius")
         return setRadius
+        break;
+      case "Set Order":
+        console.log("Set Order")
+        return setOrder
         break;
       default:
         console.log("default")
@@ -351,7 +378,7 @@ function sketch(p) {
       createEnvironment(blockPos)
     } else if (attributes.collection == "interactive") {
       if (attributes.isAdditional) {
-        createAdditional(blockPos)
+        createAdditional(blockPos, "")
       } else {
         createInteractive(blockPos)
       }
@@ -384,7 +411,7 @@ function sketch(p) {
   //  Creates a new Additional for an Interactive, that is saved in the waypointLogic,
   //  at the given position
   //
-  const createAdditional = (position) => {
+  const createAdditional = (position, value, index) => {
     console.log(position)
     let id = waypointLogic.opponentsId
     let additional = Object.assign({}, maps.DEFAULT_ADDITIONAL)
@@ -393,6 +420,7 @@ function sketch(p) {
     additional.yPosition = position.y
     additional.pointsTo = id
     additional.pointsToType = Interactives[id].type
+    additional.value = value
     console.log(additional)
     Interactives[id].additionals.push(additional)
     console.log(Interactives)
@@ -746,6 +774,13 @@ function sketch(p) {
     p.redraw();
   })
 
+  //
+  ipcRenderer.on('generelInputConfirm-sketch', (event, value) => {
+    console.log("generelInputConfirm sketch")
+    setOrder(value)
+    p.redraw();
+  })
+
   const getTextureOfType = (type) => {
     let hasImage = BLOCK_ATTRIBUTES[type].hasImage
     let texture = p.color(0,0,0)
@@ -776,6 +811,9 @@ function sketch(p) {
       break;
       case "grass_block":
       texture = GRASS_TEXTURE
+      break;
+      case "checkpoint":
+      texture = CHECKPOINT_TEXTURE
       break;
       default:
       console.log("!!!!!DEFAULT COLOR STATE!!!!!");
