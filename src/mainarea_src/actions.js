@@ -7,7 +7,7 @@
  * @Last modified time: 2018-06-16T21:16:35+02:00
 */
 
-const mainarea = require('./mainareaManager');
+const mainarea = require('../mainarea_src/mainareaManager');
 const maps = require('../assets/typeMaps');
 
 
@@ -24,6 +24,7 @@ const getGenerelInput = (type) => {
     try {
       inputInt = parseInt(inputString)
       console.log("input: " + inputInt)
+      console.log(mainarea)
       mainarea.generelInputConfirm(inputInt);
     } catch (err) {
       console.log("Couldnt parse your input as int : " + err);

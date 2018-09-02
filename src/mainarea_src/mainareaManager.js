@@ -219,7 +219,7 @@ const changeZoom = (zoom) => {
 //
 const generelInputConfirm = (inputInt) => {
   console.log("change zoom mainareaManager")
-  ipcRenderer.send('generelInputConfirm-sketch', inputInts);
+  ipcRenderer.send('generelInputConfirm-sketch', inputInt);
 }
 
 ipcRenderer.on('new-doc-sketch', (event, path) => {
@@ -239,6 +239,7 @@ module.exports = {
   changeSize,
   saveXML,
   changeBlockType,
+  generelInputConfirm,
   changeZoom,
   clean,
   app,

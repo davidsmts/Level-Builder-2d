@@ -80,7 +80,7 @@ function sketch(p) {
     opponentsId: 0
   }
   let menuLogic = {
-    currentMenuIndex = 0
+    currentMenuIndex: 0
   }
   let sketchElement
   let sketchPosition
@@ -297,7 +297,7 @@ function sketch(p) {
         break;
       case "Set Order":
         console.log("Set Order")
-        return setOrder
+        return startOrderSetting
         break;
       default:
         console.log("default")
@@ -377,8 +377,8 @@ function sketch(p) {
     if (attributes.collection == "environment") {
       createEnvironment(blockPos)
     } else if (attributes.collection == "interactive") {
-      if (attributes.isAdditional) {
-        createAdditional(blockPos, "")
+      if (attributes.isAdditional) {  // also means that it has to be a waypoint
+        createAdditional(blockPos, "", waypointLogic.opponentsId)
       } else {
         createInteractive(blockPos)
       }
@@ -413,16 +413,17 @@ function sketch(p) {
   //
   const createAdditional = (position, value, index) => {
     console.log(position)
-    let id = waypointLogic.opponentsId
+    console.log(value)
+    console.log(index)
     let additional = Object.assign({}, maps.DEFAULT_ADDITIONAL)
     additional.type = selectedBlockType
     additional.xPosition = position.x
     additional.yPosition = position.y
-    additional.pointsTo = id
-    additional.pointsToType = Interactives[id].type
+    additional.pointsTo = index
+    additional.pointsToType = Interactives[index].type
     additional.value = value
     console.log(additional)
-    Interactives[id].additionals.push(additional)
+    Interactives[index].additionals.push(additional)
     console.log(Interactives)
     waypointLogic.createdBlocksCounter++;
     if (waypointLogic.createdBlocksCounter >= 2) {
