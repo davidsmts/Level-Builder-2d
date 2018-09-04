@@ -14,7 +14,7 @@ const fs = require('fs');
 const {ipcRenderer} = require("electron");
 const maps = require('../assets/typeMaps');
 const BLOCK_ATTRIBUTES = maps.block_attributes
-const actions = require('./actions');
+// const actions = require('./actions');
 
 
 //  global vars that are getting edited by outside aka. public smh
@@ -249,7 +249,8 @@ function sketch(p) {
   //
   const startOrderSetting = (index) => {
     menuLogic.currentMenuIndex = index
-    actions.getGenerelInput(index)
+    let generelInputContainer = document.getElementById("generelInput_container");
+    generelInputContainer.style.display = "inline-block"
   }
 
   //

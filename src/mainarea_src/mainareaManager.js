@@ -11,7 +11,6 @@ const sketch = require("./sketch");
 const p5 = require('p5');
 const getXml = require("../file/readfile.js");
 const setXml = require("../file/savefile.js");
-const xml2js = require("xml2js");
 const xml2json = require("xml2json");
 const fs = require('fs');
 const {ipcRenderer} = require("electron");
@@ -236,24 +235,12 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
 
 
 module.exports = {
+
   changeSize,
   saveXML,
   changeBlockType,
   generelInputConfirm,
   changeZoom,
-  clean,
-  app,
-  sketch,
-}
+  clean
 
-// const xml =
-// "<elementCollection>" +
-// "<elements>" +
-// "<xPosition>-5</xPosition>" +
-// "<yPosition>-3</yPosition>" +
-// "</elements" +
-// "<elements>" +
-// "<xPosition>5</xPosition>" +
-// "<yPosition>3</yPosition>" +
-// "</elements" +
-// "</elementsCollection";
+}
