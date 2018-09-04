@@ -424,7 +424,12 @@ function sketch(p) {
     additional.pointsToType = Interactives[index].type
     additional.value = value
     console.log(additional)
-    Interactives[index].additionals.push(additional)
+    let interactive = Interactives[index]
+    if (interactive.additionals == undefined) {
+      interactive.additionals = new Array();
+    }
+    console.log(interactive)
+    interactive.additionals.push(additional)
     console.log(Interactives)
     waypointLogic.createdBlocksCounter++;
     if (waypointLogic.createdBlocksCounter >= 2) {
