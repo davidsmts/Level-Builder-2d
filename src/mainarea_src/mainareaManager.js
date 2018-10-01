@@ -31,7 +31,6 @@ const saveXML = () => {
   console.log(path)
   let obj = buildJsonObject()
   console.log(obj)
-  const builder = new xml2js.Builder()
   const xml = xml2json.toXml(obj)
   console.log(xml)
   fs.writeFile(path, xml, (err) => {

@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: sketch.js
  * @Last modified by:   David
- * @Last modified time: 2018-08-27T19:24:57+02:00
+ * @Last modified time: 2018-10-01T23:50:57+02:00
 */
 
 //"use strict";
@@ -80,7 +80,8 @@ function sketch(p) {
     opponentsId: 0
   }
   let menuLogic = {
-    currentMenuIndex: 0
+    currentMenuIndex: 0,
+    currentMenuType: ""
   }
   let sketchElement
   let sketchPosition
@@ -164,13 +165,16 @@ function sketch(p) {
       if (interactive.additionals != undefined && interactive.additionals != null && interactive.additionals instanceof Array) {
         if (interactive.additionals.length >= 1) {
           for (let additional of interactive.additionals) {
-            let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
-            let {hasImage, texture} = getTextureOfType(additional.type);
-            if (hasImage) {
-              p.image(texture, additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2)
-            } else {
-              p.fill(texture);
-              p.ellipse(additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
+            if (additional.draw) {  //  Because some additionals are not supposed to be drawn
+              console.log(additional)
+              let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
+              let {hasImage, texture} = getTextureOfType(additional.type);
+              if (hasImage) {
+                p.image(texture, additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2)
+              } else {
+                p.fill(texture);
+                p.ellipse(additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
+              }
             }
           }
         }
@@ -249,6 +253,7 @@ function sketch(p) {
   //
   const startOrderSetting = (index) => {
     menuLogic.currentMenuIndex = index
+    menuLogic.currentMenuType = "order"
     let generelInputContainer = document.getElementById("generelInput_container");
     generelInputContainer.style.display = "inline-block"
   }
@@ -257,7 +262,7 @@ function sketch(p) {
   //
   const setOrder = (value) => {
     let position = p.createVector(0,0)
-    createAdditional(position, value, menuLogic.currentMenuIndex)
+    createAdditional(position, value, menuLogic.currentMenuIndex, menuLogic.currentMenuType)
   }
 
 
@@ -379,7 +384,7 @@ function sketch(p) {
       createEnvironment(blockPos)
     } else if (attributes.collection == "interactive") {
       if (attributes.isAdditional) {  // also means that it has to be a waypoint
-        createAdditional(blockPos, "", waypointLogic.opponentsId)
+        createAdditional(blockPos, "", waypointLogic.opponentsId, "waypoint")
       } else {
         createInteractive(blockPos)
       }
@@ -412,31 +417,38 @@ function sketch(p) {
   //  Creates a new Additional for an Interactive, that is saved in the waypointLogic,
   //  at the given position
   //
-  const createAdditional = (position, value, index) => {
-    console.log(position)
-    console.log(value)
-    console.log(index)
+  const createAdditional = (position, value, index, type) => {
+    let attributes = Object.assign({}, BLOCK_ATTRIBUTES[type])
+    let canBeAdded = checkForAdditionalsOccurence(index, type, attributes.maxOccurence)
+    console.log(canBeAdded)
+    if (!canBeAdded) {
+      return
+    }
     let additional = Object.assign({}, maps.DEFAULT_ADDITIONAL)
-    additional.type = selectedBlockType
+    additional.type = type
     additional.xPosition = position.x
     additional.yPosition = position.y
     additional.pointsTo = index
     additional.pointsToType = Interactives[index].type
     additional.value = value
-    console.log(additional)
+    additional.draw = attributes.draw
     let interactive = Interactives[index]
     if (interactive.additionals == undefined) {
       interactive.additionals = new Array();
     }
     console.log(interactive)
+    console.log(additional)
     interactive.additionals.push(additional)
-    console.log(Interactives)
-    waypointLogic.createdBlocksCounter++;
-    if (waypointLogic.createdBlocksCounter >= 2) {
-      selectedBlockType = waypointLogic.preWaypointBlockType
-      waypointLogic.createdBlocksCounter = 0
+    //  specialCases
+    if (type == "waypoint") {
+      waypointLogic.createdBlocksCounter++;
+      if (waypointLogic.createdBlocksCounter >= 2) {
+        selectedBlockType = waypointLogic.preWaypointBlockType
+        waypointLogic.createdBlocksCounter = 0
+      }
     }
   }
+
 
   //  This function is called to decide wether or not to add additionals when
   //  the object is clicked.
@@ -648,12 +660,24 @@ function sketch(p) {
       for (let additional of additionals) {
         additional.xPosition = additional.xPosition*CubeWidthAndHeight
         additional.yPosition = additional.yPosition*CubeWidthAndHeight
+        if (additional.draw == "true") {
+          additional.draw = true
+        } else {
+          additional.draw = false
+        }
       }
       return additionals
     } else {
+      let newAdditionals = new Array()
       additionals.xPosition = additionals.xPosition*CubeWidthAndHeight
       additionals.yPosition = additionals.yPosition*CubeWidthAndHeight
-      return additionals
+      if (additionals.draw == "true") {
+        additionals.draw = true
+      } else {
+        additionals.draw = false
+      }
+      newAdditionals.push(additionals)
+      return newAdditionals
     }
   }
 
@@ -693,6 +717,37 @@ function sketch(p) {
     }
     console.log("not in interactives")
     return {doesContain: false, index: 0, container: "none"};
+  }
+
+  //  This function is used to check how many times an additionals is in an
+  //  interactive and how often its maximally supposed to appear.
+  //  returns -> false for appearing to the maximum (or to often),
+  //             true for not having reached the maxOccurence yet
+  const checkForAdditionalsOccurence = (index, type, maxOccurence) => {
+    console.log("checkForAdditionalsOccurence")
+    let additionals = Interactives[index].additionals
+    if (additionals == undefined) {
+      Interactives[index].additionals = new Array()
+      return
+    }
+    if (maxOccurence >= 1) {
+      for (let i = 0; i < additionals.length; i++) {
+        if (additionals[i].type == type) {
+          return false
+        }
+      }
+    } else if (maxOccurence == 2) {
+      let cnt = 0
+      for (let i = 0; i < additionals.length; i++) {
+        if (additionals[i].type == type) {
+          cnt++
+        }
+      }
+      if (cnt >= 2) {
+        return false
+      }
+    }
+    return true
   }
 
 

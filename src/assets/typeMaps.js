@@ -4,7 +4,7 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: nameToTypeMap.js
  * @Last modified by:   David
- * @Last modified time: 2018-08-27T19:22:16+02:00
+ * @Last modified time: 2018-09-21T21:53:03+02:00
 */
 
 const DEFAULT_HEADER_ELEMENT = {
@@ -117,7 +117,9 @@ const block_attributes = {
     collection: "interactive",
     hasAdditionals: false,
     isAdditional: true,
-    hasImage: false
+    hasImage: false,
+    draw: true,
+    maxOccurence: 2
   },
   grass_block : {
     id: 8,
@@ -150,7 +152,21 @@ const block_attributes = {
     hasAdditionals: true,
     isAdditional: false,
     hasImage: false,
-    imagePath: "assets/textures/dirt.png"
+    imagePath: "assets/textures/dirt.png",
+    draw: true
+  },
+  order : {
+    id: 11,
+    name: "order",
+    hitbox: false,
+    color: "",
+    collection: "interactive",
+    hasAdditionals: false,
+    isAdditional: true,
+    hasImage: false,
+    imagePath: "",
+    draw: false,
+    maxOccurence: 1
   }
 }
 
@@ -161,7 +177,8 @@ const DEFAULT_ADDITIONAL = {
   yPosition: 0,
   pointsTo: "",
   poinstToType: "",
-  value: ""
+  value: "",
+  draw: false
 }
 
 const DEFAULT_LOCAL_INTERACTIVE = {
