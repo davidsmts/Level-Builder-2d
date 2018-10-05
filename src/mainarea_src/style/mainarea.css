@@ -31,3 +31,45 @@ canvas {
 .blocktype_menu {
 
 }
+
+#display-backgrounds {
+  display: block;
+  width: auto;
+  white-space: nowrap;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.bg-displayer {
+  position: absolute;
+  background-color: lightgrey;
+  bottom: 0;
+  top: 80%;
+  height: 20%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: scroll;
+}
+
+.bg-element {
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100px;
+  max-height: 100%;
+  width: 20%;
+  height: 100%;
+  padding: 5px;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+.bordered {
+  box-sizing: border-box;
+  border-radius: 1px;
+  border-color: black;
+  border-style: solid;
+}

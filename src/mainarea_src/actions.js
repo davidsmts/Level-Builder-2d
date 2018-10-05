@@ -34,6 +34,13 @@ generelInputConfirm_button.addEventListener("click", () => {
   }
 });
 
+
+const changeLayerBut = document.getElementById("changeLayerBut");
+changeLayerBut.addEventListener("click", () => {
+  mainarea.changeLayer()
+});
+
+
 const changeSizeBut = document.getElementById("changeSizeBut");
 changeSizeBut.addEventListener("click", () => {
   let changeSizeContainer = document.getElementById("size_container");

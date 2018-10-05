@@ -39,6 +39,7 @@ const DEFAULT_ELEMENT = {
   type: "",
   xPosition: "",
   yPosition: "",
+  zPosition: "",
   hitbox: false,
 }
 

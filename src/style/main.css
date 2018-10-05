@@ -30,6 +30,7 @@ body {
 }
 
 .levelbuilder {
+  position: relative;
   background-color: lightgrey;
   display: inline-block;
   width: 80%;

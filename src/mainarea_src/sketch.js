@@ -87,6 +87,7 @@ function sketch(p) {
   let sketchPosition
   let sketchSize
   let parentElement
+  let currentLayer = 0
 
   p.preload = () => {
     //initialising constants
@@ -118,6 +119,8 @@ function sketch(p) {
 
 
   //
+  //
+  //
   p.draw = () => {
     p.background(200);
     p.fill(255);
@@ -138,8 +141,10 @@ function sketch(p) {
       //  because the position is 50:1 while we actually need it to be zoom:1
       let renderPosition = p.createVector(position.x * CurrentZoomLevel, position.y * CurrentZoomLevel)
       let {hasImage, texture} = getTextureOfType(SpriteTypes[i]);
-      if (hasImage) {
-        p.image(texture, renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight)
+      if (hasImage) { //  width and height get set into relation of the images size
+        let width = (texture.width / 32) * CubeWidthAndHeight
+        let height = (texture.height / 32) * CubeWidthAndHeight
+        p.image(texture, renderPosition.x, renderPosition.y, width, height)
       } else {
         p.fill(texture);
         p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
@@ -156,7 +161,9 @@ function sketch(p) {
       let renderPosition = p.createVector(interactive.position.x * CurrentZoomLevel, interactive.position.y * CurrentZoomLevel)
       let {hasImage, texture} = getTextureOfType(interactive.type);
       if (hasImage) {
-        p.image(texture, renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight)
+        let width = (texture.width / 32) * CubeWidthAndHeight
+        let height = (texture.height / 32) * CubeWidthAndHeight
+        p.image(texture, renderPosition.x, renderPosition.y, width, height)
       } else {
         p.fill(texture);
         p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
@@ -170,9 +177,12 @@ function sketch(p) {
               let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
               let {hasImage, texture} = getTextureOfType(additional.type);
               if (hasImage) {
-                p.image(texture, additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2)
+                let width = (texture.width / 32) * CubeWidthAndHeight
+                let height = (texture.height / 32) * CubeWidthAndHeight
+                p.image(texture, additonalRenderPosition.x, additonalRenderPosition.y, width, height)
               } else {
                 p.fill(texture);
+                //  + zoom * 25 damit die ellipse in der mitte ist
                 p.ellipse(additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
               }
             }
@@ -413,6 +423,7 @@ function sketch(p) {
     console.log(SpriteTypes.length)
     console.log(SpritePositions.length)
   }
+
 
   //  Creates a new Additional for an Interactive, that is saved in the waypointLogic,
   //  at the given position

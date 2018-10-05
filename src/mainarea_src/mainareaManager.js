@@ -192,6 +192,10 @@ const clean = () => {
   ipcRenderer.send('clean-all');
 }
 
+const changeLayer = () => {
+  ipcRenderer.send('change-layer');
+}
+
 const changeBlockType = (selectedBlockType) => {
   ipcRenderer.send('change-selected-block', selectedBlockType);
 }
@@ -234,12 +238,11 @@ ipcRenderer.on('new-doc-mainareaManager', (event, documentsOfMain) => {
 
 
 module.exports = {
-
   changeSize,
   saveXML,
   changeBlockType,
   generelInputConfirm,
   changeZoom,
-  clean
-
+  clean,
+  changeLayer
 }

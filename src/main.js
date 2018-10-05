@@ -39,6 +39,12 @@ function createWindow() {
           console.log("open")
           openFileDialog()
         },
+      },{
+        label: "Load backgrounds",
+        click: _ => {
+          console.log("backgrounds")
+          selectBackgroundFolder()
+        },
       }, {
         label: "New",
         click: _ => {
@@ -95,6 +101,20 @@ const openFileDialog = () => {
 }
 
 
+//  Opens File Dialog and messages all endpoints the new path
+const selectBackgroundFolder = () => {
+  dialog.showOpenDialog({
+    properties: ['openDirectory']
+  }, function (files) {
+    if (files !== undefined) {
+      const Path = files[0]
+      //  ipc sends
+      console.log("pfad: " + Path)
+      currentBackgroundTexturesPath(Path)
+    }
+  })
+}
+
 //  creates a new xml Level File
 const newXmlFile = () => {
 
@@ -109,6 +129,9 @@ const documents = {
   currentDocumentName: "",
   currentFullPath: ""
 }
+
+let layer = 0
+
 
 ipcMain.on("new-path", (event, arg) => {
   console.log("main: " + arg)
@@ -153,10 +176,33 @@ ipcMain.on("changeZoom-sketch", (event, width, height) => {
   changeZoom(width, height);
 })
 
+ipcMain.on("change-layer", (event) => {
+  console.log("change-layer main");
+})
+
 ipcMain.on("generelInputConfirm-sketch", (event, value) => {
   console.log("generelInputConfirm main");
   generelInputConfirm(value);
 })
+
+
+//
+// FUNCTIONS
+//
+
+
+const changeLayer = () => {
+  if (layer <= 1) {
+    layer++
+  } else {
+    layer = 0
+  }
+}
+
+const currentBackgroundTexturesPath = (bgPath) => {
+  console.log("sending")
+  mainWindow.webContents.send('bgPath', bgPath)
+}
 
 const currentDocumentPath = (currentDocumentPath) => {
   mainWindow.webContents.send('givingyou-currentDocumentPath', currentDocumentPath);

@@ -19,6 +19,7 @@
       <div id="saveBut" class="topBut">Save</div>
       <div id="newBut" class="topBut">New</div>
       <div id="cleanBut" class="topBut">Clean</div>
+      <div id="changeLayerBut" class="topBut">Change Layer</div>
     </div>
     <div class="blocktype_menu">
       <div id="normal_block" class="topBut">Default</div>
@@ -46,6 +47,9 @@
     </div>
     <div class="action_menu" id="action_menu"></div>
     <div id="p5Area"></div>
+    <div class="bg-displayer">
+      <ul id="display-backgrounds"></ul>
+    </div>
   </div>
 
   <script>
@@ -54,6 +58,7 @@
     require('./sidebar_src/actions')
     require('./sidebar_src/filetree')
     require('./mainarea_src/mainareaManager')
+    require('./mainarea_src/backgroundManager')
     require('./mainarea_src/actions')
     require("./mainarea_src/sketch")
   </script>
