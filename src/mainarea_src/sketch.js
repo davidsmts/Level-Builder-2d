@@ -24,8 +24,9 @@ let CurrentZoomLevel = 1.0;
 let LevelWidth = 1000;
 let LevelHeight = 1000;
 let Path = "";
-let SpritePositions = new Array();
-let SpriteTypes = new Array();
+// let SpritePositions = new Array();
+// let SpriteTypes = new Array();
+let Sprites = new Array()
 let Interactives = new Array();
 var Header = new Array();
 
@@ -87,6 +88,7 @@ function sketch(p) {
   let sketchPosition
   let sketchSize
   let parentElement
+  let bgDisplay
   let currentLayer = 0
 
   p.preload = () => {
@@ -112,8 +114,8 @@ function sketch(p) {
     sketchPosition = p.createVector(sketchElement.offsetLeft, sketchElement.offsetTop)
     sketchSize = p.createVector(sketchElement.width, sketchElement.height)
     parentElement = document.getElementById(PARENT_ID);
-
-
+    bgDisplay = document.getElementById("bg-display")
+    renderStatusBar()
     p.noLoop();
   }
 
@@ -133,14 +135,15 @@ function sketch(p) {
     for (var i=0; i<LevelHeight; i+=CubeWidthAndHeight) {
       p.line(0, i, LevelWidth, i);
     }
-    //  Draw Blocks
-    for (var i=0; i<SpritePositions.length; i++) {
-      p.push();
-      let position = SpritePositions[i];
+
+    //  Draw Sprites
+    for (let sprite of Sprites) {
+      p.push()
+      let position = sprite.position
       //  renderPosition is the position at which the cube is to be displayed in the Builder
       //  because the position is 50:1 while we actually need it to be zoom:1
       let renderPosition = p.createVector(position.x * CurrentZoomLevel, position.y * CurrentZoomLevel)
-      let {hasImage, texture} = getTextureOfType(SpriteTypes[i]);
+      let {hasImage, texture} = getTextureOfType(sprite.type);
       if (hasImage) { //  width and height get set into relation of the images size
         let width = (texture.width / 32) * CubeWidthAndHeight
         let height = (texture.height / 32) * CubeWidthAndHeight
@@ -151,6 +154,7 @@ function sketch(p) {
       }
       p.pop();
     }
+
 
     //  Draw Interactives
     for (let interactive of Interactives) {
@@ -417,11 +421,11 @@ function sketch(p) {
 
   //  Creates new environment element at given position with currently selectedBlockType
   const createEnvironment = (position) => {
-    SpritePositions.push(position);
-    console.log("pushing: " + selectedBlockType)
-    SpriteTypes.push(selectedBlockType);
-    console.log(SpriteTypes.length)
-    console.log(SpritePositions.length)
+    let tempElement = Object.assign({}, maps.DEFAULT_LOCAL_ELEMENT)
+    tempElement.position = position
+    tempElement.type = selectedBlockType
+    tempElement.layer = currentLayer
+    Sprites.push(tempElement)
   }
 
 
@@ -479,8 +483,7 @@ function sketch(p) {
   //
   const removeElement = (index) => {
     console.log("removeElement")
-    SpritePositions.splice(index, 1)
-    SpriteTypes.splice(index, 1)
+    Sprites.splice(index, 1)
     p.redraw();
   }
 
@@ -619,18 +622,32 @@ function sketch(p) {
         //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
         const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
         const type = element.type
-        SpritePositions.push(vector)
-        SpriteTypes.push(type)
+        const layer = element.layer
+        let tempElement = Object.assign({}, maps.DEFAULT_LOCAL_ELEMENT)
+        tempElement.position = vector
+        tempElement.type = type
+        if (layer == undefined || layer == null || layer == "") {
+          tempElement.layer = 0
+        } else {
+          tempElement.layer = layer
+        }
+        Sprites.push(tempElement)
       }
-      console.log(Header)
-      console.log(SpritePositions)
-      console.log(SpriteTypes)
+      console.log(Sprites)
     } else {
       //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
-      const vector = p.createVector(elements.xPosition*CubeWidthAndHeight, elements.yPosition*CubeWidthAndHeight)
-      const type = elements.type
-      SpritePositions.push(vector)
-      SpriteTypes.push(type)
+      const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
+      const type = element.type
+      const layer = element.layer
+      let tempElement = Object.assign({}, maps.DEFAULT_LOCAL_ELEMENT)
+      tempElement.position = vector
+      tempElement.type = type
+      if (layer == undefined || layer == null || layer == "") {
+        tempElement.layer = 0
+      } else {
+        tempElement.layer = layer
+      }
+      Sprites.push(tempElement)
     }
   }
 
@@ -700,8 +717,9 @@ function sketch(p) {
   const rectContains = (rectPosition, rectSize, pointToCheckFor) => {
     const x = pointToCheckFor.x - parentElement.scrollLeft
     const y = pointToCheckFor.y - parentElement.scrollTop
-
-    if (x > 0 && y > 0) {
+    const lowerBound = bgDisplay.offsetTop - parentElement.offsetTop
+    console.log("b: ", lowerBound, " and y: ", y)
+    if (x > 0 && y > 0 && y < lowerBound) {
       return true
     }
     return false
@@ -711,9 +729,9 @@ function sketch(p) {
   //  checks if any Element Container contains the passed point
   const doesPointExist = (point) => {
     console.log("doesPointExist")
-    for (let i = 0; i < SpritePositions.length; i++) {
-      const spritePosition = SpritePositions[i];
-      if (spritePosition.x == point.x && spritePosition.y == point.y) {
+    for (let i = 0; i < Sprites.length; i++) {
+      const sprite = Sprites[i];
+      if (sprite.position.x == point.x && sprite.position.y == point.y) {
         console.log("y")
         return {doesContain: true, index: i, container: "Elements"};
       }
@@ -761,12 +779,19 @@ function sketch(p) {
     return true
   }
 
+  //
+  //
+  const renderStatusBar = () => {
+  let bar = document.getElementById("status-bar")
+  bar.innerHTML = ""
+  bar.innerHTML += "<p class='status-element'>Layer: " + currentLayer + "</p>"
+  bar.innerHTML += "<p class='status-element'>Block: " + selectedBlockType + "</p>"
+}
 
   //
   //
   const flushCurrentLevel = () => {
-    SpriteTypes.splice(0, SpriteTypes.length)
-    SpritePositions.splice(0, SpritePositions.length)
+    Sprites.splice(0, Sprites.length)
     Interactives.splice(0, Interactives.length)
     p.redraw();
   }
@@ -791,11 +816,17 @@ function sketch(p) {
     module.exports.Header = Header
     module.exports.Level = Level
     module.exports.Path = Path
-    module.exports.SpritePositions = SpritePositions
-    module.exports.SpriteTypes = SpriteTypes
+    module.exports.Sprites = Sprites
+    // module.exports.SpriteTypes = SpriteTypes
     module.exports.Interactives = Interactives
   }
 
+
+  ipcRenderer.on("new-layer", (event,arg) => {
+    console.log("sketch: ", arg)
+    currentLayer = arg
+    renderStatusBar()
+  })
 
   //
   ipcRenderer.on('new-doc-sketch', (event, arg) => {
@@ -814,6 +845,7 @@ function sketch(p) {
     console.log("change-selected-block: " + passedBlockType)
     selectedBlockType = passedBlockType
     console.log("selectedBlockType after: " + selectedBlockType)
+    renderStatusBar()
   })
 
 
@@ -821,7 +853,6 @@ function sketch(p) {
   ipcRenderer.on('clean-all', (event) => {
     console.log("clean-all sketch")
     flushCurrentLevel();
-    console.log(SpritePositions)
     p.redraw();
   })
 
@@ -909,7 +940,6 @@ module.exports = {
   Header,
   Level,
   Path,
-  SpritePositions,
-  SpriteTypes,
+  Sprites,
   Interactives
 }

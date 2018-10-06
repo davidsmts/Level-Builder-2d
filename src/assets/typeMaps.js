@@ -188,6 +188,12 @@ const DEFAULT_LOCAL_INTERACTIVE = {
   additionals: new Array()
 }
 
+const DEFAULT_LOCAL_ELEMENT = {
+  position: 0,
+  type: "",
+  layer: 0
+}
+
 const ACTION_MENU = {
   opponent1: ["Waypoint", "Set Radius"],
   checkpoint: ["Set Order"]

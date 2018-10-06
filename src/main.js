@@ -178,6 +178,7 @@ ipcMain.on("changeZoom-sketch", (event, width, height) => {
 
 ipcMain.on("change-layer", (event) => {
   console.log("change-layer main");
+  changeLayer()
 })
 
 ipcMain.on("generelInputConfirm-sketch", (event, value) => {
@@ -197,6 +198,8 @@ const changeLayer = () => {
   } else {
     layer = 0
   }
+
+  mainWindow.webContents.send('new-layer', layer)
 }
 
 const currentBackgroundTexturesPath = (bgPath) => {

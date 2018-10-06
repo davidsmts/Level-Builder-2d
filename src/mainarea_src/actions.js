@@ -10,6 +10,24 @@
 const mainarea = require("./mainareaManager");
 const maps = require("../assets/typeMaps");
 
+let bgOpen = true
+const toggleBg_button = document.getElementById("toggle-bg-display")
+toggleBg_button.addEventListener("click", () => {
+  console.log("clickediclick")
+  bgDisplay = document.getElementById("bg-display");
+  if (bgOpen) {
+    bgDisplay.style.top = "92%"
+    bgDisplay.style.height = "4%"
+    toggleBg_button.innerHTML = "+"
+    bgOpen = false
+  } else {
+    bgDisplay.style.top = "80%"
+    bgDisplay.style.height = "16%"
+    toggleBg_button.innerHTML = "-"
+    bgOpen = true
+  }
+
+})
 
 //  gets inpout values when confirm button is pressed and forwards them to the main proccess
 const generelInputConfirm_button = document.getElementById("generelInputConfirm_button");
