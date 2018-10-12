@@ -27,8 +27,8 @@ let Path = "";
 // let SpritePositions = new Array();
 // let SpriteTypes = new Array();
 let Sprites = new Array()
-let Interactives = new Array();
-var Header = new Array();
+let Interactives = new Array()
+var Header = new Array()
 
 
 const Level = (path) => {
@@ -97,7 +97,7 @@ function sketch(p) {
     WOOD_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.wood_block.imagePath);
     STONE_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.stone_block.imagePath);
     PLAYER_TEXTURE = p.color("#00c800")
-    FINISH_TEXTURE = p.color("ff0000")
+    FINISH_TEXTURE = p.color("#ff0000")
     OPPONENT1_TEXTURE = p.color("#000000")
     WAYPOINT_TEXTURE = p.color("#7e33d4")
     GRASS_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.grass_block.imagePath);
@@ -136,78 +136,95 @@ function sketch(p) {
       p.line(0, i, LevelWidth, i);
     }
 
-    console.log("draw sprites")
     //  Draw Sprites
     for (let sprite of Sprites) {
-      p.push()
-      let position = sprite.position
-      //  renderPosition is the position at which the cube is to be displayed in the Builder
-      //  because the position is 50:1 while we actually need it to be zoom:1
-      let renderPosition = p.createVector(position.x * CurrentZoomLevel, position.y * CurrentZoomLevel)
-      let {hasImage, texture} = getTextureOfType(sprite.type);
-      if (hasImage) { //  width and height get set into relation of the images size
-        let width = (texture.width / 32) * CubeWidthAndHeight
-        let height = (texture.height / 32) * CubeWidthAndHeight
-        if (sprite.layer != currentLayer) {
-          console.log("at tint")
-          p.tint(255, 127)
-        }
-
-        p.image(texture, renderPosition.x, renderPosition.y, width, height)
-      } else {
-        console.log("at fill")
-        if (sprite.layer != currentLayer) {
-          p.fill(p.unhex(texture));
-        } else {
-          p.fill(texture, 0)
-        }
-
-        p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
-      }
-      
-      p.pop();
+      drawSprite(sprite)
     }
 
-    console.log("draw uadiaw")
     //  Draw Interactives
     for (let interactive of Interactives) {
-      p.push();
+      drawInteractive(interactive)
+    }
 
-      //  renderPosition is the position at which the cube is to be displayed in the Builder
-      //  because the position is 50:1 while we actually need it to be zoom:1
-      let renderPosition = p.createVector(interactive.position.x * CurrentZoomLevel, interactive.position.y * CurrentZoomLevel)
-      let {hasImage, texture} = getTextureOfType(interactive.type);
-      if (hasImage) {
-        let width = (texture.width / 32) * CubeWidthAndHeight
-        let height = (texture.height / 32) * CubeWidthAndHeight
-        p.image(texture, renderPosition.x, renderPosition.y, width, height)
-      } else {
-        p.fill(texture);
-        p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
+    for (let sprite of Sprites) {
+      if (sprite.layer == currentLayer) {
+        drawSprite(sprite)
+      }
+    }
+  }
+
+
+  //  draws passed sprite
+  //
+  const drawSprite = (sprite) => {
+    p.push()
+    let position = sprite.position
+    //  renderPosition is the position at which the cube is to be displayed in the Builder
+    //  because the position is 50:1 while we actually need it to be zoom:1
+    let renderPosition = p.createVector(position.x * CurrentZoomLevel, position.y * CurrentZoomLevel)
+    let {hasImage, texture} = getTextureOfType(sprite.type);
+    if (hasImage) { //  width and height get set into relation of the images size
+      let width = (texture.width / 32) * CubeWidthAndHeight
+      let height = (texture.height / 32) * CubeWidthAndHeight
+      if (sprite.layer != currentLayer) {
+        console.log("at tint")
+        p.tint(255, 127)
       }
 
-      if (interactive.additionals != undefined && interactive.additionals != null && interactive.additionals instanceof Array) {
-        if (interactive.additionals.length >= 1) {
-          for (let additional of interactive.additionals) {
-            if (additional.draw) {  //  Because some additionals are not supposed to be drawn
-              console.log(additional)
-              let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
-              let {hasImage, texture} = getTextureOfType(additional.type);
-              if (hasImage) {
-                let width = (texture.width / 32) * CubeWidthAndHeight
-                let height = (texture.height / 32) * CubeWidthAndHeight
-                p.image(texture, additonalRenderPosition.x, additonalRenderPosition.y, width, height)
-              } else {
-                p.fill(texture);
-                //  + zoom * 25 damit die ellipse in der mitte ist
-                p.ellipse(additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
-              }
+      p.image(texture, renderPosition.x, renderPosition.y, width, height)
+    } else {
+      console.log("at fill")
+      if (sprite.layer != currentLayer) {
+        p.fill(p.unhex(texture));
+      } else {
+        p.fill(texture, 0)
+      }
+
+      p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
+    }
+
+    p.pop();
+  }
+
+  //  draws a passed interactive
+  //
+  const drawInteractive = (interactive) => {
+    p.push();
+
+    //  renderPosition is the position at which the cube is to be displayed in the Builder
+    //  because the position is 50:1 while we actually need it to be zoom:1
+    let renderPosition = p.createVector(interactive.position.x * CurrentZoomLevel, interactive.position.y * CurrentZoomLevel)
+    let {hasImage, texture} = getTextureOfType(interactive.type);
+    if (hasImage) {
+      let width = (texture.width / 32) * CubeWidthAndHeight
+      let height = (texture.height / 32) * CubeWidthAndHeight
+      p.image(texture, renderPosition.x, renderPosition.y, width, height)
+    } else {
+      p.fill(texture);
+      p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
+    }
+
+    if (interactive.additionals != undefined && interactive.additionals != null && interactive.additionals instanceof Array) {
+      if (interactive.additionals.length >= 1) {
+        for (let additional of interactive.additionals) {
+          if (additional.draw) {  //  Because some additionals are not supposed to be drawn
+            console.log(additional)
+            let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
+            let {hasImage, texture} = getTextureOfType(additional.type);
+            if (hasImage) {
+              let width = (texture.width / 32) * CubeWidthAndHeight
+              let height = (texture.height / 32) * CubeWidthAndHeight
+              p.image(texture, additonalRenderPosition.x, additonalRenderPosition.y, width, height)
+            } else {
+              p.fill(texture);
+              //  + zoom * 25 damit die ellipse in der mitte ist
+              p.ellipse(additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
             }
           }
         }
       }
-      p.pop();
     }
+    p.pop();
   }
 
 
@@ -744,7 +761,7 @@ function sketch(p) {
     console.log("doesPointExist")
     for (let i = 0; i < Sprites.length; i++) {
       const sprite = Sprites[i];
-      if (sprite.position.x == point.x && sprite.position.y == point.y) {
+      if (sprite.position.x == point.x && sprite.position.y == point.y && sprite.layer == currentLayer) {
         console.log("y")
         return {doesContain: true, index: i, container: "Elements"};
       }
@@ -752,7 +769,7 @@ function sketch(p) {
     console.log("not in sprites")
     for (let i = 0; i < Interactives.length; i++) {
       const position = Interactives[i].position;
-      if (position.x == point.x && position.y == point.y) {
+      if (position.x == point.x && position.y == point.y && sprite.layer == currentLayer) {
         console.log("y")
         return {doesContain: true, index: i, container: "Objects"};
       }
