@@ -1,11 +1,11 @@
 /**
- * @Author: David Schmotz <David>
- * @Date:   2018-10-04T14:37:57+02:00
- * @Email:  davidschmotz@gmail.com
- * @Filename: backgroundManager.js
- * @Last modified by:   David
- * @Last modified time: 2018-10-04T18:25:36+02:00
- */
+* @Author: David Schmotz <David>
+* @Date:   2018-10-04T14:37:57+02:00
+* @Email:  davidschmotz@gmail.com
+* @Filename: backgroundManager.js
+* @Last modified by:   David
+* @Last modified time: 2018-10-04T18:25:36+02:00
+*/
 
 const electron = require("electron")
 const fs = require('fs')
@@ -34,7 +34,9 @@ const loadBackgrounds = (path) => {
       let fileEnding = getFileEnding(file)
       if (fileEnding == "png") {
         console.log(file);
-        document.getElementById("display-backgrounds").innerHTML += `<a class="bg-element bordered">${file}</a>`;
+        var _img = fs.readFileSync(path +"/"+ file).toString('base64');
+        var _out = '<img class="bg-element bordered" src="data:image/png;base64,' + _img + '" />';
+        document.getElementById("display-backgrounds").innerHTML += _out;
       }
     }
   });

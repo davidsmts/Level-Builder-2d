@@ -360,6 +360,7 @@ function sketch(p) {
 
   //
   const handleDragBlock = (point, deleteOnly) => {
+    console.log("handleDragBlock")
     const renderedPoint = p.createVector(point.x * CurrentZoomLevel, point.y * CurrentZoomLevel)
     const toRoundX = renderedPoint.x % 50;
     const toRoundY = renderedPoint.y % 50;
@@ -390,6 +391,7 @@ function sketch(p) {
 
   //
   const handleBlock = (point) => {
+    console.log("hanldeblock")
     const renderedPoint = p.createVector(point.x * CurrentZoomLevel, point.y * CurrentZoomLevel)
     const toRoundX = renderedPoint.x % 50;
     const toRoundY = renderedPoint.y % 50;
@@ -769,7 +771,7 @@ function sketch(p) {
     console.log("not in sprites")
     for (let i = 0; i < Interactives.length; i++) {
       const position = Interactives[i].position;
-      if (position.x == point.x && position.y == point.y && sprite.layer == currentLayer) {
+      if (position.x == point.x && position.y == point.y && currentLayer == 0) {
         console.log("y")
         return {doesContain: true, index: i, container: "Objects"};
       }
