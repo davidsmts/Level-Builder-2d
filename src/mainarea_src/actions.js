@@ -101,6 +101,18 @@ stone_block.addEventListener("click", () => {
   mainarea.changeBlockType("stone_block");
 });
 
+const spike_block = document.getElementById("spike_block");
+spike_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("spike_block");
+});
+
+const fire_block = document.getElementById("fire_block");
+fire_block.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("fire_block");
+});
+
 const spawn_block = document.getElementById("spawn_block");
 spawn_block.addEventListener("click", () => {
   console.log("changeBlockType")

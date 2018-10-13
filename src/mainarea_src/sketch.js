@@ -66,6 +66,8 @@ function sketch(p) {
   let GRASS_TEXTURE;
   let DIRT_TEXTURE;
   let CHECKPOINT_TEXTURE;
+  let FIRE_TEXTURE;
+  let SPIKE_TEXTURE;
 
   //  constants
   const PARENT_ID = "p5Area";
@@ -102,6 +104,9 @@ function sketch(p) {
     WAYPOINT_TEXTURE = p.color("#7e33d4")
     GRASS_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.grass_block.imagePath);
     DIRT_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.dirt_block.imagePath);
+    SPIKE_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.spike_block.imagePath);
+    console.log(SPIKE_TEXTURE)
+    FIRE_TEXTURE = p.color("#00ff00")
     CHECKPOINT_TEXTURE = p.color("#32b464")
   }
 
@@ -654,7 +659,7 @@ function sketch(p) {
         //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
         const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
         const type = element.type
-        const layer = element.layer
+        const layer = element.zPosition
         let tempElement = Object.assign({}, maps.DEFAULT_LOCAL_ELEMENT)
         tempElement.position = vector
         tempElement.type = type
@@ -951,6 +956,12 @@ function sketch(p) {
       break;
       case "checkpoint":
       texture = CHECKPOINT_TEXTURE
+      break;
+      case "fire_block":
+      texture = FIRE_TEXTURE
+      break;
+      case "spike_block":
+      texture = SPIKE_TEXTURE
       break;
       default:
       console.log("!!!!!DEFAULT COLOR STATE!!!!!");

@@ -168,6 +168,28 @@ const block_attributes = {
     imagePath: "",
     draw: false,
     maxOccurence: 1
+  },
+  spike_block : {
+    id: 12,
+    name: "spike_block",
+    hitbox: true,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: true,
+    imagePath: "assets/textures/spikes.png"
+  },
+  fire_block : {
+    id: 13,
+    name: "fire_block",
+    hitbox: true,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: false,
+    imagePath: "assets/textures/fire_block.png"
   }
 }
 

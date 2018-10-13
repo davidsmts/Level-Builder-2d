@@ -34,7 +34,7 @@ const loadBackgrounds = (path) => {
       let fileEnding = getFileEnding(file)
       if (fileEnding == "png") {
         console.log(file);
-        var _img = fs.readFileSync(path +"/"+ file).toString('base64');
+        var _img = fs.readFileSync(path + "/" + file).toString('base64');
         var _out = '<img class="bg-element bordered" src="data:image/png;base64,' + _img + '" />';
         document.getElementById("display-backgrounds").innerHTML += _out;
       }
