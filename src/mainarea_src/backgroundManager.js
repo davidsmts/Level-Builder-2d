@@ -31,6 +31,7 @@ const loadBackgrounds = (path) => {
     //if an error is thrown when reading the directory, we throw it. Otherwise we continue
     if (err) throw  err;
     //the files parameter is an array of the files and folders in the path we passed. So we loop through the array, printing each file and folder
+    document.getElementById("display-backgrounds").innerHTML = "";
     for (let file of files) {
       let {fileprefix, fileEnding} = getFileEndingAndName(file)
       if (fileEnding == "png") {
@@ -40,7 +41,7 @@ const loadBackgrounds = (path) => {
         document.getElementById("display-backgrounds").innerHTML += _out;
       }
     }
-
+    ipcRenderer.send('load-background-images', files)
     actionsOnBgElements()
   });
 }
@@ -57,8 +58,8 @@ const getFileEndingAndName = (filename) => {
 //
 //
 const actionsOnBgElements = () => {
-  const bgElement = document.getElementsByClassName("bg-element")
-  for (let element of bgElement) {
+  const bgElements = document.getElementsByClassName("bg-element")
+  for (let element of bgElements) {
     element.addEventListener("click", () => {
       let filename = element.id
       mainarea.changeBlockType("background");

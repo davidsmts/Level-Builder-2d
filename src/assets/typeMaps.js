@@ -191,6 +191,28 @@ const block_attributes = {
     isAdditional: false,
     hasImage: false,
     imagePath: "assets/textures/fire_block.png"
+  },
+  background : {
+    id: 14,
+    name: "background",
+    hitbox: false,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: true,
+    imagePath: ""
+  },
+  coin : {
+    id: 15,
+    name: "coin",
+    hitbox: false,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: true,
+    imagePath: "assets/textures/Coin.png"
   }
 }
 

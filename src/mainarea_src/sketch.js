@@ -68,6 +68,7 @@ function sketch(p) {
   let CHECKPOINT_TEXTURE;
   let FIRE_TEXTURE;
   let SPIKE_TEXTURE;
+  let COIN_TEXTURE;
 
   //  constants
   const PARENT_ID = "p5Area";
@@ -93,6 +94,8 @@ function sketch(p) {
   let parentElement
   let bgDisplay
   let currentLayer = 0
+  let currentBackgroundTexturesPath = ""
+  let backgroundImages = new Array()
 
   p.preload = () => {
     //initialising constants
@@ -109,6 +112,7 @@ function sketch(p) {
     console.log(SPIKE_TEXTURE)
     FIRE_TEXTURE = p.color("#00ff00")
     CHECKPOINT_TEXTURE = p.color("#32b464")
+    COIN_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.coin.imagePath);
   }
 
   p.setup = () => {
@@ -168,7 +172,7 @@ function sketch(p) {
     //  renderPosition is the position at which the cube is to be displayed in the Builder
     //  because the position is 50:1 while we actually need it to be zoom:1
     let renderPosition = p.createVector(position.x * CurrentZoomLevel, position.y * CurrentZoomLevel)
-    let {hasImage, texture} = getTextureOfType(sprite.type);
+    let {hasImage, texture} = getTextureOfElement(sprite);
     if (hasImage) { //  width and height get set into relation of the images size
       let width = (texture.width / 32) * CubeWidthAndHeight
       let height = (texture.height / 32) * CubeWidthAndHeight
@@ -200,7 +204,7 @@ function sketch(p) {
     //  renderPosition is the position at which the cube is to be displayed in the Builder
     //  because the position is 50:1 while we actually need it to be zoom:1
     let renderPosition = p.createVector(interactive.position.x * CurrentZoomLevel, interactive.position.y * CurrentZoomLevel)
-    let {hasImage, texture} = getTextureOfType(interactive.type);
+    let {hasImage, texture} = getTextureOfElement(interactive);
     if (hasImage) {
       let width = (texture.width / 32) * CubeWidthAndHeight
       let height = (texture.height / 32) * CubeWidthAndHeight
@@ -478,7 +482,7 @@ function sketch(p) {
       let name = selectedBlockType == "background" ? selectedBlockType : selectedBackground
       tempElement.type = selectedBlockType
       tempElement.layer = currentLayer
-      temoElement.filename = selectedBlockType == "background" ? "" : selectedBackground
+      tempElement.filename = selectedBlockType == "background" ? selectedBackground : ""
       Sprites.push(tempElement)
     }
 
@@ -680,8 +684,8 @@ function sketch(p) {
           let tempElement = Object.assign({}, maps.DEFAULT_LOCAL_ELEMENT)
           tempElement.position = vector
           tempElement.type = type
-          tempElement.layer = setWithCheck(tempElement.layer, 0)
-          tempElement.filename = setWithCheck(tempElement.filename, "")
+          tempElement.layer = setWithCheck(layer, 0)
+          tempElement.filename = setWithCheck(element.filename, "")
           Sprites.push(tempElement)
         }
         console.log(Sprites)
@@ -693,8 +697,8 @@ function sketch(p) {
         let tempElement = Object.assign({}, maps.DEFAULT_LOCAL_ELEMENT)
         tempElement.position = vector
         tempElement.type = type
-        tempElement.layer = setWithCheck(tempElement.layer, 0)
-        tempElement.filename = setWithCheck(tempElement.filename, "")
+        tempElement.layer = setWithCheck(layer, 0)
+        tempElement.filename = setWithCheck(element.filename, "")
         Sprites.push(tempElement)
       }
     }
@@ -731,9 +735,9 @@ function sketch(p) {
 
     //
     //  Checks wether or not a variable is undefined and sets it in case it is
-    const setWithCheck = (variable, default) => {
+    const setWithCheck = (variable, defaultValue) => {
       if (variable == undefined || variable == null || variable == "") {
-        return default
+        return defaultValue
       } else {
         return variable
       }
@@ -884,7 +888,48 @@ function sketch(p) {
       module.exports.Interactives = Interactives
     }
 
+    //
+    const loadBackgroundImages = () => {
+      console.log("bg img")
+      return new Promise((resolve, reject) => {
+        const bgElements = document.getElementsByClassName("bg-element")
+        for (let element of bgElements) {
+          let texture = p.loadImage(currentBackgroundTexturesPath + "/" + element.id + ".png")
+          console.log(texture)
+          backgroundImages[element.id] = texture
+        }
+        resolve()
+      })
+    }
 
+    //
+    //
+    ipcRenderer.on('load-background-images', (event, files) => {
+      console.log(files)
+      loadBackgroundImages().then((result) => {
+        console.log(result)
+        p.redraw()
+      }, (err) => {
+        console.log(err)
+      })
+    })
+
+
+    //
+    //
+    ipcRenderer.on('bgPath', (event, path) => {
+      console.log(path)
+      currentBackgroundTexturesPath = path
+      loadBackgroundImages().then((result) => {
+        console.log(result)
+        p.redraw()
+      }, (err) => {
+        console.log(err)
+      })
+    })
+
+    //
+    //
     ipcRenderer.on("new-layer", (event,arg) => {
       console.log("sketch: ", arg)
       currentLayer = arg
@@ -958,9 +1003,15 @@ function sketch(p) {
       p.redraw();
     })
 
-    const getTextureOfType = (type) => {
+    const getTextureOfElement = (element) => {
+      let type = element.type
       let hasImage = BLOCK_ATTRIBUTES[type].hasImage
       let texture = p.color(0,0,0)
+      if (type == "background") {
+        texture = backgroundImages[element.filename]
+        return {hasImage, texture}
+      }
+
       switch (type) {
         case "normal_block":
         texture = NORMAL_TEXTURE
@@ -997,6 +1048,9 @@ function sketch(p) {
         break;
         case "spike_block":
         texture = SPIKE_TEXTURE
+        break;
+        case "coin":
+        texture = COIN_TEXTURE
         break;
         default:
         console.log("!!!!!DEFAULT COLOR STATE!!!!!");

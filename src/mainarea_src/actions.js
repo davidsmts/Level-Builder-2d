@@ -152,6 +152,12 @@ checkpoint.addEventListener("click", () => {
   mainarea.changeBlockType("checkpoint");
 });
 
+const coin = document.getElementById("coin");
+coin.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("coin");
+});
+
 //  gets inpout values when confirm button is pressed and forwards them to the main proccess
 const changeSizeConfirm_button = document.getElementById("changeSizeConfirm_button");
 changeSizeConfirm_button.addEventListener("click", () => {

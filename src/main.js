@@ -132,6 +132,10 @@ const documents = {
 
 let layer = 0
 
+ipcMain.on('load-background-images', (event, arg) => {
+  console.log("main: " + arg)
+  loadBackgroundImages(arg)
+})
 
 ipcMain.on("new-path", (event, arg) => {
   console.log("main: " + arg)
@@ -206,6 +210,11 @@ const changeLayer = () => {
   }
 
   mainWindow.webContents.send('new-layer', layer)
+}
+
+const loadBackgroundImages = (files) => {
+  console.log("loadBackgroundImages")
+  mainWindow.webContents.send('load-background-images', files)
 }
 
 const currentBackgroundTexturesPath = (bgPath) => {
