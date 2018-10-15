@@ -156,6 +156,12 @@ ipcMain.on("change-selected-block", (event, arg) => {
   changeSelectedBlockTo(arg);
 })
 
+ipcMain.on("change-selected-background", (event, arg) => {
+  console.log("main-change: " + arg);
+  changeSelectedBackgroundTo(arg);
+})
+
+
 ipcMain.on("clean-all", (event) => {
   console.log("clean-all main");
   cleanAllSpriteArrays();
@@ -218,6 +224,10 @@ const openNewDocument = (pathToNewDocument) => {
 
 const changeSelectedBlockTo = (selectedBlockType) => {
   mainWindow.webContents.send('change-selected-block', selectedBlockType);
+}
+
+const changeSelectedBackgroundTo = (selectedBackground) => {
+  mainWindow.webContents.send('change-selected-background', selectedBackground);
 }
 
 const cleanAllSpriteArrays = () => {

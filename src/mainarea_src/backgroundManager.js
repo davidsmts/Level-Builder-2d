@@ -11,6 +11,7 @@ const electron = require("electron")
 const fs = require('fs')
 const ipcRenderer = electron.ipcRenderer
 const currentBackgroundTexturesPath = "";
+const mainarea = require("./mainareaManager");
 
 //
 //
@@ -31,18 +32,37 @@ const loadBackgrounds = (path) => {
     if (err) throw  err;
     //the files parameter is an array of the files and folders in the path we passed. So we loop through the array, printing each file and folder
     for (let file of files) {
-      let fileEnding = getFileEnding(file)
+      let {fileprefix, fileEnding} = getFileEndingAndName(file)
       if (fileEnding == "png") {
         console.log(file);
         var _img = fs.readFileSync(path + "/" + file).toString('base64');
-        var _out = '<img class="bg-element bordered" src="data:image/png;base64,' + _img + '" />';
+        var _out = '<img class="bg-element bordered" id="'+fileprefix+'" src="data:image/png;base64,' + _img + '" />';
         document.getElementById("display-backgrounds").innerHTML += _out;
       }
     }
+
+    actionsOnBgElements()
   });
 }
 
-const getFileEnding = (filename) => {
+//
+//
+const getFileEndingAndName = (filename) => {
   let filenameParts = filename.split(".")
-  return filenameParts[filenameParts.length-1]
+  let fileprefix = filenameParts[0]
+  let fileEnding = filenameParts[filenameParts.length-1]
+  return {fileprefix, fileEnding}
+}
+
+//
+//
+const actionsOnBgElements = () => {
+  const bgElement = document.getElementsByClassName("bg-element")
+  for (let element of bgElement) {
+    element.addEventListener("click", () => {
+      let filename = element.id
+      mainarea.changeBlockType("background");
+      mainarea.changeBackground(filename);
+    })
+  }
 }

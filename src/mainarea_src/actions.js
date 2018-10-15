@@ -10,6 +10,9 @@
 const mainarea = require("./mainareaManager");
 const maps = require("../assets/typeMaps");
 
+
+
+
 let bgOpen = true
 const toggleBg_button = document.getElementById("toggle-bg-display")
 toggleBg_button.addEventListener("click", () => {

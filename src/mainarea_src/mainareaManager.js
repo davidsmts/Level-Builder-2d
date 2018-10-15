@@ -85,6 +85,7 @@ const buildJsonObject = () => {
     tempObj.yPosition = translatedY.toString();
     tempObj.zPosition = sprites[i].layer
     tempObj.hitbox = block_attributes.hitbox;
+    tempObj.filename = sprites[i].filename
     if (tempObj.zPosition != 0) {
       tempObj.hitbox = false;
     }
@@ -206,6 +207,10 @@ const changeBlockType = (selectedBlockType) => {
   ipcRenderer.send('change-selected-block', selectedBlockType);
 }
 
+const changeBackground = (background) => {
+  ipcRenderer.send('change-selected-background', background);
+}
+
 //
 const redrawSketch = () => {
   console.log("redrawSketch mainareaManager")
@@ -250,5 +255,6 @@ module.exports = {
   generelInputConfirm,
   changeZoom,
   clean,
-  changeLayer
+  changeLayer,
+  changeBackground
 }

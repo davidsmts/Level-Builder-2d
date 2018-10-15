@@ -41,6 +41,7 @@ const DEFAULT_ELEMENT = {
   yPosition: "",
   zPosition: "",
   hitbox: false,
+  filename: ""
 }
 
 const DEFAULT_OBJECT = {
@@ -213,7 +214,8 @@ const DEFAULT_LOCAL_INTERACTIVE = {
 const DEFAULT_LOCAL_ELEMENT = {
   position: 0,
   type: "",
-  layer: 0
+  layer: 0,
+  filename: ""
 }
 
 const ACTION_MENU = {
