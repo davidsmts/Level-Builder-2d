@@ -894,9 +894,10 @@ function sketch(p) {
       return new Promise((resolve, reject) => {
         const bgElements = document.getElementsByClassName("bg-element")
         for (let element of bgElements) {
-          let texture = p.loadImage(currentBackgroundTexturesPath + "/" + element.id + ".png")
-          console.log(texture)
-          backgroundImages[element.id] = texture
+          let texture = p.loadImage(currentBackgroundTexturesPath + "/" + element.id + ".png", () => {
+            console.log(texture)
+            backgroundImages[element.id] = texture
+          })
         }
         resolve()
       })
