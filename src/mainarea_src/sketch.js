@@ -99,19 +99,19 @@ function sketch(p) {
 
   p.preload = () => {
     //initialising constants
-    NORMAL_TEXTURE = p.color("#cc6600")
+    NORMAL_TEXTURE = p.color("#cc6600ff")
     WOOD_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.wood_block.imagePath);
     STONE_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.stone_block.imagePath);
-    PLAYER_TEXTURE = p.color("#00c800")
-    FINISH_TEXTURE = p.color("#ff0000")
-    OPPONENT1_TEXTURE = p.color("#000000")
-    WAYPOINT_TEXTURE = p.color("#7e33d4")
+    PLAYER_TEXTURE = p.color("#00c800ff")
+    FINISH_TEXTURE = p.color("#ff0000ff")
+    OPPONENT1_TEXTURE = p.color("#000000ff")
+    WAYPOINT_TEXTURE = p.color("#7e33d4ff")
     GRASS_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.grass_block.imagePath);
     DIRT_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.dirt_block.imagePath);
     SPIKE_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.spike_block.imagePath);
     console.log(SPIKE_TEXTURE)
-    FIRE_TEXTURE = p.color("#00ff00")
-    CHECKPOINT_TEXTURE = p.color("#32b464")
+    FIRE_TEXTURE = "00FF00"
+    CHECKPOINT_TEXTURE = p.color("#32b464ff")
     COIN_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.coin.imagePath);
   }
 
@@ -136,7 +136,7 @@ function sketch(p) {
   p.draw = () => {
     p.background(200);
     p.fill(255);
-    console.log("draw: " + LevelHeight + " - " + LevelWidth)
+    // console.log("draw: " + LevelHeight + " - " + LevelWidth)
     //  Draw Vertical Lines
     for (var i=0; i<LevelWidth; i+=CubeWidthAndHeight) {
       p.line(i, 0, i, LevelHeight);
@@ -177,17 +177,20 @@ function sketch(p) {
       let width = (texture.width / 32) * CubeWidthAndHeight
       let height = (texture.height / 32) * CubeWidthAndHeight
       if (sprite.layer != currentLayer) {
-        console.log("at tint")
         p.tint(255, 127)
       }
 
       p.image(texture, renderPosition.x, renderPosition.y, width, height)
     } else {
-      console.log("at fill")
+      // console.log("at fill")
       if (sprite.layer != currentLayer) {
         p.fill(p.unhex(texture));
+        console.log("after fill")
       } else {
-        p.fill(texture, 0)
+        // console.log(sprite.type)
+        // console.log(p.unhex(texture))
+        // console.log(p.unhex("0000FF"))
+        p.fill(p.unhex(texture))
       }
 
       p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
@@ -220,7 +223,7 @@ function sketch(p) {
           if (additional.draw) {  //  Because some additionals are not supposed to be drawn
             console.log(additional)
             let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
-            let {hasImage, texture} = getTextureOfType(additional.type);
+            let {hasImage, texture} = getTextureOfElement(additional.type);
             if (hasImage) {
               let width = (texture.width / 32) * CubeWidthAndHeight
               let height = (texture.height / 32) * CubeWidthAndHeight
@@ -244,7 +247,7 @@ function sketch(p) {
     const mouse = p.createVector(p.mouseX, p.mouseY);
     console.log(mouse)
     if (rectContains(sketchPosition, sketchSize, mouse)) {
-      console.log("in bound")
+      // console.log("in bound")
       handleBlock(mouse)
     } else {
       console.log("not in bounds")
@@ -254,7 +257,6 @@ function sketch(p) {
   p.touchMoved = (touch) => {
     const mouse = p.createVector(p.mouseX, p.mouseY);
     if (rectContains(sketchPosition, sketchSize, mouse)) {
-      console.log("in bound")
       let shiftIsPressed = touch.shiftKey
       // console.log(shiftIsPressed)
       // console.log(mouse)
@@ -370,7 +372,6 @@ function sketch(p) {
 
     //
     const handleDragBlock = (point, deleteOnly) => {
-      console.log("handleDragBlock")
       const renderedPoint = p.createVector(point.x * CurrentZoomLevel, point.y * CurrentZoomLevel)
       const toRoundX = renderedPoint.x % 50;
       const toRoundY = renderedPoint.y % 50;
@@ -448,7 +449,7 @@ function sketch(p) {
     //  this function creates a new block at the given position
     //  blockPos : p.Vector2d => position(x and y) of the new block in pixels
     const createNewBlock = (blockPos) => {
-      console.log("createNewBlock")
+      //console.log("createNewBlock")
       let attributes = Object.assign({}, BLOCK_ATTRIBUTES[selectedBlockType])
       if (attributes.collection == "environment") {
         createEnvironment(blockPos)
@@ -784,7 +785,7 @@ function sketch(p) {
       const x = pointToCheckFor.x - parentElement.scrollLeft
       const y = pointToCheckFor.y - parentElement.scrollTop
       const lowerBound = bgDisplay.offsetTop - parentElement.offsetTop
-      console.log("b: ", lowerBound, " and y: ", y)
+      // console.log("b: ", lowerBound, " and y: ", y)
       if (x > 0 && y > 0 && y < lowerBound) {
         return true
       }
@@ -794,7 +795,6 @@ function sketch(p) {
 
     //  checks if any Element Container contains the passed point
     const doesPointExist = (point) => {
-      console.log("doesPointExist")
       for (let i = 0; i < Sprites.length; i++) {
         const sprite = Sprites[i];
         if (sprite.position.x == point.x && sprite.position.y == point.y && sprite.layer == currentLayer) {
@@ -802,7 +802,6 @@ function sketch(p) {
           return {doesContain: true, index: i, container: "Elements"};
         }
       }
-      console.log("not in sprites")
       for (let i = 0; i < Interactives.length; i++) {
         const position = Interactives[i].position;
         if (position.x == point.x && position.y == point.y && currentLayer == 0) {
@@ -810,7 +809,6 @@ function sketch(p) {
           return {doesContain: true, index: i, container: "Objects"};
         }
       }
-      console.log("not in interactives")
       return {doesContain: false, index: 0, container: "none"};
     }
 
