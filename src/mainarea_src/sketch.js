@@ -223,7 +223,7 @@ function sketch(p) {
           if (additional.draw) {  //  Because some additionals are not supposed to be drawn
             console.log(additional)
             let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
-            let {hasImage, texture} = getTextureOfElement(additional.type);
+            let {hasImage, texture} = getTextureOfElement(additional);
             if (hasImage) {
               let width = (texture.width / 32) * CubeWidthAndHeight
               let height = (texture.height / 32) * CubeWidthAndHeight
@@ -331,11 +331,13 @@ function sketch(p) {
       actionMenu.removeChild(actionMenu.firstChild);
     }  }
 
+
     //
     let defaultAction = (index) => {
       console.log(index)
       console.log("default action")
     }
+
 
     //
     const actionForIdentifier = (action) => {
@@ -823,7 +825,8 @@ function sketch(p) {
         Interactives[index].additionals = new Array()
         return
       }
-      if (maxOccurence >= 1) {
+
+      if (maxOccurence == 1) {
         for (let i = 0; i < additionals.length; i++) {
           if (additionals[i].type == type) {
             return false
@@ -836,6 +839,7 @@ function sketch(p) {
             cnt++
           }
         }
+
         if (cnt >= 2) {
           return false
         }
