@@ -4,14 +4,13 @@
 * @Email:  davidschmotz@gmail.com
 * @Filename: mainareaManager.js
  * @Last modified by:   David
- * @Last modified time: 2018-06-16T21:16:54+02:00
+ * @Last modified time: 2018-08-27T19:28:28+02:00
 */
 
 const sketch = require("./sketch");
 const p5 = require('p5');
 const getXml = require("../file/readfile.js");
 const setXml = require("../file/savefile.js");
-const xml2js = require("xml2js");
 const xml2json = require("xml2json");
 const fs = require('fs');
 const {ipcRenderer} = require("electron");
@@ -32,7 +31,6 @@ const saveXML = () => {
   console.log(path)
   let obj = buildJsonObject()
   console.log(obj)
-  const builder = new xml2js.Builder()
   const xml = xml2json.toXml(obj)
   console.log(xml)
   fs.writeFile(path, xml, (err) => {
@@ -46,10 +44,9 @@ const saveXML = () => {
 
 //  builds a json object of the provided information and turns it into an xml
 const buildJsonObject = () => {
-  let spritePositions = sketch.SpritePositions
-  let spriteTypes = sketch.SpriteTypes
+  let sprites = sketch.Sprites
   let Interactives = sketch.Interactives
-  console.log("json builder: " + spritePositions.length + " and : " + spriteTypes.length)
+  console.log("json builder: " + sprites.length)
   const DIMENSION = sketch.CubeWidthAndHeight;
   const LevelHeight = sketch.LevelHeight
   const LevelWidth = sketch.LevelWidth
@@ -69,28 +66,35 @@ const buildJsonObject = () => {
   }}
 
   //  Prepare Environment Elements
-  let {sortedPositions, sortedTypes} = sortVectors(spritePositions, spriteTypes, LevelHeight, LevelWidth);
-  spritePositions = sortedPositions
-  spriteTypes = sortedTypes
-  console.log("after sorting: " + spritePositions.length + " and : " + spriteTypes.length)
+  let sortedSprites = sortVectors(sprites, LevelHeight, LevelWidth);
+  sprites = sortedSprites
+  console.log("after sorting: " + sprites.length)
+  console.log(sprites)
   //  Fill Environment Elements
-  for (let i = 0; i < spritePositions.length; i++) {
-    let block_attributes = maps.block_attributes[spriteTypes[i]];
+  for (let i = 0; i < sprites.length; i++) {
+    let block_attributes = maps.block_attributes[sprites[i].type];
     //  calculate positions in unified dimension
-    const translatedX = spritePositions[i].x / DIMENSION;
-    const translatedY = spritePositions[i].y / DIMENSION;
+    const translatedX = sprites[i].position.x / DIMENSION;
+    const translatedY = sprites[i].position.y / DIMENSION;
     //  Prepare a temporary object
     let tempObj = Object.assign({},maps.DEFAULT_ELEMENT);
     tempObj.id = i.toString();
     tempObj.prefab = 0;
-    tempObj.type = spriteTypes[i];
+    tempObj.type = sprites[i].type;
     tempObj.xPosition = translatedX.toString();
     tempObj.yPosition = translatedY.toString();
+    tempObj.zPosition = sprites[i].layer
     tempObj.hitbox = block_attributes.hitbox;
+    tempObj.filename = sprites[i].filename
+    if (tempObj.zPosition != 0) {
+      tempObj.hitbox = false;
+    }
     //  Add tempObj to environment container
     obj.collection.environment.element.push(tempObj)
   }
+
   console.log(obj.collection.environment.element)
+
   //  Fill Interactives
   for (let i = 0; i < Interactives.length; i++) {
     let Interactive = Interactives[i]
@@ -106,13 +110,20 @@ const buildJsonObject = () => {
     tempObj.xPosition = translatedX.toString();
     tempObj.yPosition = translatedY.toString();
     tempObj.hitbox = block_attributes.hitbox;
-    tempObj.additionals = Interactive.additionals;
-    if (tempObj.additionals != undefined) {
-      for (let additional of tempObj.additionals) {
-        additional.xPosition = additional.xPosition / DIMENSION
-        additional.yPosition = additional.yPosition / DIMENSION
+    tempObj.additionals = new Array()
+    if (Interactive.additionals != undefined) {
+      for (let additional of Interactive.additionals) {
+        let tempAddiditional = Object.assign({}, additional)
+        tempAddiditional.xPosition = additional.xPosition / DIMENSION
+        tempAddiditional.yPosition = additional.yPosition / DIMENSION
+        if (additional.value == null || additional.value == undefined) {
+          additional.value = ""
+          tempAddiditional.value = ""
+        }
+        tempObj.additionals.push(tempAddiditional)
       }
     }
+
     //  Add tempObj to environment container
     obj.collection.interactive.object.push(tempObj)
   }
@@ -138,61 +149,70 @@ const renewHeader = (dimension) => {
   return Header
 }
 
+
 //
+//  SORT FUNCTIONS
 //
-const sortVectors = (SpritePositions, SpriteTypes, LevelHeight, LevelWidth) => {
+
+//  sorts the vectors b y-coordinate and then calls the below function to
+//  sort by x as well
+//  returns sorted Sprite Array
+const sortVectors = (Sprites, LevelHeight, LevelWidth) => {
   console.log(LevelHeight)
-  let sortedPositions = [];
-  let sortedTypes = [];
+  let sortedSprites = new Array()
   for (let i=0; i<LevelHeight; i+=50) {
-    let spritePositionsOfRowI = [];
-    let spriteTypesOfRowI = [];
+    let spritesOfRowI = new Array();
     //  Get all sprites with i's y-coordinate
-    for (let j=0; j<SpritePositions.length; j++) {
-      let position = SpritePositions[j];
-      if (position.y == i) {
+    for (let j=0; j<Sprites.length; j++) {
+      if (Sprites[j].position.y == i) {
         //console.log(i + " vs. " + position.y + " -> worked")
-        spritePositionsOfRowI.push(position);
-        spriteTypesOfRowI.push(SpriteTypes[j]);
+        spritesOfRowI.push(Sprites[j]);
       }
     }
 
-    let {xSortedPositions, xSortedTypes} = sortByX(LevelWidth, spritePositionsOfRowI, spriteTypesOfRowI)
-    sortedPositions = sortedPositions.concat(xSortedPositions)
-    sortedTypes = sortedTypes.concat(xSortedTypes)
+    let xSortedSprites = sortByX(LevelWidth, spritesOfRowI)
+    sortedSprites = sortedSprites.concat(xSortedSprites)
   }
 
-  return {sortedPositions, sortedTypes}
+  return sortedSprites
 }
 
 
+//  gets called by the above sort function to sort by x after the vectors
+//  have been classified by y
 //
-//
-const sortByX = (LevelWidth, positions, types) => {
-  let xSortedPositions = [];
-  let xSortedTypes = [];
-
+const sortByX = (LevelWidth, Sprites) => {
+  let xSortedSprites = new Array();
   //  Sort the sprites for the -> i y coordinate by their x value
   for (let x=0; x<LevelWidth; x+=50) {
-    for (let j=0; j<positions.length; j++) {
-      let position = positions[j];
-      if (position.x == x) {
-        //console.log(x + " vs. " + position.x + " -> worked")
-        xSortedPositions.push(position);
-        xSortedTypes.push(types[j]);
+    for (let j=0; j<Sprites.length; j++) {
+      if (Sprites[j].position.x == x) {
+        xSortedSprites.push(Sprites[j]);
       }
     }
   }
-  return {xSortedPositions, xSortedTypes}
+  return xSortedSprites
 }
+
+
+
+//
 
 const clean = () => {
   console.log("clean")
   ipcRenderer.send('clean-all');
 }
 
+const changeLayer = () => {
+  ipcRenderer.send('change-layer');
+}
+
 const changeBlockType = (selectedBlockType) => {
   ipcRenderer.send('change-selected-block', selectedBlockType);
+}
+
+const changeBackground = (background) => {
+  ipcRenderer.send('change-selected-background', background);
 }
 
 //
@@ -213,6 +233,12 @@ const changeZoom = (zoom) => {
   ipcRenderer.send('changeZoom-sketch', zoom);
 }
 
+//
+const generelInputConfirm = (inputInt) => {
+  console.log("change zoom mainareaManager")
+  ipcRenderer.send('generelInputConfirm-sketch', inputInt);
+}
+
 ipcRenderer.on('new-doc-sketch', (event, path) => {
   console.log("mainarea creates sketch");
 })
@@ -230,20 +256,9 @@ module.exports = {
   changeSize,
   saveXML,
   changeBlockType,
+  generelInputConfirm,
   changeZoom,
   clean,
-  app,
-  sketch,
+  changeLayer,
+  changeBackground
 }
-
-// const xml =
-// "<elementCollection>" +
-// "<elements>" +
-// "<xPosition>-5</xPosition>" +
-// "<yPosition>-3</yPosition>" +
-// "</elements" +
-// "<elements>" +
-// "<xPosition>5</xPosition>" +
-// "<yPosition>3</yPosition>" +
-// "</elements" +
-// "</elementsCollection";

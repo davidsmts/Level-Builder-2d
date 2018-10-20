@@ -3,8 +3,8 @@
 * @Date:   2018-06-11T23:44:30+02:00
 * @Email:  davidschmotz@gmail.com
 * @Filename: nameToTypeMap.js
-* @Last modified by:   David
-* @Last modified time: 2018-06-12T23:22:41+02:00
+ * @Last modified by:   David
+ * @Last modified time: 2018-09-21T21:53:03+02:00
 */
 
 const DEFAULT_HEADER_ELEMENT = {
@@ -39,7 +39,9 @@ const DEFAULT_ELEMENT = {
   type: "",
   xPosition: "",
   yPosition: "",
+  zPosition: "",
   hitbox: false,
+  filename: ""
 }
 
 const DEFAULT_OBJECT = {
@@ -117,7 +119,9 @@ const block_attributes = {
     collection: "interactive",
     hasAdditionals: false,
     isAdditional: true,
-    hasImage: false
+    hasImage: false,
+    draw: true,
+    maxOccurence: 2
   },
   grass_block : {
     id: 8,
@@ -140,6 +144,75 @@ const block_attributes = {
     isAdditional: false,
     hasImage: true,
     imagePath: "assets/textures/dirt.png"
+  },
+  checkpoint : {
+    id: 10,
+    name: "checkpoint",
+    hitbox: false,
+    color: "",
+    collection: "interactive",
+    hasAdditionals: true,
+    isAdditional: false,
+    hasImage: false,
+    imagePath: "assets/textures/dirt.png",
+    draw: true
+  },
+  order : {
+    id: 11,
+    name: "order",
+    hitbox: false,
+    color: "",
+    collection: "interactive",
+    hasAdditionals: false,
+    isAdditional: true,
+    hasImage: false,
+    imagePath: "",
+    draw: false,
+    maxOccurence: 1
+  },
+  spike_block : {
+    id: 12,
+    name: "spike_block",
+    hitbox: true,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: true,
+    imagePath: "assets/textures/spikes.png"
+  },
+  fire_block : {
+    id: 13,
+    name: "fire_block",
+    hitbox: true,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: false,
+    imagePath: "assets/textures/fire_block.png"
+  },
+  background : {
+    id: 14,
+    name: "background",
+    hitbox: false,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: true,
+    imagePath: ""
+  },
+  coin : {
+    id: 15,
+    name: "coin",
+    hitbox: false,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: true,
+    imagePath: "assets/textures/Coin.png"
   }
 }
 
@@ -149,7 +222,9 @@ const DEFAULT_ADDITIONAL = {
   xPosition: 0,
   yPosition: 0,
   pointsTo: "",
-  poinstToType: ""
+  poinstToType: "",
+  value: "",
+  draw: false
 }
 
 const DEFAULT_LOCAL_INTERACTIVE = {
@@ -158,8 +233,16 @@ const DEFAULT_LOCAL_INTERACTIVE = {
   additionals: new Array()
 }
 
+const DEFAULT_LOCAL_ELEMENT = {
+  position: 0,
+  type: "",
+  layer: 0,
+  filename: ""
+}
+
 const ACTION_MENU = {
-  opponent1: ["Delete", "Waypoint", "Set Radius", "Close"]
+  opponent1: ["Waypoint", "Set Radius"],
+  checkpoint: ["Set Order"]
 }
 
 module.exports = {

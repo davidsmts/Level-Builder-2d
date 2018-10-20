@@ -30,10 +30,22 @@ body {
 }
 
 .levelbuilder {
+  position: relative;
   background-color: lightgrey;
   display: inline-block;
   width: 80%;
   height: 100vh;
   padding-left: 0;
   margin-left: 0;
+}
+
+.close-button {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  text-align: center;
+  vertical-align: top;
+  padding: 0;
 }

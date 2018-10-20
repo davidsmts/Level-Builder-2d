@@ -31,3 +31,65 @@ canvas {
 .blocktype_menu {
 
 }
+
+#display-backgrounds {
+  display: block;
+  width: auto;
+  white-space: nowrap;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#bg-display {
+  position: absolute;
+  background-color: lightgrey;
+  bottom: 0;
+  top: 80%;
+  height: 16%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: scroll;
+}
+
+.bg-element {
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100px;
+  max-height: 100%;
+  width: 20%;
+  height: 100%;
+  padding: 5px;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+.bordered {
+  box-sizing: border-box;
+  border-radius: 1px;
+  border-color: black;
+  border-style: solid;
+}
+
+#status-bar {
+  position: absolute;
+  top: 96%;
+  left: 0;
+  width: 100%;
+  height: 4%;
+  min-height: 20px;
+  background-color: lightgrey;
+}
+
+.status-element {
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 0;
+  margin-bottom: 0;
+}

@@ -39,6 +39,12 @@ function createWindow() {
           console.log("open")
           openFileDialog()
         },
+      },{
+        label: "Load backgrounds",
+        click: _ => {
+          console.log("backgrounds")
+          selectBackgroundFolder()
+        },
       }, {
         label: "New",
         click: _ => {
@@ -95,6 +101,20 @@ const openFileDialog = () => {
 }
 
 
+//  Opens File Dialog and messages all endpoints the new path
+const selectBackgroundFolder = () => {
+  dialog.showOpenDialog({
+    properties: ['openDirectory']
+  }, function (files) {
+    if (files !== undefined) {
+      const Path = files[0]
+      //  ipc sends
+      console.log("pfad: " + Path)
+      currentBackgroundTexturesPath(Path)
+    }
+  })
+}
+
 //  creates a new xml Level File
 const newXmlFile = () => {
 
@@ -109,6 +129,13 @@ const documents = {
   currentDocumentName: "",
   currentFullPath: ""
 }
+
+let layer = 0
+
+ipcMain.on('load-background-images', (event, arg) => {
+  console.log("main: " + arg)
+  loadBackgroundImages(arg)
+})
 
 ipcMain.on("new-path", (event, arg) => {
   console.log("main: " + arg)
@@ -133,6 +160,12 @@ ipcMain.on("change-selected-block", (event, arg) => {
   changeSelectedBlockTo(arg);
 })
 
+ipcMain.on("change-selected-background", (event, arg) => {
+  console.log("main-change: " + arg);
+  changeSelectedBackgroundTo(arg);
+})
+
+
 ipcMain.on("clean-all", (event) => {
   console.log("clean-all main");
   cleanAllSpriteArrays();
@@ -153,6 +186,42 @@ ipcMain.on("changeZoom-sketch", (event, width, height) => {
   changeZoom(width, height);
 })
 
+ipcMain.on("change-layer", (event) => {
+  console.log("change-layer main");
+  changeLayer()
+})
+
+ipcMain.on("generelInputConfirm-sketch", (event, value) => {
+  console.log("generelInputConfirm main");
+  generelInputConfirm(value);
+})
+
+
+//
+// FUNCTIONS
+//
+
+
+const changeLayer = () => {
+  if (layer <= 1) {
+    layer++
+  } else {
+    layer = 0
+  }
+
+  mainWindow.webContents.send('new-layer', layer)
+}
+
+const loadBackgroundImages = (files) => {
+  console.log("loadBackgroundImages")
+  mainWindow.webContents.send('load-background-images', files)
+}
+
+const currentBackgroundTexturesPath = (bgPath) => {
+  console.log("sending")
+  mainWindow.webContents.send('bgPath', bgPath)
+}
+
 const currentDocumentPath = (currentDocumentPath) => {
   mainWindow.webContents.send('givingyou-currentDocumentPath', currentDocumentPath);
 }
@@ -164,6 +233,10 @@ const openNewDocument = (pathToNewDocument) => {
 
 const changeSelectedBlockTo = (selectedBlockType) => {
   mainWindow.webContents.send('change-selected-block', selectedBlockType);
+}
+
+const changeSelectedBackgroundTo = (selectedBackground) => {
+  mainWindow.webContents.send('change-selected-background', selectedBackground);
 }
 
 const cleanAllSpriteArrays = () => {
@@ -183,4 +256,9 @@ const changeSize = (width, height) => {
 const changeZoom = (newZoom) => {
   console.log("changeZoom main")
   mainWindow.webContents.send('changeZoom-sketch', newZoom);
+}
+
+const generelInputConfirm = (value) => {
+  console.log("generelInputConfirm main")
+  mainWindow.webContents.send('generelInputConfirm-sketch', value);
 }
