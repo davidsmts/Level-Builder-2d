@@ -110,16 +110,20 @@ const buildJsonObject = () => {
     tempObj.xPosition = translatedX.toString();
     tempObj.yPosition = translatedY.toString();
     tempObj.hitbox = block_attributes.hitbox;
-    tempObj.additionals = Interactive.additionals;
-    if (tempObj.additionals != undefined) {
-      for (let additional of tempObj.additionals) {
-        additional.xPosition = additional.xPosition / DIMENSION
-        additional.yPosition = additional.yPosition / DIMENSION
+    tempObj.additionals = new Array()
+    if (Interactive.additionals != undefined) {
+      for (let additional of Interactive.additionals) {
+        let tempAddiditional = Object.assign({}, additional)
+        tempAddiditional.xPosition = additional.xPosition / DIMENSION
+        tempAddiditional.yPosition = additional.yPosition / DIMENSION
         if (additional.value == null || additional.value == undefined) {
           additional.value = ""
+          tempAddiditional.value = ""
         }
+        tempObj.additionals.push(tempAddiditional)
       }
     }
+
     //  Add tempObj to environment container
     obj.collection.interactive.object.push(tempObj)
   }

@@ -691,7 +691,6 @@ function sketch(p) {
           tempElement.filename = setWithCheck(element.filename, "")
           Sprites.push(tempElement)
         }
-        console.log(Sprites)
       } else {
         //  positions get multiplied by CubeWidthAndHeight because thats how we lay out the window
         const vector = p.createVector(element.xPosition*CubeWidthAndHeight, element.yPosition*CubeWidthAndHeight)
@@ -709,7 +708,6 @@ function sketch(p) {
     //
     //
     const handleInteractives = (interactives) => {
-      console.log(interactives)
       if (interactives == undefined || interactives == null) {
         return
       }
@@ -755,8 +753,10 @@ function sketch(p) {
       }
       if (additionals instanceof Array) {
         for (let additional of additionals) {
+          console.log(additional.xPosition)
           additional.xPosition = additional.xPosition*CubeWidthAndHeight
           additional.yPosition = additional.yPosition*CubeWidthAndHeight
+          console.log(additional.xPosition)
           if (additional.draw == "true") {
             additional.draw = true
           } else {
@@ -868,6 +868,8 @@ function sketch(p) {
 
     //
     const changeSizeOfWorkspace = (width, height) => {
+      console.log(width)
+      console.log(height)
       LevelWidth = width
       LevelHeight = height
       module.exports.LevelWidth = width
