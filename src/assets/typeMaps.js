@@ -213,6 +213,17 @@ const block_attributes = {
     isAdditional: false,
     hasImage: true,
     imagePath: "assets/textures/Coin.png"
+  },
+  collectable : {
+    id: 16,
+    name: "collectable",
+    hitbox: false,
+    color: "",
+    collection: "environment",
+    hasAdditionals: false,
+    isAdditional: false,
+    hasImage: false,
+    imagePath: ""
   }
 }
 

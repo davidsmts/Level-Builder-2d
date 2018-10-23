@@ -69,6 +69,7 @@ function sketch(p) {
   let FIRE_TEXTURE;
   let SPIKE_TEXTURE;
   let COIN_TEXTURE;
+  let COLLECTABLE_TEXTURE;
 
   //  constants
   const PARENT_ID = "p5Area";
@@ -113,6 +114,7 @@ function sketch(p) {
     FIRE_TEXTURE = "00FF00"
     CHECKPOINT_TEXTURE = p.color("#32b464ff")
     COIN_TEXTURE = p.loadImage(BLOCK_ATTRIBUTES.coin.imagePath);
+    COLLECTABLE_TEXTURE = p.color(0, 255, 0)
   }
 
   p.setup = () => {
@@ -156,11 +158,11 @@ function sketch(p) {
       drawInteractive(interactive)
     }
 
-    for (let sprite of Sprites) {
-      if (sprite.layer == currentLayer) {
-        drawSprite(sprite)
-      }
-    }
+    // for (let sprite of Sprites) {
+    //   if (sprite.layer == currentLayer) {
+    //     drawSprite(sprite)
+    //   }
+    // }
   }
 
 
@@ -185,12 +187,8 @@ function sketch(p) {
       // console.log("at fill")
       if (sprite.layer != currentLayer) {
         p.fill(p.unhex(texture));
-        console.log("after fill")
       } else {
-        // console.log(sprite.type)
-        // console.log(p.unhex(texture))
-        // console.log(p.unhex("0000FF"))
-        p.fill(p.unhex(texture))
+        p.fill(texture)
       }
 
       p.rect(renderPosition.x, renderPosition.y, CubeWidthAndHeight, CubeWidthAndHeight);
@@ -221,7 +219,6 @@ function sketch(p) {
       if (interactive.additionals.length >= 1) {
         for (let additional of interactive.additionals) {
           if (additional.draw) {  //  Because some additionals are not supposed to be drawn
-            console.log(additional)
             let additonalRenderPosition = p.createVector(additional.xPosition * CurrentZoomLevel, additional.yPosition * CurrentZoomLevel)
             let {hasImage, texture} = getTextureOfElement(additional);
             if (hasImage) {
@@ -233,6 +230,12 @@ function sketch(p) {
               //  + zoom * 25 damit die ellipse in der mitte ist
               p.ellipse(additonalRenderPosition.x + CurrentZoomLevel * 25, additonalRenderPosition.y + CurrentZoomLevel * 25, CubeWidthAndHeight/2, CubeWidthAndHeight/2);
             }
+          } else {
+            console.log("draw additional")
+            console.log(additional)
+            p.fill(0)
+            p.textSize(20)
+            p.text(additional.value, renderPosition.x + 20, renderPosition.y + 30)
           }
         }
       }
@@ -245,7 +248,6 @@ function sketch(p) {
   //  the sketch has to be catched
   p.mousePressed = () => {
     const mouse = p.createVector(p.mouseX, p.mouseY);
-    console.log(mouse)
     if (rectContains(sketchPosition, sketchSize, mouse)) {
       // console.log("in bound")
       handleBlock(mouse)
@@ -800,14 +802,12 @@ function sketch(p) {
       for (let i = 0; i < Sprites.length; i++) {
         const sprite = Sprites[i];
         if (sprite.position.x == point.x && sprite.position.y == point.y && sprite.layer == currentLayer) {
-          console.log("y")
           return {doesContain: true, index: i, container: "Elements"};
         }
       }
       for (let i = 0; i < Interactives.length; i++) {
         const position = Interactives[i].position;
         if (position.x == point.x && position.y == point.y && currentLayer == 0) {
-          console.log("y")
           return {doesContain: true, index: i, container: "Objects"};
         }
       }
@@ -1056,6 +1056,9 @@ function sketch(p) {
         break;
         case "coin":
         texture = COIN_TEXTURE
+        break;
+        case "collectable":
+        texture = COLLECTABLE_TEXTURE
         break;
         default:
         console.log("!!!!!DEFAULT COLOR STATE!!!!!");

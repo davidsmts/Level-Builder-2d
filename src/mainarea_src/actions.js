@@ -51,6 +51,7 @@ generelInputConfirm_button.addEventListener("click", () => {
     return;
   } finally {
     let generelInputContainer = document.getElementById("generelInput_container");
+    generelInputContainer.innerHTML = ""
     generelInputContainer.style.display = "none"
   }
 });
@@ -156,6 +157,12 @@ const coin = document.getElementById("coin");
 coin.addEventListener("click", () => {
   console.log("changeBlockType")
   mainarea.changeBlockType("coin");
+});
+
+const collectable = document.getElementById("collectable");
+collectable.addEventListener("click", () => {
+  console.log("changeBlockType")
+  mainarea.changeBlockType("collectable");
 });
 
 //  gets inpout values when confirm button is pressed and forwards them to the main proccess
