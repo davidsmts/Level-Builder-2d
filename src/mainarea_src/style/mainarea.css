@@ -9,6 +9,7 @@
 
 #p5Area {
   overflow: auto;
+  overflow-x: scroll;
   width: 100%;
   height: 90%;
 }
